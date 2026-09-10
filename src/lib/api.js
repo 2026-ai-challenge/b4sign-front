@@ -3,6 +3,17 @@
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
 
+/**
+ * API 사용 가능 여부. NEXT_PUBLIC_API_URL이 없으면 localhost 개발 환경에서만
+ * 기본 주소(localhost:4000)를 시도한다 — 배포(Vercel)에서는 불필요한 요청과
+ * 콘솔 에러 없이 곧장 목 데이터로 동작.
+ */
+export function apiAvailable() {
+  if (process.env.NEXT_PUBLIC_API_URL) return true;
+  if (typeof window === "undefined") return false;
+  return ["localhost", "127.0.0.1"].includes(window.location.hostname);
+}
+
 const TOKEN_KEY = "zipsalpi_token";
 
 export function getToken() {

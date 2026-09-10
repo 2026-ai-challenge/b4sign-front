@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { D } from "@/lib/derive";
-import { api, apiStream } from "@/lib/api";
+import { api, apiStream, apiAvailable } from "@/lib/api";
 
 const AppContext = createContext(null);
 
@@ -85,8 +85,9 @@ export function AppProvider({ children }) {
   const tasksRef = useRef(null);
   tasksRef.current = tasks;
 
-  // 백엔드 부트스트랩 — 실패하면 로컬 목 데이터 그대로 사용
+  // 백엔드 부트스트랩 — API 미설정(배포 데모)이거나 실패하면 로컬 목 데이터 그대로 사용
   useEffect(() => {
+    if (!apiAvailable()) return;
     let cancelled = false;
     api("/bootstrap")
       .then((b) => {
