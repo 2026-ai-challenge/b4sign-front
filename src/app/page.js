@@ -125,14 +125,21 @@ export default function Landing() {
         <div
           className="scroll-hint"
           style={{
-            marginTop: 14,
-            textAlign: "center",
-            fontSize: 16,
-            color: "#1B7F5C",
+            marginTop: 16,
+            display: "flex",
+            justifyContent: "center",
             animation: "floatDown 1.6s ease-in-out infinite",
           }}
         >
-          ⌄
+          <svg width="22" height="12" viewBox="0 0 22 12" fill="none" aria-hidden="true">
+            <path
+              d="M2 2L11 10L20 2"
+              stroke="#1B7F5C"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
       </div>
 
