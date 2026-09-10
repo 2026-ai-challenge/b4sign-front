@@ -325,6 +325,33 @@ function Documents() {
             </div>
           ))}
         </div>
+        {/* 등기 변동 모니터링 진입 */}
+        <button
+          onClick={() => router.push("/registry-watch")}
+          style={{
+            display: "flex",
+            width: "100%",
+            alignItems: "center",
+            gap: 12,
+            marginTop: 14,
+            padding: "14px",
+            borderRadius: 16,
+            background: "#0F2A20",
+            border: "none",
+            textAlign: "left",
+          }}
+        >
+          <span style={{ fontSize: 18, flex: "none" }}>🔍</span>
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span style={{ display: "block", fontSize: 13.5, fontWeight: 700, color: "#fff" }}>
+              등기 변동 모니터링
+            </span>
+            <span style={{ display: "block", fontSize: 11.5, color: "#9BD3B9", marginTop: 2 }}>
+              3개월 주기 재확인 · 재업로드 시 변동 자동 비교
+            </span>
+          </span>
+          <span style={{ flex: "none", color: "rgba(255,255,255,.6)", fontSize: 14 }}>›</span>
+        </button>
         <p style={{ margin: "16px 0 0", fontSize: 12, lineHeight: 1.6, color: "#6E827A" }}>
           업로드 시 주민등록번호 뒷자리는 자동 마스킹 후 저장돼요. 원본은 보관하지 않으며, 케이스
           삭제 시 함께 지워집니다.

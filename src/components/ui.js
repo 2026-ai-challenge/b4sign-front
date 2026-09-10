@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
 import { Logo } from "@/components/logo";
+import { NotificationHost } from "@/components/notifications";
 
 // 탭바 없이 풀스크린으로 쓰는 라우트: 문서 뷰어 + 인증 플로우
 const NO_TAB_ROUTES = ["/", "/login", "/signup", "/signup/consent", "/find-id", "/find-password"];
@@ -95,6 +96,7 @@ export function Shell({ children }) {
           {children}
         </div>
         {!hideTabs && <TabBar />}
+        {!isViewer && <NotificationHost />}
         <GlobalSheets />
         <Toast />
       </div>

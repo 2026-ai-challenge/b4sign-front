@@ -162,4 +162,64 @@ export function buildDocList(caseId, docs) {
   });
 }
 
+// ─── 중개보수(중개수수료) 계산 ───
+// 주택 상한 요율표 (2021.10 개정, 서울 기준 — 지자체 조례로 차이 가능, VAT 별도)
+const FEE_TABLE = {
+  maemae: [
+    [50e6, 0.006, 250000],
+    [200e6, 0.005, 800000],
+    [900e6, 0.004, null],
+    [1200e6, 0.005, null],
+    [1500e6, 0.006, null],
+    [Infinity, 0.007, null],
+  ],
+  lease: [
+    [50e6, 0.005, 200000],
+    [100e6, 0.004, 300000],
+    [600e6, 0.003, null],
+    [1200e6, 0.004, null],
+    [1500e6, 0.005, null],
+    [Infinity, 0.006, null],
+  ],
+};
+
+/**
+ * 중개보수 상한 계산.
+ * - 월세: 거래금액 = 보증금 + 월세×100 (합산 5천만 미만이면 보증금 + 월세×70)
+ * - 반환: { base(거래금액), rate, cap, fee(상한 보수) }
+ */
+export function brokerageFee(type, amount, monthly = 0) {
+  let base = amount;
+  if (type === "wolse") {
+    base = amount + monthly * 100;
+    if (base < 50e6) base = amount + monthly * 70;
+  }
+  const table = type === "maemae" ? FEE_TABLE.maemae : FEE_TABLE.lease;
+  const row = table.find(([limit]) => base < limit);
+  const fee = Math.min(Math.floor(base * row[1]), row[2] ?? Infinity);
+  return { base, rate: row[1], cap: row[2], fee };
+}
+
+/** "보증금 2억", "3,000만 · 월 65만", "6.2억" 등에서 금액(원) 추출 */
+export function parseKoreanAmount(str) {
+  if (!str) return 0;
+  const s = str.replace(/,/g, "");
+  const eok = s.match(/(\d+(?:\.\d+)?)\s*억/);
+  const man = s.match(/(\d+(?:\.\d+)?)\s*(?:천만|만)/);
+  let v = 0;
+  if (eok) v += parseFloat(eok[1]) * 1e8;
+  if (man) v += parseFloat(man[1]) * (s.includes("천만") ? 1e7 : 1e4);
+  return Math.round(v);
+}
+
+/** 원 → "1,234만 원" / "1.2억 원" 표기 */
+export function fmtKrw(v) {
+  if (v >= 1e8) {
+    const eok = v / 1e8;
+    return (Number.isInteger(eok) ? eok : eok.toFixed(2).replace(/0+$/, "").replace(/\.$/, "")) + "억 원";
+  }
+  if (v >= 1e4) return Math.round(v / 1e4).toLocaleString() + "만 원";
+  return v.toLocaleString() + "원";
+}
+
 export { D };

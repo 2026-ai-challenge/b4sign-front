@@ -11,6 +11,10 @@ import {
   buildDocList,
   ddInfo,
   taskProgress,
+  resolveTaskDue,
+  brokerageFee,
+  parseKoreanAmount,
+  fmtKrw,
 } from "@/lib/derive";
 import { TypeBadge, StatusChip } from "@/components/ui";
 import { Collapse } from "@/components/fields";
@@ -22,6 +26,13 @@ export default function Dashboard() {
 
   const cur = D.CASES.find((c) => c.id === caseId);
   const typ = D.TYPES[cur.type];
+  // 중개보수 계산기 (케이스 금액으로 프리필)
+  const [feeOpen, setFeeOpen] = useState(false);
+  const amountParts = (cur.amount || "").split("월");
+  const [feeAmount, setFeeAmount] = useState(() => parseKoreanAmount(amountParts[0]));
+  const [feeMonthly, setFeeMonthly] = useState(() =>
+    cur.type === "wolse" ? parseKoreanAmount(amountParts[1] || "") : 0
+  );
   const { counts, overall } = caseCounts(caseId);
   const caseDocs = docs[caseId] || {};
   const docList = buildDocList(caseId, caseDocs);
@@ -443,6 +454,92 @@ export default function Dashboard() {
                   ? `${next.where} · ${next.source === "auto" ? "분석 결과에서 생성" : "기본 항목"}`
                   : "다음 단계로 넘어가세요"}
               </div>
+              {/* 이 단계에서 해야 할 것들 요약 — 다음 항목 외 나머지도 한눈에 */}
+              {(() => {
+                const phaseTasks = caseTasks.filter((t) => t.phase === progress.current);
+                if (phaseTasks.length <= 1) return null;
+                return (
+                  <div
+                    style={{
+                      marginTop: 14,
+                      paddingTop: 12,
+                      borderTop: "1px solid rgba(255,255,255,.12)",
+                    }}
+                  >
+                    <div style={{ fontSize: 11.5, fontWeight: 700, color: "#9BD3B9" }}>
+                      이 단계({typ.phases[progress.current]})에서 할 일 ·{" "}
+                      {phaseTasks.filter((t) => t.done).length}/{phaseTasks.length}
+                    </div>
+                    <div
+                      style={{
+                        marginTop: 8,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 6,
+                      }}
+                    >
+                      {phaseTasks.map((t) => {
+                        const r = resolveTaskDue(t, cur);
+                        const dd = r.due ? ddInfo(r.due) : null;
+                        return (
+                          <div
+                            key={t.id}
+                            style={{ display: "flex", alignItems: "center", gap: 8 }}
+                          >
+                            <span
+                              style={{
+                                flex: "none",
+                                width: 15,
+                                height: 15,
+                                borderRadius: 5,
+                                border: `1.5px solid ${t.done ? "#9BD3B9" : "rgba(255,255,255,.4)"}`,
+                                background: t.done ? "#9BD3B9" : "transparent",
+                                color: "#0F2A20",
+                                fontSize: 10,
+                                fontWeight: 900,
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              {t.done ? "✓" : ""}
+                            </span>
+                            <span
+                              style={{
+                                flex: 1,
+                                minWidth: 0,
+                                fontSize: 12.5,
+                                lineHeight: 1.4,
+                                color: t.done
+                                  ? "rgba(255,255,255,.45)"
+                                  : "rgba(255,255,255,.88)",
+                                textDecoration: t.done ? "line-through" : "none",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {t.title}
+                            </span>
+                            {!t.done && dd && (
+                              <span
+                                style={{
+                                  flex: "none",
+                                  fontSize: 10.5,
+                                  fontWeight: 700,
+                                  color: dd.fg === "#B4231A" ? "#FFB4AC" : "#9BD3B9",
+                                }}
+                              >
+                                {dd.label}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
               <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
                 <button
                   onClick={() => {
@@ -589,6 +686,202 @@ export default function Dashboard() {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* 도구: 중개보수 계산 · 이사 체크리스트 */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <button
+              onClick={() => setFeeOpen(true)}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: 4,
+                padding: "14px",
+                borderRadius: 16,
+                background: "#fff",
+                border: "1px solid #E3E8E3",
+                textAlign: "left",
+              }}
+            >
+              <span style={{ fontSize: 17 }}>🧮</span>
+              <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0F2A20" }}>
+                중개보수 계산
+              </span>
+              <span style={{ fontSize: 11.5, color: "#6E827A" }}>법정 상한 요율로 미리 계산</span>
+            </button>
+            <button
+              onClick={() => router.push("/moving")}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: 4,
+                padding: "14px",
+                borderRadius: 16,
+                background: "#fff",
+                border: "1px solid #E3E8E3",
+                textAlign: "left",
+              }}
+            >
+              <span style={{ fontSize: 17 }}>📦</span>
+              <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0F2A20" }}>
+                이사 체크리스트
+              </span>
+              <span style={{ fontSize: 11.5, color: "#6E827A" }}>
+                입주 하자 체크 · 퇴거 시 주의
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 중개보수 계산 바텀시트 */}
+      {feeOpen && (
+        <div
+          onClick={() => setFeeOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,42,32,.45)",
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            zIndex: 40,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 430,
+              background: "#fff",
+              borderRadius: "24px 24px 0 0",
+              padding: "20px 20px calc(28px + env(safe-area-inset-bottom))",
+              animation: "sheetUp .22s ease",
+            }}
+          >
+            <div
+              style={{
+                width: 40,
+                height: 4,
+                borderRadius: 2,
+                background: "#DDE3DF",
+                margin: "0 auto 14px",
+              }}
+            />
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 18 }}>🧮</span>
+              <span style={{ fontSize: 17, fontWeight: 800 }}>중개보수 계산</span>
+              <TypeBadge type={cur.type} size="sm" />
+            </div>
+            <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#6E827A" }}>
+                  {cur.type === "maemae" ? "매매가" : "보증금"}
+                </div>
+                <input
+                  value={feeAmount ? feeAmount.toLocaleString() : ""}
+                  onChange={(e) => setFeeAmount(Number(e.target.value.replace(/\D/g, "")) || 0)}
+                  inputMode="numeric"
+                  placeholder="원 단위 입력 (예: 200,000,000)"
+                  style={{
+                    marginTop: 6,
+                    height: 46,
+                    padding: "0 14px",
+                    borderRadius: 12,
+                    border: "1px solid #DDE3DF",
+                    background: "#fff",
+                    fontSize: 15,
+                    outline: "none",
+                    width: "100%",
+                  }}
+                />
+              </div>
+              {cur.type === "wolse" && (
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#6E827A" }}>월세</div>
+                  <input
+                    value={feeMonthly ? feeMonthly.toLocaleString() : ""}
+                    onChange={(e) =>
+                      setFeeMonthly(Number(e.target.value.replace(/\D/g, "")) || 0)
+                    }
+                    inputMode="numeric"
+                    placeholder="원 단위 입력 (예: 650,000)"
+                    style={{
+                      marginTop: 6,
+                      height: 46,
+                      padding: "0 14px",
+                      borderRadius: 12,
+                      border: "1px solid #DDE3DF",
+                      background: "#fff",
+                      fontSize: 15,
+                      outline: "none",
+                      width: "100%",
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+            {feeAmount > 0 &&
+              (() => {
+                const r = brokerageFee(cur.type, feeAmount, feeMonthly);
+                return (
+                  <div
+                    style={{
+                      marginTop: 14,
+                      padding: "14px 16px",
+                      borderRadius: 14,
+                      background: "#EEF6F1",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        fontSize: 13,
+                        color: "#2E463C",
+                      }}
+                    >
+                      <span>거래금액 {cur.type === "wolse" ? "(보증금+월세 환산)" : ""}</span>
+                      <b>{fmtKrw(r.base)}</b>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        fontSize: 13,
+                        color: "#2E463C",
+                        marginTop: 4,
+                      }}
+                    >
+                      <span>상한 요율</span>
+                      <b>
+                        {(r.rate * 100).toFixed(1)}%{r.cap ? ` (한도 ${fmtKrw(r.cap)})` : ""}
+                      </b>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "baseline",
+                        marginTop: 10,
+                        paddingTop: 10,
+                        borderTop: "1px solid #CFE3D8",
+                      }}
+                    >
+                      <span style={{ fontSize: 13.5, fontWeight: 700 }}>중개보수 상한</span>
+                      <span style={{ fontSize: 20, fontWeight: 800, color: "#14613F" }}>
+                        {r.fee.toLocaleString()}원
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
+            <p style={{ margin: "12px 0 0", fontSize: 12, lineHeight: 1.6, color: "#6E827A" }}>
+              법정 <b>상한</b>이에요 (부가세 별도) — 실제 보수는 이 범위 안에서 중개인과{" "}
+              <b>협의</b>해서 정합니다. 상한 요율은 지자체 조례에 따라 다를 수 있어요 (서울 기준표).
+            </p>
           </div>
         </div>
       )}
