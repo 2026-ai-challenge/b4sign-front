@@ -121,8 +121,9 @@ export default function Landing() {
             무료로 4가지 체크 시작하기
           </button>
         </Reveal>
-        {/* 스크롤 힌트 */}
+        {/* 스크롤 힌트 (reduced-motion에서는 CSS로 정지) */}
         <div
+          className="scroll-hint"
           style={{
             marginTop: 14,
             textAlign: "center",

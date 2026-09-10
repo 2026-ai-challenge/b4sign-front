@@ -51,6 +51,12 @@ textarea {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint {
+    animation: none !important;
+  }
+}
+
 @keyframes floatDown {
   0%,
   100% {

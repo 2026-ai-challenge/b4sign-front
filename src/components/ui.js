@@ -36,7 +36,9 @@ export function Shell({ children }) {
           overflow: "hidden",
         }}
       >
+        {/* data-scroll-root: Reveal(스크롤 리빌)의 IntersectionObserver 기준 컨테이너 */}
         <div
+          data-scroll-root=""
           style={{
             flex: 1,
             minHeight: 0,
