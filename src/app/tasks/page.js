@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/store";
-import { D, ddInfo, balanceWord, resolveTaskDue, phaseAnchor } from "@/lib/derive";
+import { D, ddInfo, balanceWord, resolveTaskDue, phaseAnchor, taskProgress } from "@/lib/derive";
 import { TypeBadge } from "@/components/ui";
 import { Collapse } from "@/components/fields";
 
@@ -17,7 +17,11 @@ export default function Tasks() {
   const doneCount = caseTasks.filter((t) => t.done).length;
   const pct = Math.round((doneCount / Math.max(1, caseTasks.length)) * 100);
 
-  const [openPhase, setOpenPhase] = useState({ [cur.phase]: true });
+  // 현재 단계는 할 일 완료 상황에서 파생 (홈의 단계 바와 동일 기준)
+  const progress = taskProgress(caseTasks, typ.phases.length);
+  const [openPhase, setOpenPhase] = useState(() => ({
+    [taskProgress(caseTasks, typ.phases.length).current]: true,
+  }));
   const [detailId, setDetailId] = useState(null);
   const detail = caseTasks.find((t) => t.id === detailId);
 
@@ -120,8 +124,8 @@ export default function Tasks() {
           {typ.phases.map((label, i) => {
             const ts = caseTasks.filter((t) => t.phase === i);
             const dn = ts.filter((t) => t.done).length;
-            const isCur = i === cur.phase;
-            const past = i < cur.phase;
+            const isCur = !progress.allDone && i === progress.current;
+            const past = i < progress.current;
             const allDone = ts.length > 0 && dn === ts.length;
             const active = isCur || past || allDone;
             const open = !!openPhase[i];

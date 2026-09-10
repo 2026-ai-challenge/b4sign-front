@@ -94,6 +94,24 @@ const PHASE_ANCHORS = {
   maemae: ["contract", "contract", "mid", "balance", null],
 };
 
+/**
+ * 할 일 완료 상황에서 파생한 진행 단계.
+ * - perPhase: 단계별 {total, done, pct}
+ * - current: 첫 미완료 단계 인덱스 (전부 완료면 마지막 단계)
+ * - allDone: 모든 할 일 완료 여부
+ */
+export function taskProgress(tasks, phaseCount) {
+  const perPhase = Array.from({ length: phaseCount }, (_, i) => {
+    const ts = tasks.filter((t) => t.phase === i);
+    const done = ts.filter((t) => t.done).length;
+    return { total: ts.length, done, pct: ts.length ? Math.round((done / ts.length) * 100) : 0 };
+  });
+  const allDone = tasks.length > 0 && tasks.every((t) => t.done);
+  const firstIncomplete = perPhase.findIndex((p) => p.total > 0 && p.done < p.total);
+  const current = allDone || firstIncomplete === -1 ? phaseCount - 1 : firstIncomplete;
+  return { perPhase, current, allDone };
+}
+
 export function phaseAnchor(type, phaseIndex, cur) {
   const base = (PHASE_ANCHORS[type] || [])[phaseIndex];
   if (!base) return null;

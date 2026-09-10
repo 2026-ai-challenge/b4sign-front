@@ -10,6 +10,7 @@ import {
   balanceWord,
   buildDocList,
   ddInfo,
+  taskProgress,
 } from "@/lib/derive";
 import { TypeBadge, StatusChip } from "@/components/ui";
 import { Collapse } from "@/components/fields";
@@ -27,8 +28,10 @@ export default function Dashboard() {
   const caseTasks = tasks[caseId] || [];
   const hasAnyDoc = Object.values(caseDocs).some((d) => d.status !== "missing");
 
+  // 진행 단계는 할 일 완료 상황에서 파생 — 단계를 마치면 바가 채워지고 다음 단계로 넘어간다
+  const progress = taskProgress(caseTasks, typ.phases.length);
   const next =
-    caseTasks.filter((t) => !t.done && t.phase === cur.phase)[0] ||
+    caseTasks.filter((t) => !t.done && t.phase === progress.current)[0] ||
     caseTasks.filter((t) => !t.done)[0];
   const nextDd = next && next.due ? ddInfo(next.due) : null;
 
@@ -309,96 +312,176 @@ export default function Dashboard() {
                 marginTop: 16,
               }}
             >
-              {typ.phases.map((label, i) => (
-                <div key={label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <span
-                    style={{
-                      height: 4,
-                      borderRadius: 2,
-                      background: i <= cur.phase ? "#1B7F5C" : "#E6EBE7",
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: 10.5,
-                      fontWeight: i === cur.phase ? 800 : 500,
-                      color: i === cur.phase ? "#0F2A20" : "#8A968F",
-                    }}
-                  >
-                    {label}
-                  </span>
-                </div>
-              ))}
+              {typ.phases.map((label, i) => {
+                const p = progress.perPhase[i];
+                const isCur = !progress.allDone && i === progress.current;
+                return (
+                  <div key={label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {/* 단계 바: 해당 단계 할 일 완료율만큼 채워진다 */}
+                    <span
+                      style={{
+                        height: 4,
+                        borderRadius: 2,
+                        background: "#E6EBE7",
+                        overflow: "hidden",
+                        display: "block",
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "block",
+                          height: "100%",
+                          width: `${p.pct}%`,
+                          background: "#1B7F5C",
+                          borderRadius: 2,
+                          transition: "width .4s ease",
+                        }}
+                      />
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 10.5,
+                        fontWeight: isCur || (progress.allDone && i === typ.phases.length - 1) ? 800 : 500,
+                        color:
+                          p.pct === 100
+                            ? "#14613F"
+                            : isCur
+                              ? "#0F2A20"
+                              : "#8A968F",
+                      }}
+                    >
+                      {p.pct === 100 ? "✓ " : ""}
+                      {label}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* 지금 해야 할 일 */}
-          <div style={{ padding: 20, borderRadius: 20, background: "#0F2A20", color: "#fff" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {/* 지금 해야 할 일 / 전체 완료 축하 */}
+          {progress.allDone ? (
+            <div style={{ padding: 20, borderRadius: 20, background: "#0F2A20", color: "#fff" }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: "#9BD3B9" }}>
-                지금 해야 할 일
+                모든 할 일 완료
               </span>
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>
+              <div style={{ marginTop: 10, fontSize: 20, fontWeight: 800, lineHeight: 1.35 }}>
+                축하드려요, 전부 마쳤어요! 🎉
+              </div>
+              <div
+                style={{
+                  marginTop: 8,
+                  fontSize: 13,
+                  lineHeight: 1.6,
+                  color: "rgba(255,255,255,.75)",
+                }}
+              >
+                입주는 잘 하셨나요? 거주 중에도 등기부등본은{" "}
+                <b style={{ color: "#9BD3B9" }}>3개월 주기</b>로 계속 확인하는 게 안전해요.
+              </div>
+              <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
+                <button
+                  onClick={() => router.push("/documents/registry")}
+                  style={{
+                    flex: 1,
+                    height: 44,
+                    borderRadius: 999,
+                    border: "none",
+                    background: "#fff",
+                    color: "#0F2A20",
+                    fontSize: 14,
+                    fontWeight: 700,
+                  }}
+                >
+                  등기부 확인하기
+                </button>
+                <button
+                  onClick={() => router.push("/tasks")}
+                  style={{
+                    flex: 1,
+                    height: 44,
+                    borderRadius: 999,
+                    border: "1px solid rgba(255,255,255,.3)",
+                    background: "none",
+                    color: "#fff",
+                    fontSize: 14,
+                    fontWeight: 600,
+                  }}
+                >
+                  할 일 돌아보기
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ padding: 20, borderRadius: 20, background: "#0F2A20", color: "#fff" }}>
+              <div
+                style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#9BD3B9" }}>
+                  지금 해야 할 일
+                </span>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>
+                  {next
+                    ? next.due
+                      ? `${nextDd.label} · ${next.due.slice(5).replace("-", "/")}`
+                      : "기한 없음"
+                    : ""}
+                </span>
+              </div>
+              <div style={{ marginTop: 10, fontSize: 20, fontWeight: 800, lineHeight: 1.35 }}>
+                {next ? next.title : "이 단계 할 일을 모두 마쳤어요"}
+              </div>
+              <div
+                style={{
+                  marginTop: 8,
+                  fontSize: 13,
+                  lineHeight: 1.55,
+                  color: "rgba(255,255,255,.72)",
+                }}
+              >
                 {next
-                  ? next.due
-                    ? `${nextDd.label} · ${next.due.slice(5).replace("-", "/")}`
-                    : "기한 없음"
-                  : ""}
-              </span>
+                  ? `${next.where} · ${next.source === "auto" ? "분석 결과에서 생성" : "기본 항목"}`
+                  : "다음 단계로 넘어가세요"}
+              </div>
+              <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
+                <button
+                  onClick={() => {
+                    if (next) {
+                      toggleTask(caseId, next.id);
+                      toast("완료! 다음 할 일로 넘어가요");
+                    }
+                  }}
+                  style={{
+                    flex: 1,
+                    height: 44,
+                    borderRadius: 999,
+                    border: "none",
+                    background: "#fff",
+                    color: "#0F2A20",
+                    fontSize: 14,
+                    fontWeight: 700,
+                  }}
+                >
+                  완료했어요
+                </button>
+                <button
+                  onClick={() => router.push("/tasks")}
+                  style={{
+                    flex: 1,
+                    height: 44,
+                    borderRadius: 999,
+                    border: "1px solid rgba(255,255,255,.3)",
+                    background: "none",
+                    color: "#fff",
+                    fontSize: 14,
+                    fontWeight: 600,
+                  }}
+                >
+                  자세히
+                </button>
+              </div>
             </div>
-            <div style={{ marginTop: 10, fontSize: 20, fontWeight: 800, lineHeight: 1.35 }}>
-              {next ? next.title : "이 단계 할 일을 모두 마쳤어요"}
-            </div>
-            <div
-              style={{
-                marginTop: 8,
-                fontSize: 13,
-                lineHeight: 1.55,
-                color: "rgba(255,255,255,.72)",
-              }}
-            >
-              {next
-                ? `${next.where} · ${next.source === "auto" ? "분석 결과에서 생성" : "기본 항목"}`
-                : "다음 단계로 넘어가세요"}
-            </div>
-            <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
-              <button
-                onClick={() => {
-                  if (next) {
-                    toggleTask(caseId, next.id);
-                    toast("완료! 다음 할 일로 넘어가요");
-                  }
-                }}
-                style={{
-                  flex: 1,
-                  height: 44,
-                  borderRadius: 999,
-                  border: "none",
-                  background: "#fff",
-                  color: "#0F2A20",
-                  fontSize: 14,
-                  fontWeight: 700,
-                }}
-              >
-                완료했어요
-              </button>
-              <button
-                onClick={() => router.push("/tasks")}
-                style={{
-                  flex: 1,
-                  height: 44,
-                  borderRadius: 999,
-                  border: "1px solid rgba(255,255,255,.3)",
-                  background: "none",
-                  color: "#fff",
-                  fontSize: 14,
-                  fontWeight: 600,
-                }}
-              >
-                자세히
-              </button>
-            </div>
-          </div>
+          )}
 
           {/* 판정 개수 — 타일을 누르면 해당 판정만 모아 보기 */}
           <div>
