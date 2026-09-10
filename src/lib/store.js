@@ -322,6 +322,38 @@ export function AppProvider({ children }) {
           },
           active: { ...s.active, [cid]: id },
         }));
+        sync(`/cases/${cid}/chat/sessions`, { method: "POST", body: { id } });
+      },
+      chatRenameSession: (cid, sessionId, title) => {
+        const trimmed = (title || "").trim().slice(0, 40);
+        if (!trimmed) return;
+        setChat((s) => ({
+          ...s,
+          sessions: {
+            ...s.sessions,
+            [cid]: (s.sessions[cid] || []).map((x) =>
+              x.id === sessionId ? { ...x, title: trimmed } : x
+            ),
+          },
+        }));
+        sync(`/cases/${cid}/chat/sessions/${sessionId}`, {
+          method: "PATCH",
+          body: { title: trimmed },
+        });
+      },
+      chatDeleteSession: (cid, sessionId) => {
+        setChat((s) => {
+          const rest = (s.sessions[cid] || []).filter((x) => x.id !== sessionId);
+          const active =
+            s.active[cid] === sessionId ? (rest[rest.length - 1]?.id ?? null) : s.active[cid];
+          return {
+            ...s,
+            sessions: { ...s.sessions, [cid]: rest },
+            active: { ...s.active, [cid]: active },
+          };
+        });
+        sync(`/cases/${cid}/chat/sessions/${sessionId}`, { method: "DELETE" });
+        toast("대화를 삭제했어요");
       },
     };
   }, []);

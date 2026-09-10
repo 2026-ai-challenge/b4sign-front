@@ -209,8 +209,10 @@ POST body / 응답 공통 형태:
 
 | 메서드 | 경로 | 설명 |
 |---|---|---|
-| GET | `/cases/{caseId}/chat/sessions` | 세션 목록 `{ id, title, messageCount, updatedAt }` |
-| POST | `/cases/{caseId}/chat/sessions` | 새 세션 → `{ id }` |
+| GET | `/cases/{caseId}/chat/sessions` | 세션 목록 `{ id, title, messageCount }` |
+| POST | `/cases/{caseId}/chat/sessions` | 새 세션 → `{ id }`. body `{ id? }` — 프론트 낙관적 생성과 정합을 위해 클라이언트 id 허용(멱등) |
+| PATCH | `/cases/{caseId}/chat/sessions/{sessionId}` | 세션 이름 변경. `{ title }` (최대 40자) |
+| DELETE | `/cases/{caseId}/chat/sessions/{sessionId}` | 세션 삭제 (메시지 cascade). 활성 세션이었다면 최신 세션으로 자동 교체 |
 | GET | `/chat/sessions/{sessionId}/messages` | 메시지 목록 |
 | POST | `/chat/sessions/{sessionId}/messages` | 질문 전송 → **SSE 스트리밍** 응답 |
 

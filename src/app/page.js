@@ -33,34 +33,8 @@ export default function Landing() {
 
   return (
     <>
-      {/* 헤더 */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          height: 52,
-          padding: "0 20px",
-          flex: "none",
-        }}
-      >
-        <Logo />
-        <button
-          onClick={start}
-          style={{
-            background: "none",
-            border: "none",
-            fontSize: 13,
-            color: "#4B6157",
-            fontWeight: 600,
-          }}
-        >
-          {loggedIn ? "대시보드로" : "로그인"}
-        </button>
-      </div>
-
-      {/* 히어로 */}
-      <div style={{ padding: "18px 20px 16px", background: "linear-gradient(#EEF6F1,#FAFAF7)" }}>
+      {/* 로고·로그인은 셸의 브랜드 밴드가 담당 — 히어로부터 시작 */}
+      <div style={{ padding: "14px 20px 16px", background: "linear-gradient(#EEF6F1,#FAFAF7)" }}>
         <Reveal>
           <div
             style={{

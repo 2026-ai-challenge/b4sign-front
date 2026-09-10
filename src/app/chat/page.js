@@ -16,11 +16,16 @@ export default function Chat() {
     chatMarkAdded,
     chatSetActive,
     chatNewSession,
+    chatRenameSession,
+    chatDeleteSession,
     addTaskRaw,
   } = useApp();
   const [input, setInput] = useState("");
   const [drawer, setDrawer] = useState(false);
   const [caseMenu, setCaseMenu] = useState(false);
+  // 드로어 내 세션 편집 상태: { mode: 'rename'|'delete', id } / rename 입력값
+  const [editing, setEditing] = useState(null);
+  const [editText, setEditText] = useState("");
   const scrollRef = useRef(null);
 
   const cur = D.CASES.find((c) => c.id === caseId);
@@ -57,18 +62,31 @@ export default function Chat() {
         }}
       >
         <span style={{ fontSize: 18, fontWeight: 800 }}>AI 상담</span>
+        {/* 햄버거: 대화 목록·세션 관리 드로어 */}
         <button
-          onClick={() => setDrawer(true)}
+          onClick={() => {
+            setEditing(null);
+            setDrawer(true);
+          }}
+          aria-label="대화 목록"
           style={{
             background: "none",
             border: "none",
-            fontSize: 13,
-            color: "#1B7F5C",
-            fontWeight: 700,
-            padding: "6px 10px",
+            padding: "8px 10px",
+            display: "inline-flex",
           }}
         >
-          대화 목록
+          <svg width="20" height="16" viewBox="0 0 20 16" fill="none" aria-hidden="true">
+            {[2, 8, 14].map((y) => (
+              <path
+                key={y}
+                d={`M1 ${y}H19`}
+                stroke="#0F2A20"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+            ))}
+          </svg>
         </button>
       </div>
 
@@ -460,33 +478,221 @@ export default function Chat() {
             >
               <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 8 }}>대화 목록</div>
               {sessions
-                .filter((x) => x.msgs.length)
-                .map((x) => (
-                  <button
-                    key={x.id}
-                    onClick={() => {
-                      chatSetActive(caseId, x.id);
-                      setDrawer(false);
-                    }}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 3,
-                      textAlign: "left",
-                      padding: 12,
-                      borderRadius: 12,
-                      border: "none",
-                      background: x.id === chat.active[caseId] ? "#EEF6F1" : "#fff",
-                    }}
-                  >
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#0F2A20" }}>
-                      {x.title}
-                    </span>
-                    <span style={{ fontSize: 12, color: "#6E827A" }}>
-                      {x.msgs.length}개 메시지
-                    </span>
-                  </button>
-                ))}
+                .filter((x) => x.msgs.length || x.id === chat.active[caseId])
+                .map((x) => {
+                  const isActive = x.id === chat.active[caseId];
+                  // 이름 변경 중
+                  if (editing?.mode === "rename" && editing.id === x.id)
+                    return (
+                      <div
+                        key={x.id}
+                        style={{
+                          display: "flex",
+                          gap: 6,
+                          alignItems: "center",
+                          padding: "8px 10px",
+                          borderRadius: 12,
+                          background: "#EEF6F1",
+                        }}
+                      >
+                        <input
+                          autoFocus
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              chatRenameSession(caseId, x.id, editText);
+                              setEditing(null);
+                            }
+                            if (e.key === "Escape") setEditing(null);
+                          }}
+                          maxLength={40}
+                          style={{
+                            flex: 1,
+                            minWidth: 0,
+                            height: 34,
+                            padding: "0 10px",
+                            borderRadius: 9,
+                            border: "1px solid #9BD3B9",
+                            fontSize: 13,
+                            outline: "none",
+                          }}
+                        />
+                        <button
+                          onClick={() => {
+                            chatRenameSession(caseId, x.id, editText);
+                            setEditing(null);
+                          }}
+                          style={{
+                            height: 34,
+                            padding: "0 10px",
+                            borderRadius: 999,
+                            border: "none",
+                            background: "#1B7F5C",
+                            color: "#fff",
+                            fontSize: 12,
+                            fontWeight: 700,
+                          }}
+                        >
+                          저장
+                        </button>
+                        <button
+                          onClick={() => setEditing(null)}
+                          style={{
+                            height: 34,
+                            padding: "0 8px",
+                            borderRadius: 999,
+                            border: "1px solid #DDE3DF",
+                            background: "#fff",
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: "#4B6157",
+                          }}
+                        >
+                          취소
+                        </button>
+                      </div>
+                    );
+                  // 삭제 확인 중
+                  if (editing?.mode === "delete" && editing.id === x.id)
+                    return (
+                      <div
+                        key={x.id}
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "10px 12px",
+                          borderRadius: 12,
+                          background: "#FDE8E4",
+                        }}
+                      >
+                        <span style={{ fontSize: 13, fontWeight: 700, color: "#B4231A" }}>
+                          이 대화를 삭제할까요?
+                        </span>
+                        <span style={{ display: "flex", gap: 6, flex: "none" }}>
+                          <button
+                            onClick={() => {
+                              chatDeleteSession(caseId, x.id);
+                              setEditing(null);
+                            }}
+                            style={{
+                              height: 32,
+                              padding: "0 12px",
+                              borderRadius: 999,
+                              border: "none",
+                              background: "#B4231A",
+                              color: "#fff",
+                              fontSize: 12,
+                              fontWeight: 700,
+                            }}
+                          >
+                            삭제
+                          </button>
+                          <button
+                            onClick={() => setEditing(null)}
+                            style={{
+                              height: 32,
+                              padding: "0 10px",
+                              borderRadius: 999,
+                              border: "1px solid #DDE3DF",
+                              background: "#fff",
+                              fontSize: 12,
+                              fontWeight: 600,
+                              color: "#4B6157",
+                            }}
+                          >
+                            취소
+                          </button>
+                        </span>
+                      </div>
+                    );
+                  // 기본 행: 탭=전환, ✎=이름 변경, 🗑=삭제
+                  return (
+                    <div
+                      key={x.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 4,
+                        borderRadius: 12,
+                        background: isActive ? "#EEF6F1" : "#fff",
+                      }}
+                    >
+                      <button
+                        onClick={() => {
+                          chatSetActive(caseId, x.id);
+                          setDrawer(false);
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 3,
+                          textAlign: "left",
+                          padding: 12,
+                          border: "none",
+                          background: "none",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 700,
+                            color: "#0F2A20",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "100%",
+                          }}
+                        >
+                          {x.title}
+                        </span>
+                        <span style={{ fontSize: 12, color: "#6E827A" }}>
+                          {x.msgs.length}개 메시지
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditing({ mode: "rename", id: x.id });
+                          setEditText(x.title);
+                        }}
+                        aria-label="이름 변경"
+                        style={{
+                          flex: "none",
+                          width: 32,
+                          height: 32,
+                          borderRadius: 9,
+                          border: "none",
+                          background: "none",
+                          fontSize: 13,
+                          color: "#6E827A",
+                        }}
+                      >
+                        ✎
+                      </button>
+                      <button
+                        onClick={() => setEditing({ mode: "delete", id: x.id })}
+                        aria-label="삭제"
+                        style={{
+                          flex: "none",
+                          width: 32,
+                          height: 32,
+                          marginRight: 4,
+                          borderRadius: 9,
+                          border: "none",
+                          background: "none",
+                          fontSize: 13,
+                          color: "#B4231A",
+                        }}
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  );
+                })}
               <button
                 onClick={() => {
                   chatNewSession(caseId);

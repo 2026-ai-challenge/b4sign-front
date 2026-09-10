@@ -3,11 +3,53 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
+import { Logo } from "@/components/logo";
 
 // 탭바 없이 풀스크린으로 쓰는 라우트: 문서 뷰어 + 인증 플로우
 const NO_TAB_ROUTES = ["/", "/login", "/signup", "/signup/consent", "/find-id", "/find-password"];
 
-// ─── 앱 셸: 모바일 프레임(100dvh 고정) + 내부 스크롤 + 탭바 ───
+// 모든 화면 상단에 항상 떠 있는 브랜드 밴드 — 로고 + 숨 쉴 여백
+function BrandBar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { loggedIn } = useApp();
+  const isLanding = pathname === "/";
+  return (
+    <div
+      style={{
+        flex: "none",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "16px 20px 6px",
+      }}
+    >
+      <button
+        onClick={() => router.push("/")}
+        aria-label="B4SIGN 홈"
+        style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}
+      >
+        <Logo size="sm" />
+      </button>
+      {isLanding && (
+        <button
+          onClick={() => router.push(loggedIn ? "/dashboard" : "/login")}
+          style={{
+            background: "none",
+            border: "none",
+            fontSize: 13,
+            color: "#4B6157",
+            fontWeight: 600,
+          }}
+        >
+          {loggedIn ? "대시보드로" : "로그인"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─── 앱 셸: 모바일 프레임(100dvh 고정) + 브랜드 밴드 + 내부 스크롤 + 탭바 ───
 // iPhone 14~16(390~430px)에서 화면을 꽉 채우고, 가로 오버플로를 차단한다.
 export function Shell({ children }) {
   const pathname = usePathname();
@@ -36,6 +78,7 @@ export function Shell({ children }) {
           overflow: "hidden",
         }}
       >
+        {!isViewer && <BrandBar />}
         {/* data-scroll-root: Reveal(스크롤 리빌)의 IntersectionObserver 기준 컨테이너 */}
         <div
           data-scroll-root=""
