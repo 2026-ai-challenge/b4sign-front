@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { kstTodayStr } from "@/lib/derive";
 
 // ─── 다음(카카오) 우편번호 스크립트 로더 ───
 let postcodePromise = null;
@@ -262,7 +263,7 @@ export function DateField({ value, onChange, placeholder, marks = [] }) {
 
 function CalendarSheet({ title, value, marks, onClose, onSelect }) {
   const selected = parseDate(value);
-  const today = new Date();
+  const today = parseDate(kstTodayStr()); // "오늘"도 항상 한국시간 기준
   const init = selected || parseDate(marks[0]?.date) || today;
   const [ym, setYm] = useState([init.getFullYear(), init.getMonth()]); // [year, 0-based month]
   const [y, m] = ym;

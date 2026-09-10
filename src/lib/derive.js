@@ -1,6 +1,18 @@
 import { ZIPSALPI_DATA as D } from "@/data/zipsalpi";
 
-export const dday = D.dday;
+// ─── 날짜는 항상 한국시간(KST, UTC+9 고정 — 서머타임 없음) 기준 ───
+export function kstTodayStr() {
+  return new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
+// D-day: KST 오늘 기준 남은 일수 (양수 = 미래)
+export const dday = (dateStr) => {
+  const p = (s) => {
+    const [y, m, d] = s.split("-").map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  return Math.round((p(dateStr) - p(kstTodayStr())) / 864e5);
+};
 
 // D-day 라벨/색: 3일 이내는 위험 톤
 export function ddInfo(due) {

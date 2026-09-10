@@ -461,6 +461,38 @@ export default function Tasks() {
                 </>
               )}
             </div>
+            {/* 공식 사이트 바로가기 (새 탭) */}
+            {(D.TASK_LINKS?.[detail.id] || []).length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#6E827A" }}>바로가기</div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+                  {D.TASK_LINKS[detail.id].map((l) => (
+                    <a
+                      key={l.url + l.label}
+                      href={l.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        height: 38,
+                        padding: "0 14px",
+                        borderRadius: 999,
+                        border: "1px solid #CFE3D8",
+                        background: "#EEF6F1",
+                        color: "#14613F",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        textDecoration: "none",
+                      }}
+                    >
+                      {l.label} ↗
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
             {detail.due && (
               <div
                 style={{

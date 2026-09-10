@@ -261,8 +261,13 @@ const DEFAULT_TASKS = {
     { id: 'j-d4', phase: 1, title: '계약금은 임대인 명의 계좌로만 송금', why: '제3자 계좌 송금은 사기 피해 시 구제가 어려워요.', where: '은행 앱', items: '임대인 신분증·통장 사본', due: '2026-09-14' },
     { id: 'j-d5', phase: 2, title: '잔금일 당일 등기부 재확인', why: '잔금 직전 담보 설정을 막기 위한 마지막 확인이에요.', where: '인터넷등기소', items: '주소', due: '2026-10-05', doc: 'registry' },
     { id: 'j-d6', phase: 2, title: '전입신고 (입주 당일)', why: '대항력은 전입 다음 날 0시부터 생겨요.', where: '주민센터 또는 정부24', items: '신분증, 계약서', due: '2026-10-05' },
-    { id: 'j-d7', phase: 2, title: '확정일자 받기 (전입 후 14일 내)', why: '우선변제권을 받아야 경매 시 배당을 받아요.', where: '주민센터 / 인터넷등기소', items: '계약서 원본', due: '2026-10-19', doc: 'fixdate' },
+    { id: 'j-d7', phase: 2, title: '확정일자 받기 (전입 당일 즉시)', why: '우선변제권은 확정일자+전입+거주를 모두 갖춘 다음 날 생겨요. 미루지 말고 입주 당일 바로 받으세요. 임대차 신고를 하면 자동 부여돼요.', where: '주민센터 / 인터넷등기소', items: '계약서 원본', due: '2026-10-05', doc: 'fixdate' },
     { id: 'j-d8', phase: 3, title: '등기부 3개월마다 확인', why: '거주 중 담보 설정·소유자 변경을 놓치지 않기 위해서예요.', where: '인터넷등기소', items: '주소' },
+    { id: 'j-d9', phase: 1, title: '주택 임대차 계약 신고 (계약 후 30일)', why: '보증금 6천만 초과 계약은 신고 의무예요. 2025.6.1부터 미신고 과태료(최대 30만 원)가 부과되고, 계약서를 첨부해 신고하면 확정일자가 자동 부여돼요.', where: '부동산거래관리시스템(온라인) 또는 주민센터', items: '계약서', dueRule: { base: 'contract', offset: 30, label: '계약 후 30일 내' } },
+    { id: 'j-d10', phase: 0, title: '임대인 미납 국세·지방세 확인', why: '밀린 세금은 경매 시 보증금보다 먼저 배당돼요. 계약 시 납세증명서 제시를 요구하고, 계약 후에는 보증금 1천만 원 초과 시 임대인 동의 없이 세무서에서 열람할 수 있어요.', where: '세무서(국세) · 지자체 세무부서(지방세)', items: '임대인 인적사항, 계약서(계약 후 열람 시)', dueRule: { base: 'contract', offset: -1, label: '계약 전까지' } },
+    { id: 'j-d11', phase: 3, title: '전세보증보험 가입 신청', why: '보증보험은 잔금·전입 후에 신청하며, 전세계약기간의 절반이 지나기 전까지만 가입할 수 있어요.', where: 'HUG 안심전세 앱 / SGI서울보증', items: '계약서, 확정일자, 전입세대확인서', due: '2027-10-04' },
+    { id: 'j-d12', phase: 3, title: '만기 6~2개월 전 갱신 의사 통보', why: '통보 없으면 같은 조건으로 묵시적 갱신돼요. 갱신요구권(최대 2년 연장)도 이 기간에 행사해요.', where: '문자·내용증명', items: '—', due: '2028-08-04' },
+    { id: 'j-d13', phase: 3, title: '퇴거 시 장기수선충당금 정산 청구', why: '아파트·오피스텔에서 임차인이 관리비로 낸 장기수선충당금은 퇴거할 때 소유자에게 돌려받을 수 있어요.', where: '관리사무소에서 납부 내역 발급 → 임대인에게 청구', items: '납부 확인서' },
   ],
   wolse: [
     { id: 'w-d1', phase: 0, title: '건축물대장 위반 여부 확인', why: '위반건축물은 보증보험·대출이 막히고 철거 위험이 있어요.', where: '정부24 (무료)', items: '주소', doc: 'building', done: true, dueRule: { base: 'contract', offset: -3, label: '계약 3일 전까지' } },
@@ -274,6 +279,9 @@ const DEFAULT_TASKS = {
     { id: 'w-d7', phase: 3, title: '수리 요청은 문자로 남기기', why: '임대인 수리 의무(민법 623조) 이행 증거예요.', where: '문자·카톡', items: '—' },
     { id: 'w-d8', phase: 3, title: '관리비 영수증 보관', why: '실비 정산 항목 분쟁 대비.', where: '앱 사진 보관', items: '—' },
     { id: 'w-d9', phase: 3, title: '만기 6~2개월 전 갱신 의사 통보', why: '통보 없으면 묵시적 갱신이 돼요.', where: '문자', items: '—', due: '2028-06-30' },
+    { id: 'w-d10', phase: 1, title: '주택 임대차 계약 신고 (계약 후 30일)', why: '월세 30만 원 초과 계약은 신고 의무예요. 2025.6.1부터 미신고 과태료가 부과되고, 신고하면 확정일자가 자동 부여돼요.', where: '부동산거래관리시스템(온라인) 또는 주민센터', items: '계약서', dueRule: { base: 'contract', offset: 30, label: '계약 후 30일 내' } },
+    { id: 'w-d11', phase: 2, title: '확정일자 받기 (전입 당일)', why: '월세 보증금도 확정일자가 있어야 경매 시 우선변제를 받아요. 임대차 신고를 했다면 자동 부여돼요.', where: '주민센터 / 인터넷등기소', items: '계약서 원본', due: '2026-10-01' },
+    { id: 'w-d12', phase: 3, title: '퇴거 시 장기수선충당금 정산 청구', why: '오피스텔·아파트라면 임차인이 낸 장기수선충당금을 퇴거 시 돌려받을 수 있어요.', where: '관리사무소 → 임대인 청구', items: '납부 확인서' },
   ],
   maemae: [
     { id: 'm-d1', phase: 0, title: '등기부·건축물대장 계약 전 확인', why: '계약금을 걸기 전에 권리·건물 상태를 봐야 해요.', where: '인터넷등기소 · 정부24', items: '주소', doc: 'registry', done: true, dueRule: { base: 'contract', offset: -3, label: '계약 3일 전까지' } },
@@ -286,6 +294,7 @@ const DEFAULT_TASKS = {
     { id: 'm-d8', phase: 3, title: '소유권이전등기 접수 확인', why: '접수번호를 받아야 등기 진행이 확정돼요.', where: '법무사 / 인터넷등기소', items: '등기필정보', due: '2026-11-20' },
     { id: 'm-d9', phase: 4, title: '취득세 신고·납부 (잔금 후 60일)', why: '기한 초과 시 가산세.', where: '위택스', items: '계약서, 잔금 영수증', due: '2027-01-19' },
     { id: 'm-d10', phase: 4, title: '등기 완료 확인 (등기필정보 수령)', why: '내 이름으로 등기가 끝났는지 확인.', where: '인터넷등기소', items: '접수번호', due: '2026-12-04' },
+    { id: 'm-d11', phase: 1, title: '자금조달계획서 제출 (거래신고와 함께)', why: '규제지역(서울 전역·경기 일부 등)은 금액 무관, 비규제지역은 6억 원 이상이면 제출 의무예요. 거래신고할 때 같이 내면 돼요.', where: '부동산거래관리시스템 · 중개인 대행 확인', items: '자금 출처 증빙(예금·대출·증여 등)', dueRule: { base: 'contract', offset: 30, label: '계약 후 30일 내' } },
   ],
 };
 
@@ -339,4 +348,30 @@ const CONSENT_ITEMS = [
   { key: 'marketing', req: '[선택]', label: '마케팅 정보 수신', title: '마케팅 수신 동의', body: '새 기능 소식을 월 1회 이내로 보내드려요.' },
 ];
 
-export const ZIPSALPI_DATA = { TODAY, dday, ST, DOCST, TYPES, DOCS, SECTION_META, SECTION_OVERRIDE, TERMS, LAWS, DOCTEXT, ANALYSIS, CLAUSES, DEFAULT_TASKS, CASES, INITIAL_DOCS, SUMMARY, SUGGEST, CHAT_SEED, REPLIES, NAV, CONSENT_ITEMS };
+// 할 일별 공식 사이트 바로가기 (프론트 정적 매핑 — 상세 시트의 "바로가기" 버튼)
+const TASK_LINKS = {
+  'j-d2': [{ label: 'HUG 주택도시보증공사', url: 'https://www.khug.or.kr' }, { label: 'SGI서울보증', url: 'https://www.sgic.co.kr' }],
+  'j-d3': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }],
+  'j-d5': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }],
+  'j-d6': [{ label: '정부24 전입신고', url: 'https://www.gov.kr' }],
+  'j-d7': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }, { label: '정부24', url: 'https://www.gov.kr' }],
+  'j-d8': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }],
+  'w-d1': [{ label: '정부24 건축물대장', url: 'https://www.gov.kr' }],
+  'w-d3': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }],
+  'w-d5': [{ label: '정부24 전입신고', url: 'https://www.gov.kr' }],
+  'm-d1': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }, { label: '정부24', url: 'https://www.gov.kr' }],
+  'm-d2': [{ label: '정부24', url: 'https://www.gov.kr' }, { label: '토지이음', url: 'https://www.eum.go.kr' }],
+  'm-d4': [{ label: '부동산거래관리시스템', url: 'https://rtms.molit.go.kr' }],
+  'm-d5': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }],
+  'm-d6': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }],
+  'm-d9': [{ label: '위택스', url: 'https://www.wetax.go.kr' }],
+  'm-d10': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }],
+  'j-d9': [{ label: '부동산거래관리시스템', url: 'https://rtms.molit.go.kr' }],
+  'j-d10': [{ label: '홈택스', url: 'https://www.hometax.go.kr' }],
+  'j-d11': [{ label: 'HUG 주택도시보증공사', url: 'https://www.khug.or.kr' }, { label: 'SGI서울보증', url: 'https://www.sgic.co.kr' }],
+  'w-d10': [{ label: '부동산거래관리시스템', url: 'https://rtms.molit.go.kr' }],
+  'w-d11': [{ label: '인터넷등기소', url: 'https://www.iros.go.kr' }, { label: '정부24', url: 'https://www.gov.kr' }],
+  'm-d11': [{ label: '부동산거래관리시스템', url: 'https://rtms.molit.go.kr' }],
+};
+
+export const ZIPSALPI_DATA = { TODAY, dday, ST, DOCST, TYPES, DOCS, SECTION_META, SECTION_OVERRIDE, TERMS, LAWS, DOCTEXT, ANALYSIS, CLAUSES, DEFAULT_TASKS, TASK_LINKS, CASES, INITIAL_DOCS, SUMMARY, SUGGEST, CHAT_SEED, REPLIES, NAV, CONSENT_ITEMS };

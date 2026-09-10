@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useApp } from "@/lib/store";
 import { D, buildDocList, lawShort } from "@/lib/derive";
 import { TypeBadge, LawButton } from "@/components/ui";
+import { Collapse } from "@/components/fields";
 
 export default function Chat() {
   const {
@@ -129,7 +130,7 @@ export default function Chat() {
           ▾
         </button>
       </div>
-      {caseMenu && (
+      <Collapse open={caseMenu}>
         <div
           style={{
             margin: "0 20px 10px",
@@ -138,7 +139,9 @@ export default function Chat() {
             background: "#fff",
             border: "1px solid #E3E8E3",
             boxShadow: "0 8px 24px rgba(15,42,32,.12)",
-            flex: "none",
+            opacity: caseMenu ? 1 : 0,
+            transform: caseMenu ? "none" : "translateY(-6px)",
+            transition: "opacity .3s ease, transform .3s ease",
           }}
         >
           {D.CASES.map((c) => (
@@ -168,7 +171,7 @@ export default function Chat() {
             </button>
           ))}
         </div>
-      )}
+      </Collapse>
 
       {/* 메시지 영역 */}
       <div
@@ -211,33 +214,64 @@ export default function Chat() {
                 gap: 8,
               }}
             >
-              <div
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: "18px 18px 18px 4px",
-                  background: m.refused ? "#F4F6F4" : "#fff",
-                  border: `1px solid ${m.refused ? "#DDE3DF" : "#E3E8E3"}`,
-                  fontSize: 14,
-                  lineHeight: 1.6,
-                  color: "#0F2A20",
-                  whiteSpace: "pre-line",
-                }}
-              >
-                {m.text}
-                {m.streaming && (
+              {m.streaming && !m.text ? (
+                // 첫 글자가 오기 전: 대기 인디케이터
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 9,
+                    padding: "12px 14px",
+                    borderRadius: "18px 18px 18px 4px",
+                    background: "#fff",
+                    border: "1px solid #E3E8E3",
+                    fontSize: 13.5,
+                    color: "#4B6157",
+                  }}
+                >
                   <span
                     style={{
+                      width: 15,
+                      height: 15,
+                      borderRadius: "50%",
+                      border: "2.5px solid #CFE3D8",
+                      borderTopColor: "#1B7F5C",
+                      animation: "spin .9s linear infinite",
                       display: "inline-block",
-                      width: 8,
-                      height: 14,
-                      background: "#1B7F5C",
-                      marginLeft: 2,
-                      verticalAlign: "text-bottom",
-                      animation: "sk .8s infinite",
+                      flex: "none",
                     }}
                   />
-                )}
-              </div>
+                  AI가 관련 정보를 찾아보고 있어요…
+                </div>
+              ) : (
+                <div
+                  style={{
+                    padding: "12px 14px",
+                    borderRadius: "18px 18px 18px 4px",
+                    background: m.refused ? "#F4F6F4" : "#fff",
+                    border: `1px solid ${m.refused ? "#DDE3DF" : "#E3E8E3"}`,
+                    fontSize: 14,
+                    lineHeight: 1.6,
+                    color: "#0F2A20",
+                    whiteSpace: "pre-line",
+                  }}
+                >
+                  {m.text}
+                  {m.streaming && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        width: 8,
+                        height: 14,
+                        background: "#1B7F5C",
+                        marginLeft: 2,
+                        verticalAlign: "text-bottom",
+                        animation: "sk .8s infinite",
+                      }}
+                    />
+                  )}
+                </div>
+              )}
               {!m.streaming &&
                 ((m.sources && m.sources.length > 0) || (m.laws && m.laws.length > 0)) && (
                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>

@@ -12,6 +12,7 @@ import {
   ddInfo,
 } from "@/lib/derive";
 import { TypeBadge, StatusChip } from "@/components/ui";
+import { Collapse } from "@/components/fields";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -87,15 +88,19 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {menuOpen && (
+      {/* 케이스 전환 드롭다운 — 부드럽게 열리고 닫힘 */}
+      <Collapse open={menuOpen}>
         <div
           style={{
-            margin: "0 20px",
+            margin: "4px 20px 0",
             padding: 6,
             borderRadius: 14,
             background: "#fff",
             border: "1px solid #E3E8E3",
             boxShadow: "0 8px 24px rgba(15,42,32,.12)",
+            opacity: menuOpen ? 1 : 0,
+            transform: menuOpen ? "none" : "translateY(-6px)",
+            transition: "opacity .3s ease, transform .3s ease",
           }}
         >
           {D.CASES.map((c) => (
@@ -148,7 +153,7 @@ export default function Dashboard() {
             + 새 케이스 만들기
           </button>
         </div>
-      )}
+      </Collapse>
 
       {!hasAnyDoc ? (
         // 빈 상태
