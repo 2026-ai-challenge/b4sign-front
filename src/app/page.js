@@ -150,17 +150,19 @@ export default function Landing() {
                 <span
                   style={{
                     flex: "none",
-                    width: 44,
+                    minWidth: 44,
                     height: 44,
+                    padding: "0 9px",
                     borderRadius: 12,
                     background: "#EEF6F1",
                     color: "#1B7F5C",
-                    fontSize: 11,
+                    fontSize: 10.5,
                     fontWeight: 900,
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    letterSpacing: "-.02em",
+                    letterSpacing: "-.01em",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {c.en}
