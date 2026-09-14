@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeftIcon, CheckIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { api, setToken } from "@/lib/api";
+import { Button } from "@/design-system";
 
 const inputStyle = (borderColor = "#DDE3DF") => ({
   height: 48,
@@ -84,13 +86,13 @@ export default function Signup() {
       <div style={{ display: "flex", alignItems: "center", height: 52, padding: "0 12px", flex: "none" }}>
         <button
           onClick={() => (step === "code" ? setStep("form") : router.push("/login"))}
-          style={{ background: "none", border: "none", fontSize: 22, color: "#0F2A20", padding: "6px 10px" }}
+          style={{ background: "none", border: "none", color: "#17211E", padding: "6px 10px", display: "flex" }}
         >
-          ‹
+          <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
       </div>
       <div style={{ padding: "8px 20px 32px", flex: 1 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: "#1B7F5C" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#16A36A" }}>
           {step === "form" ? "1 / 2" : "2 / 2"}
         </div>
         <h1 style={{ margin: "6px 0 0", fontSize: 26, fontWeight: 800, letterSpacing: "-.02em" }}>
@@ -122,13 +124,13 @@ export default function Signup() {
                       gap: 4,
                       padding: "4px 9px",
                       borderRadius: 999,
-                      fontSize: 11.5,
+                      fontSize: 12,
                       fontWeight: 600,
                       background: on ? "#E3F3E9" : "#F1F3F1",
-                      color: on ? "#14613F" : "#8A968F",
+                      color: on ? "#14613F" : "#5A6660",
                     }}
                   >
-                    {on ? "✓" : "·"} {label}
+                    {on ? <CheckIcon style={{ width: 11, height: 11 }} /> : "·"} {label}
                   </span>
                 ))}
               </div>
@@ -146,32 +148,19 @@ export default function Signup() {
               )}
               <input value={su.name} onChange={set("name")} placeholder="이름 (선택)" style={inputStyle()} />
             </div>
-            <button
+            <Button
+              variant="dark"
               onClick={() => ok && requestCode()}
               disabled={!ok}
-              style={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 52,
-                marginTop: 20,
-                background: ok ? "#0F2A20" : "#B9C2BC",
-                color: "#fff",
-                border: "none",
-                borderRadius: 999,
-                fontWeight: 700,
-                fontSize: 16,
-                cursor: ok ? "pointer" : "default",
-              }}
+              style={{ marginTop: 20, fontSize: 16 }}
             >
               인증 코드 받기
-            </button>
+            </Button>
           </>
         ) : (
           <>
             <p style={{ margin: "8px 0 0", fontSize: 14, color: "#4B6157", lineHeight: 1.55 }}>
-              <b style={{ color: "#0F2A20" }}>{su.email}</b>로 6자리 코드를 보냈어요. 10분 안에
+              <b style={{ color: "#17211E" }}>{su.email}</b>로 6자리 코드를 보냈어요. 10분 안에
               입력해 주세요.
             </p>
             {devCode && (
@@ -181,13 +170,13 @@ export default function Signup() {
                   padding: "10px 12px",
                   borderRadius: 10,
                   background: "#F1F3F1",
-                  fontSize: 12.5,
+                  fontSize: 13,
                   lineHeight: 1.55,
                   color: "#6E827A",
                 }}
               >
                 개발 모드 (메일 프로바이더 미연결) · 인증 코드:{" "}
-                <b style={{ color: "#0F2A20", letterSpacing: ".1em" }}>{devCode}</b>
+                <b style={{ color: "#17211E", letterSpacing: ".1em" }}>{devCode}</b>
               </div>
             )}
             <input
@@ -214,32 +203,31 @@ export default function Signup() {
               }}
             />
             {codeErr && (
-              <div style={{ marginTop: 10, fontSize: 12.5, color: "#B4231A" }}>▲ {codeErr}</div>
+              <div
+                style={{
+                  marginTop: 10,
+                  fontSize: 13,
+                  color: "#B4231A",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                }}
+              >
+                <ExclamationCircleIcon style={{ width: 14, height: 14 }} />
+                {codeErr}
+              </div>
             )}
-            <button
+            <Button
+              variant="dark"
               onClick={() => {
                 if (su.code.length < 6) return;
                 verifyCode();
               }}
               disabled={su.code.length < 6}
-              style={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 52,
-                marginTop: 16,
-                background: su.code.length >= 6 ? "#0F2A20" : "#B9C2BC",
-                color: "#fff",
-                border: "none",
-                borderRadius: 999,
-                fontWeight: 700,
-                fontSize: 16,
-                cursor: su.code.length >= 6 ? "pointer" : "default",
-              }}
+              style={{ marginTop: 16, fontSize: 16 }}
             >
               확인
-            </button>
+            </Button>
             <button
               onClick={resendCode}
               style={{

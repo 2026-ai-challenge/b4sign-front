@@ -1,10 +1,19 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  ChevronDownIcon,
+  CheckIcon,
+  CheckCircleIcon,
+  PencilIcon,
+  TrashIcon,
+  PaperAirplaneIcon,
+} from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, buildDocList, lawShort } from "@/lib/derive";
 import { TypeBadge, LawButton } from "@/components/ui";
 import { Collapse } from "@/components/fields";
+import { Button, Card } from "@/design-system";
 
 export default function Chat() {
   const {
@@ -62,7 +71,7 @@ export default function Chat() {
           flex: "none",
         }}
       >
-        <span style={{ fontSize: 18, fontWeight: 800 }}>AI 상담</span>
+        <span style={{ fontSize: 17, fontWeight: 800 }}>AI 상담</span>
         {/* 햄버거: 대화 목록·세션 관리 드로어 */}
         <button
           onClick={() => {
@@ -82,7 +91,7 @@ export default function Chat() {
               <path
                 key={y}
                 d={`M1 ${y}H19`}
-                stroke="#0F2A20"
+                stroke="#17211E"
                 strokeWidth="2.2"
                 strokeLinecap="round"
               />
@@ -127,17 +136,15 @@ export default function Chat() {
           >
             {scope}
           </span>
-          ▾
+          <ChevronDownIcon style={{ width: 12, height: 12, flex: "none" }} />
         </button>
       </div>
       <Collapse open={caseMenu}>
-        <div
+        <Card
+          radius={14}
           style={{
             margin: "0 20px 10px",
             padding: 6,
-            borderRadius: 14,
-            background: "#fff",
-            border: "1px solid #E3E8E3",
             boxShadow: "0 8px 24px rgba(15,42,32,.12)",
             opacity: caseMenu ? 1 : 0,
             transform: caseMenu ? "none" : "translateY(-6px)",
@@ -161,16 +168,16 @@ export default function Chat() {
                 borderRadius: 10,
                 border: "none",
                 background: c.id === caseId ? "#EEF6F1" : "#fff",
-                fontSize: 13.5,
+                fontSize: 14,
                 fontWeight: 600,
-                color: "#0F2A20",
+                color: "#17211E",
               }}
             >
               <span>{c.short}</span>
               <span style={{ fontSize: 12, color: "#6E827A" }}>{c.amount}</span>
             </button>
           ))}
-        </div>
+        </Card>
       </Collapse>
 
       {/* 메시지 영역 */}
@@ -195,7 +202,7 @@ export default function Chat() {
                 maxWidth: "82%",
                 padding: "11px 14px",
                 borderRadius: "18px 18px 4px 18px",
-                background: "#1B7F5C",
+                background: "#16A36A",
                 color: "#fff",
                 fontSize: 14,
                 lineHeight: 1.55,
@@ -225,7 +232,7 @@ export default function Chat() {
                     borderRadius: "18px 18px 18px 4px",
                     background: "#fff",
                     border: "1px solid #E3E8E3",
-                    fontSize: 13.5,
+                    fontSize: 14,
                     color: "#4B6157",
                   }}
                 >
@@ -235,7 +242,7 @@ export default function Chat() {
                       height: 15,
                       borderRadius: "50%",
                       border: "2.5px solid #CFE3D8",
-                      borderTopColor: "#1B7F5C",
+                      borderTopColor: "#16A36A",
                       animation: "spin .9s linear infinite",
                       display: "inline-block",
                       flex: "none",
@@ -252,7 +259,7 @@ export default function Chat() {
                     border: `1px solid ${m.refused ? "#DDE3DF" : "#E3E8E3"}`,
                     fontSize: 14,
                     lineHeight: 1.6,
-                    color: "#0F2A20",
+                    color: "#17211E",
                     whiteSpace: "pre-line",
                   }}
                 >
@@ -263,7 +270,7 @@ export default function Chat() {
                         display: "inline-block",
                         width: 8,
                         height: 14,
-                        background: "#1B7F5C",
+                        background: "#16A36A",
                         marginLeft: 2,
                         verticalAlign: "text-bottom",
                         animation: "sk .8s infinite",
@@ -282,8 +289,8 @@ export default function Chat() {
                           padding: "4px 9px",
                           borderRadius: 6,
                           background: "#EEF6F1",
-                          color: "#1B7F5C",
-                          fontSize: 11.5,
+                          color: "#16A36A",
+                          fontSize: 12,
                           fontWeight: 700,
                         }}
                       >
@@ -301,15 +308,21 @@ export default function Chat() {
                   <span
                     style={{
                       alignSelf: "flex-start",
-                      fontSize: 12.5,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      fontSize: 13,
                       fontWeight: 700,
                       color: "#14613F",
                     }}
                   >
-                    ✓ 할 일에 추가됨
+                    <CheckCircleIcon style={{ width: 14, height: 14 }} />
+                    할 일에 추가됨
                   </span>
                 ) : (
-                  <button
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={() => {
                       chatMarkAdded(caseId, sess.id, k);
                       addTaskRaw(caseId, {
@@ -322,20 +335,10 @@ export default function Chat() {
                         items: "특약 문구",
                       });
                     }}
-                    style={{
-                      alignSelf: "flex-start",
-                      height: 34,
-                      padding: "0 12px",
-                      borderRadius: 999,
-                      border: "1px solid #CFE3D8",
-                      background: "#fff",
-                      color: "#1B7F5C",
-                      fontSize: 12.5,
-                      fontWeight: 700,
-                    }}
+                    style={{ display: "inline-flex", width: "auto", alignSelf: "flex-start", padding: "0 12px" }}
                   >
                     + 이 내용을 할 일에 추가
-                  </button>
+                  </Button>
                 ))}
             </div>
           )
@@ -359,18 +362,16 @@ export default function Chat() {
                     width: 22,
                     height: 22,
                     borderRadius: 8,
-                    background: "#1B7F5C",
+                    background: "#16A36A",
                     color: "#fff",
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 12,
-                    fontWeight: 900,
                   }}
                 >
-                  ✓
+                  <CheckIcon style={{ width: 12, height: 12 }} />
                 </span>
-                <span style={{ fontSize: 11.5, fontWeight: 700, color: "#6E827A" }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#6E827A" }}>
                   B4SIGN AI 상담
                 </span>
               </div>
@@ -382,7 +383,7 @@ export default function Chat() {
                   border: "1px solid #E3E8E3",
                   fontSize: 14,
                   lineHeight: 1.65,
-                  color: "#0F2A20",
+                  color: "#17211E",
                 }}
               >
                 안녕하세요, <b>{me.name}님</b> 👋
@@ -396,7 +397,7 @@ export default function Chat() {
                     padding: "8px 10px",
                     borderRadius: 10,
                     background: "#F4F6F4",
-                    fontSize: 12.5,
+                    fontSize: 13,
                     lineHeight: 1.55,
                     color: "#4B6157",
                   }}
@@ -418,7 +419,7 @@ export default function Chat() {
                     borderRadius: 999,
                     border: "1px solid #CFE3D8",
                     background: "#fff",
-                    color: "#0F2A20",
+                    color: "#17211E",
                     fontSize: 13,
                     textAlign: "left",
                   }}
@@ -440,7 +441,7 @@ export default function Chat() {
           borderTop: "1px solid #E3E8E3",
         }}
       >
-        <div style={{ fontSize: 11.5, color: "#6E827A", marginBottom: 6, padding: "0 4px" }}>
+        <div style={{ fontSize: 12, color: "#6E827A", marginBottom: 6, padding: "0 4px" }}>
           특약·계약서 조항에 대해서만 답해요. 시세 예측·소송 판단은 범위 밖이에요.
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -473,13 +474,14 @@ export default function Chat() {
               height: 44,
               borderRadius: "50%",
               border: "none",
-              background: busy || !input ? "#B9C2BC" : "#1B7F5C",
+              background: busy || !input ? "#B9C2BC" : "#16A36A",
               color: "#fff",
-              fontSize: 18,
-              fontWeight: 800,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            ↑
+            <PaperAirplaneIcon style={{ width: 17, height: 17 }} />
           </button>
         </div>
       </div>
@@ -562,7 +564,7 @@ export default function Chat() {
                             padding: "0 10px",
                             borderRadius: 999,
                             border: "none",
-                            background: "#1B7F5C",
+                            background: "#16A36A",
                             color: "#fff",
                             fontSize: 12,
                             fontWeight: 700,
@@ -675,7 +677,7 @@ export default function Chat() {
                           style={{
                             fontSize: 14,
                             fontWeight: 700,
-                            color: "#0F2A20",
+                            color: "#17211E",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             whiteSpace: "nowrap",
@@ -701,11 +703,13 @@ export default function Chat() {
                           borderRadius: 9,
                           border: "none",
                           background: "none",
-                          fontSize: 13,
                           color: "#6E827A",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
-                        ✎
+                        <PencilIcon style={{ width: 14, height: 14 }} />
                       </button>
                       <button
                         onClick={() => setEditing({ mode: "delete", id: x.id })}
@@ -718,34 +722,29 @@ export default function Chat() {
                           borderRadius: 9,
                           border: "none",
                           background: "none",
-                          fontSize: 13,
                           color: "#B4231A",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
-                        🗑
+                        <TrashIcon style={{ width: 14, height: 14 }} />
                       </button>
                     </div>
                   );
                 })}
-              <button
+              <Button
+                variant="secondary"
+                size="md"
                 onClick={() => {
                   chatNewSession(caseId);
                   setDrawer(false);
                 }}
-                style={{
-                  marginTop: 8,
-                  height: 42,
-                  borderRadius: 999,
-                  border: "1px solid #CFE3D8",
-                  background: "#fff",
-                  color: "#1B7F5C",
-                  fontSize: 13,
-                  fontWeight: 700,
-                }}
+                style={{ marginTop: 8, fontSize: 13 }}
               >
                 + 새 대화
-              </button>
-              <div style={{ marginTop: "auto", fontSize: 11.5, color: "#6E827A" }}>
+              </Button>
+              <div style={{ marginTop: "auto", fontSize: 12, color: "#6E827A" }}>
                 빈 대화는 목록에 보이지 않아요.
               </div>
             </div>

@@ -1,9 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, kstTodayStr, dday } from "@/lib/derive";
 import { TypeBadge } from "@/components/ui";
+import { Button, Card } from "@/design-system";
 
 /** YYYY-MM-DD + n개월 */
 function addMonths(dateStr, n) {
@@ -42,9 +44,9 @@ export default function RegistryWatch() {
       >
         <button
           onClick={() => router.push("/documents")}
-          style={{ background: "none", border: "none", fontSize: 22, color: "#0F2A20", padding: "6px 10px" }}
+          style={{ background: "none", border: "none", color: "#17211E", padding: "6px 10px", display: "flex" }}
         >
-          ‹
+          <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
         <span style={{ fontSize: 17, fontWeight: 800 }}>등기 변동 모니터링</span>
         <span
@@ -55,7 +57,7 @@ export default function RegistryWatch() {
             borderRadius: 999,
             background: "#E3F3E9",
             color: "#14613F",
-            fontSize: 11.5,
+            fontSize: 12,
             fontWeight: 700,
           }}
         >
@@ -65,14 +67,7 @@ export default function RegistryWatch() {
 
       <div style={{ padding: "4px 20px 32px", display: "flex", flexDirection: "column", gap: 14 }}>
         {/* 상태 카드 */}
-        <div
-          style={{
-            borderRadius: 18,
-            background: "#fff",
-            border: "1px solid #E3E8E3",
-            padding: 16,
-          }}
-        >
+        <Card radius={18} style={{ padding: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <TypeBadge type={cur.type} size="sm" />
             <span style={{ fontSize: 14, fontWeight: 700 }}>{cur.short}</span>
@@ -83,7 +78,7 @@ export default function RegistryWatch() {
               display: "grid",
               gridTemplateColumns: "auto 1fr",
               gap: "8px 14px",
-              fontSize: 13.5,
+              fontSize: 14,
               lineHeight: 1.5,
             }}
           >
@@ -105,36 +100,17 @@ export default function RegistryWatch() {
             <span style={{ color: "#6E827A", fontWeight: 600 }}>주기</span>
             <span>3개월 (거주 중 담보 설정·소유자 변경 감시)</span>
           </div>
-          <button
+          <Button
             onClick={() => router.push("/documents?upload=registry")}
-            style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-              height: 46,
-              marginTop: 14,
-              background: overdue ? "#B4231A" : "#1B7F5C",
-              color: "#fff",
-              border: "none",
-              borderRadius: 999,
-              fontWeight: 700,
-              fontSize: 14,
-            }}
+            size="md"
+            style={{ marginTop: 14, fontSize: 14, ...(overdue ? { background: "#B4231A" } : {}) }}
           >
             최신 등기부 올리고 비교하기
-          </button>
-        </div>
+          </Button>
+        </Card>
 
         {/* 최근 변동 (재업로드 비교) */}
-        <div
-          style={{
-            borderRadius: 18,
-            background: "#fff",
-            border: "1px solid #E3E8E3",
-            padding: 16,
-          }}
-        >
+        <Card radius={18} style={{ padding: 16 }}>
           <div style={{ fontSize: 14, fontWeight: 800 }}>최근 변동 내역</div>
           {cur.diff ? (
             <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8, fontSize: 13, lineHeight: 1.5 }}>
@@ -181,7 +157,7 @@ export default function RegistryWatch() {
               새 근저당·가압류·소유자 변경을 짚어드려요.
             </p>
           )}
-        </div>
+        </Card>
 
         {/* 자동 열람 안내 */}
         <div
@@ -189,7 +165,7 @@ export default function RegistryWatch() {
             padding: "12px 16px",
             borderRadius: 14,
             background: "#F4F6F4",
-            fontSize: 12.5,
+            fontSize: 13,
             lineHeight: 1.6,
             color: "#4B6157",
           }}

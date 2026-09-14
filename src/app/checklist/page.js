@@ -2,13 +2,26 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  ChevronLeftIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
+import { Card } from "@/design-system";
 
 const CLST = {
   present: { ...D.ST.safe, label: "있음" },
   missing: { ...D.ST.danger, label: "없음" },
   weak: { ...D.ST.warn, label: "불충분" },
+};
+
+const CLST_ICON = {
+  present: CheckCircleIcon,
+  missing: ExclamationCircleIcon,
+  weak: ExclamationTriangleIcon,
 };
 
 export default function Checklist() {
@@ -45,9 +58,9 @@ export default function Checklist() {
       >
         <button
           onClick={() => router.push("/tasks")}
-          style={{ background: "none", border: "none", fontSize: 22, color: "#0F2A20", padding: "6px 10px" }}
+          style={{ background: "none", border: "none", color: "#17211E", padding: "6px 10px", display: "flex" }}
         >
-          ‹
+          <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
         <span style={{ fontSize: 17, fontWeight: 800 }}>{typ.label} 필수 특약</span>
       </div>
@@ -67,9 +80,9 @@ export default function Checklist() {
                 height: 34,
                 padding: "0 14px",
                 borderRadius: 999,
-                border: `1px solid ${on ? "#0F2A20" : "#DDE3DF"}`,
-                background: on ? "#0F2A20" : "#fff",
-                color: on ? "#fff" : "#0F2A20",
+                border: `1px solid ${on ? "#17211E" : "#DDE3DF"}`,
+                background: on ? "#17211E" : "#fff",
+                color: on ? "#fff" : "#17211E",
                 fontSize: 13,
                 fontWeight: 700,
               }}
@@ -89,32 +102,15 @@ export default function Checklist() {
         }}
       >
         {filtered.length === 0 && (
-          <div
-            style={{
-              padding: "32px 20px",
-              borderRadius: 20,
-              background: "#fff",
-              border: "1px solid #E3E8E3",
-              textAlign: "center",
-              fontSize: 14,
-              color: "#4B6157",
-            }}
-          >
+          <Card radius={20} style={{ padding: "32px 20px", textAlign: "center", fontSize: 14, color: "#4B6157" }}>
             이 조건에 해당하는 특약이 없어요.
-          </div>
+          </Card>
         )}
         {filtered.map((c) => {
           const st = CLST[c.st];
+          const ClauseIcon = CLST_ICON[c.st];
           return (
-            <div
-              key={c.id}
-              style={{
-                padding: 16,
-                borderRadius: 18,
-                background: "#fff",
-                border: "1px solid #E3E8E3",
-              }}
-            >
+            <Card key={c.id} radius={18} style={{ padding: 16 }}>
               <div
                 style={{
                   display: "flex",
@@ -134,18 +130,19 @@ export default function Checklist() {
                     borderRadius: 999,
                     background: st.bg,
                     color: st.fg,
-                    fontSize: 11.5,
+                    fontSize: 12,
                     fontWeight: 700,
                   }}
                 >
-                  {st.glyph} {st.label}
+                  <ClauseIcon style={{ width: 13, height: 13 }} />
+                  {st.label}
                 </span>
               </div>
               <p style={{ margin: "8px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
                 {c.why}
               </p>
               {c.note && (
-                <div style={{ marginTop: 8, fontSize: 12.5, color: "#7A4E00", lineHeight: 1.5 }}>
+                <div style={{ marginTop: 8, fontSize: 13, color: "#7A4E00", lineHeight: 1.5 }}>
                   {c.note}
                 </div>
               )}
@@ -173,14 +170,14 @@ export default function Checklist() {
                       border: "none",
                       padding: 0,
                       fontSize: 12,
-                      color: "#1B7F5C",
+                      color: "#16A36A",
                       fontWeight: 700,
                     }}
                   >
                     복사
                   </button>
                 </div>
-                <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.6, color: "#0F2A20" }}>
+                <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.6, color: "#17211E" }}>
                   {c.example}
                 </p>
               </div>
@@ -210,19 +207,19 @@ export default function Checklist() {
                         border: "none",
                         padding: 0,
                         fontSize: 12,
-                        color: "#1B7F5C",
+                        color: "#16A36A",
                         fontWeight: 700,
                       }}
                     >
                       복사
                     </button>
                   </div>
-                  <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.6, color: "#0F2A20" }}>
+                  <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.6, color: "#17211E" }}>
                     {c.request}
                   </p>
                 </div>
               )}
-            </div>
+            </Card>
           );
         })}
       </div>

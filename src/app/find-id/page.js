@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { Button, Card } from "@/design-system";
 
 const inputStyle = {
   height: 48,
@@ -25,9 +27,9 @@ export default function FindId() {
       <div style={{ display: "flex", alignItems: "center", height: 52, padding: "0 12px", flex: "none" }}>
         <button
           onClick={() => router.push("/login")}
-          style={{ background: "none", border: "none", fontSize: 22, color: "#0F2A20", padding: "6px 10px" }}
+          style={{ background: "none", border: "none", color: "#17211E", padding: "6px 10px", display: "flex" }}
         >
-          ‹
+          <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
       </div>
       <div style={{ padding: "8px 20px 32px", flex: 1 }}>
@@ -53,40 +55,16 @@ export default function FindId() {
                 style={inputStyle}
               />
             </div>
-            <button
-              onClick={() => setStep("result")}
-              style={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 52,
-                marginTop: 20,
-                background: "#0F2A20",
-                color: "#fff",
-                border: "none",
-                borderRadius: 999,
-                fontWeight: 700,
-                fontSize: 16,
-              }}
-            >
+            <Button variant="dark" onClick={() => setStep("result")} style={{ marginTop: 20, fontSize: 16 }}>
               찾기
-            </button>
+            </Button>
           </>
         ) : (
           <>
             <p style={{ margin: "8px 0 0", fontSize: 14, color: "#4B6157" }}>
               일치하는 계정 1개를 찾았어요.
             </p>
-            <div
-              style={{
-                marginTop: 24,
-                padding: 18,
-                borderRadius: 16,
-                background: "#fff",
-                border: "1px solid #E3E8E3",
-              }}
-            >
+            <Card style={{ marginTop: 24, padding: 18 }}>
               <div style={{ fontSize: 20, fontWeight: 800 }}>dl***@gmail.com</div>
               <div
                 style={{
@@ -116,26 +94,10 @@ export default function FindId() {
               <p style={{ margin: "12px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
                 이 계정은 비밀번호가 없어요. 로그인 화면에서 카카오 버튼을 눌러주세요.
               </p>
-            </div>
-            <button
-              onClick={() => router.push("/login")}
-              style={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 52,
-                marginTop: 20,
-                background: "#1B7F5C",
-                color: "#fff",
-                border: "none",
-                borderRadius: 999,
-                fontWeight: 700,
-                fontSize: 16,
-              }}
-            >
+            </Card>
+            <Button onClick={() => router.push("/login")} style={{ marginTop: 20, fontSize: 16 }}>
               로그인으로
-            </button>
+            </Button>
           </>
         )}
       </div>

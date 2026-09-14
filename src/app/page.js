@@ -1,10 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { CameraIcon, CheckIcon, MinusIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
 import { Logo } from "@/components/logo";
 import { Reveal } from "@/components/reveal";
+import { Button, Card } from "@/design-system";
 
 // B4SIGN의 4 Checks — 사인하기 전 반드시 확인할 4가지
 const CHECKS = [
@@ -19,12 +21,7 @@ const CHECKS = [
   },
 ];
 
-const sectionTitle = { fontSize: 13, fontWeight: 800, color: "#0F2A20" };
-const card = {
-  borderRadius: 16,
-  background: "#fff",
-  border: "1px solid #E3E8E3",
-};
+const sectionTitle = { fontSize: 13, fontWeight: 800, color: "#17211E" };
 
 export default function Landing() {
   const router = useRouter();
@@ -45,7 +42,7 @@ export default function Landing() {
               border: "1px solid #CFE3D8",
               fontSize: 12,
               fontWeight: 600,
-              color: "#1B7F5C",
+              color: "#16A36A",
             }}
           >
             비포사인 · 전세 · 월세 · 매매
@@ -59,12 +56,12 @@ export default function Landing() {
               lineHeight: 1.15,
               fontWeight: 900,
               letterSpacing: "-.02em",
-              color: "#0F2A20",
+              color: "#17211E",
             }}
           >
             4 CHECKS
             <br />
-            <span style={{ color: "#1B7F5C" }}>BEFORE YOU SIGN.</span>
+            <span style={{ color: "#16A36A" }}>BEFORE YOU SIGN.</span>
           </h1>
         </Reveal>
         <Reveal delay={180}>
@@ -75,25 +72,9 @@ export default function Landing() {
           </p>
         </Reveal>
         <Reveal delay={260}>
-          <button
-            onClick={start}
-            style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-              height: 52,
-              marginTop: 24,
-              background: "#1B7F5C",
-              color: "#fff",
-              border: "none",
-              borderRadius: 999,
-              fontWeight: 700,
-              fontSize: 16,
-            }}
-          >
+          <Button onClick={start} style={{ marginTop: 24, fontSize: 16 }}>
             무료로 4가지 체크 시작하기
-          </button>
+          </Button>
         </Reveal>
         {/* 스크롤 힌트 (reduced-motion에서는 CSS로 정지) */}
         <div
@@ -108,7 +89,7 @@ export default function Landing() {
           <svg width="22" height="12" viewBox="0 0 22 12" fill="none" aria-hidden="true">
             <path
               d="M2 2L11 10L20 2"
-              stroke="#1B7F5C"
+              stroke="#16A36A"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -121,13 +102,13 @@ export default function Landing() {
       <div style={{ padding: "8px 20px 0" }}>
         <Reveal>
           <div style={sectionTitle}>
-            B4SIGN의 <span style={{ color: "#1B7F5C" }}>4 Checks</span>
+            B4SIGN의 <span style={{ color: "#16A36A" }}>4 Checks</span>
           </div>
         </Reveal>
         <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
           {CHECKS.map((c, i) => (
             <Reveal key={c.en} delay={i * 80}>
-              <div style={{ ...card, display: "flex", gap: 12, padding: 14, alignItems: "flex-start" }}>
+              <Card style={{ display: "flex", gap: 12, padding: 14, alignItems: "flex-start" }}>
                 <span
                   style={{
                     flex: "none",
@@ -136,8 +117,8 @@ export default function Landing() {
                     padding: "0 9px",
                     borderRadius: 12,
                     background: "#EEF6F1",
-                    color: "#1B7F5C",
-                    fontSize: 10.5,
+                    color: "#16A36A",
+                    fontSize: 11,
                     fontWeight: 900,
                     display: "inline-flex",
                     alignItems: "center",
@@ -149,14 +130,14 @@ export default function Landing() {
                   {c.en}
                 </span>
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: 14.5, fontWeight: 700 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700 }}>
                     {c.n} {c.q}
                   </div>
-                  <div style={{ marginTop: 4, fontSize: 12.5, lineHeight: 1.5, color: "#4B6157" }}>
+                  <div style={{ marginTop: 4, fontSize: 13, lineHeight: 1.5, color: "#4B6157" }}>
                     {c.desc}
                   </div>
                 </div>
-              </div>
+              </Card>
             </Reveal>
           ))}
         </div>
@@ -170,7 +151,7 @@ export default function Landing() {
 
         {/* STEP 1 — 찍어서 올리면 교차검증 */}
         <Reveal delay={60}>
-          <div style={{ ...card, marginTop: 10, padding: 16 }}>
+          <Card style={{ marginTop: 10, padding: 16 }}>
             <GuideHead
               step="STEP 1"
               title="찍어서 올리기만 하면"
@@ -178,11 +159,13 @@ export default function Landing() {
             />
             <div style={mock.frame}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={mock.iconBox}>📷</span>
+                <span style={mock.iconBox}>
+                  <CameraIcon style={{ width: 15, height: 15, color: "#16A36A" }} />
+                </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, fontWeight: 700 }}>등기부등본_촬영.jpg</div>
                   <div style={{ height: 5, borderRadius: 3, background: "#E6EBE7", marginTop: 5, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: "100%", background: "#1B7F5C", borderRadius: 3 }} />
+                    <div style={{ height: "100%", width: "100%", background: "#16A36A", borderRadius: 3 }} />
                   </div>
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#14613F", flex: "none" }}>
@@ -190,16 +173,22 @@ export default function Landing() {
                 </span>
               </div>
               <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 5 }}>
-                <div style={mock.okRow}>✓ 등기부 소유자 = 계약서 임대인 일치</div>
-                <div style={mock.okRow}>✓ 국토부 건축물대장 교차검증 완료</div>
+                <div style={{ ...mock.okRow, display: "flex", alignItems: "center", gap: 5 }}>
+                  <CheckIcon style={{ width: 11, height: 11 }} />
+                  등기부 소유자 = 계약서 임대인 일치
+                </div>
+                <div style={{ ...mock.okRow, display: "flex", alignItems: "center", gap: 5 }}>
+                  <CheckIcon style={{ width: 11, height: 11 }} />
+                  국토부 건축물대장 교차검증 완료
+                </div>
               </div>
             </div>
-          </div>
+          </Card>
         </Reveal>
 
         {/* STEP 2 — 위험 특약 감지 + 수정 방향 */}
         <Reveal delay={60}>
-          <div style={{ ...card, marginTop: 10, padding: 16 }}>
+          <Card style={{ marginTop: 10, padding: 16 }}>
             <GuideHead
               step="STEP 2"
               title="위험한 특약을 짚어줘요"
@@ -229,14 +218,12 @@ export default function Landing() {
                     border: "2px solid #B4231A",
                     background: "#FDE8E4",
                     color: "#B4231A",
-                    fontSize: 10,
-                    fontWeight: 900,
                     alignItems: "center",
                     justifyContent: "center",
                     verticalAlign: "middle",
                   }}
                 >
-                  ▲
+                  <ExclamationCircleIcon style={{ width: 11, height: 11 }} />
                 </span>
               </div>
               <div
@@ -252,18 +239,22 @@ export default function Landing() {
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                   <span
                     style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 3,
                       padding: "2px 7px",
                       borderRadius: 999,
                       background: "#FDE8E4",
                       color: "#B4231A",
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: 800,
                       fontFamily: "Pretendard, sans-serif",
                     }}
                   >
-                    ▲ 위험
+                    <ExclamationCircleIcon style={{ width: 10, height: 10 }} />
+                    위험
                   </span>
-                  <span style={{ fontSize: 11.5, fontWeight: 700, fontFamily: "Pretendard, sans-serif" }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "Pretendard, sans-serif" }}>
                     임차인에게 일방적으로 불리한 조항
                   </span>
                 </div>
@@ -276,17 +267,17 @@ export default function Landing() {
                     fontFamily: "Pretendard, sans-serif",
                   }}
                 >
-                  <b style={{ color: "#1B7F5C" }}>수정 방향</b> · "통상 마모 제외"로 바꾸도록 요청
+                  <b style={{ color: "#16A36A" }}>수정 방향</b> · "통상 마모 제외"로 바꾸도록 요청
                   문구를 만들어 드려요
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         </Reveal>
 
         {/* STEP 3 — 챗 질문 */}
         <Reveal delay={60}>
-          <div style={{ ...card, marginTop: 10, padding: 16 }}>
+          <Card style={{ marginTop: 10, padding: 16 }}>
             <GuideHead
               step="STEP 3"
               title="모르는 건 챗에서 질문하세요"
@@ -301,9 +292,9 @@ export default function Landing() {
                   width: "fit-content",
                   padding: "7px 10px",
                   borderRadius: "12px 12px 3px 12px",
-                  background: "#1B7F5C",
+                  background: "#16A36A",
                   color: "#fff",
-                  fontSize: 11.5,
+                  fontSize: 12,
                 }}
               >
                 이 특약, 나한테 불리한 거야?
@@ -316,7 +307,7 @@ export default function Landing() {
                   borderRadius: "12px 12px 12px 3px",
                   background: "#fff",
                   border: "1px solid #E3E8E3",
-                  fontSize: 11.5,
+                  fontSize: 12,
                   lineHeight: 1.55,
                 }}
               >
@@ -328,7 +319,7 @@ export default function Landing() {
                 <span style={mock.chip}>§ 민법 제615조</span>
               </div>
             </div>
-          </div>
+          </Card>
         </Reveal>
       </div>
 
@@ -340,7 +331,7 @@ export default function Landing() {
         <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
           {Object.values(D.TYPES).map((t, i) => (
             <Reveal key={t.key} delay={i * 80}>
-              <div style={{ ...card, display: "flex", gap: 12, padding: 14 }}>
+              <Card style={{ display: "flex", gap: 12, padding: 14 }}>
                 <span
                   style={{
                     flex: "none",
@@ -360,11 +351,11 @@ export default function Landing() {
                 </span>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700 }}>{t.risk}</div>
-                  <div style={{ marginTop: 4, fontSize: 12.5, lineHeight: 1.5, color: "#4B6157" }}>
+                  <div style={{ marginTop: 4, fontSize: 13, lineHeight: 1.5, color: "#4B6157" }}>
                     {t.focus.join(" · ")}
                   </div>
                 </div>
-              </div>
+              </Card>
             </Reveal>
           ))}
         </div>
@@ -372,7 +363,7 @@ export default function Landing() {
 
       {/* 검증 범위 */}
       <Reveal>
-        <div style={{ ...card, margin: "28px 20px 0", padding: 16 }}>
+        <Card style={{ margin: "28px 20px 0", padding: 16 }}>
           <div style={{ fontSize: 14, fontWeight: 700 }}>무엇을 어떻게 검증하나요</div>
           <div
             style={{
@@ -385,11 +376,11 @@ export default function Landing() {
             }}
           >
             {[
-              ["✓", "#E3F3E9", "#14613F", <span key="1"><b>등기부등본</b> — 소유자·근저당·가압류·면적 등 등기 항목을 검증하고 계약서와 대조</span>],
-              ["✓", "#E3F3E9", "#14613F", <span key="2"><b>건축물대장</b> — 국토부 API로 위반건축물·용도 교차 검증</span>],
-              ["✓", "#E3F3E9", "#14613F", <span key="3"><b>계약서</b> — 필수 특약 누락·불리한 조항을 줄 단위로 표시</span>],
-              ["–", "#ECEEEC", "#5A6660", <span key="4" style={{ color: "#4B6157" }}>문서 원본의 <b style={{ color: "#0F2A20" }}>위·변조 여부</b>는 확인하지 않아요. 계약 당일 인터넷등기소에서 직접 재열람하세요</span>],
-            ].map(([glyph, bg, fg, content], i) => (
+              [CheckIcon, "#E3F3E9", "#14613F", <span key="1"><b>등기부등본</b> — 소유자·근저당·가압류·면적 등 등기 항목을 검증하고 계약서와 대조</span>],
+              [CheckIcon, "#E3F3E9", "#14613F", <span key="2"><b>건축물대장</b> — 국토부 API로 위반건축물·용도 교차 검증</span>],
+              [CheckIcon, "#E3F3E9", "#14613F", <span key="3"><b>계약서</b> — 필수 특약 누락·불리한 조항을 줄 단위로 표시</span>],
+              [MinusIcon, "#ECEEEC", "#5A6660", <span key="4" style={{ color: "#4B6157" }}>문서 원본의 <b style={{ color: "#17211E" }}>위·변조 여부</b>는 확인하지 않아요. 계약 당일 인터넷등기소에서 직접 재열람하세요</span>],
+            ].map(([GlyphIcon, bg, fg, content], i) => (
               <div key={i} style={{ display: "flex", gap: 8 }}>
                 <span
                   style={{
@@ -402,40 +393,23 @@ export default function Landing() {
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 11,
-                    fontWeight: 900,
                   }}
                 >
-                  {glyph}
+                  <GlyphIcon style={{ width: 11, height: 11 }} />
                 </span>
                 {content}
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </Reveal>
 
       {/* 마지막 CTA */}
       <Reveal>
         <div style={{ padding: "24px 20px 0" }}>
-          <button
-            onClick={start}
-            style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-              height: 52,
-              background: "#0F2A20",
-              color: "#fff",
-              border: "none",
-              borderRadius: 999,
-              fontWeight: 700,
-              fontSize: 15,
-            }}
-          >
+          <Button variant="dark" onClick={start} style={{ fontSize: 15 }}>
             지금 4가지 체크 시작하기 →
-          </button>
+          </Button>
         </div>
       </Reveal>
 
@@ -471,10 +445,10 @@ export default function Landing() {
 function GuideHead({ step, title, desc }) {
   return (
     <>
-      <div style={{ fontSize: 11, fontWeight: 800, color: "#1B7F5C", letterSpacing: ".06em" }}>
+      <div style={{ fontSize: 11, fontWeight: 800, color: "#16A36A", letterSpacing: ".06em" }}>
         {step}
       </div>
-      <div style={{ marginTop: 4, fontSize: 15.5, fontWeight: 800 }}>{title}</div>
+      <div style={{ marginTop: 4, fontSize: 15, fontWeight: 800 }}>{title}</div>
       <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.6, color: "#4B6157" }}>{desc}</p>
     </>
   );
@@ -512,8 +486,8 @@ const mock = {
     padding: "3px 7px",
     borderRadius: 5,
     background: "#EEF6F1",
-    color: "#1B7F5C",
-    fontSize: 10,
+    color: "#16A36A",
+    fontSize: 11,
     fontWeight: 700,
   },
 };

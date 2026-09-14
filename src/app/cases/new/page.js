@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
 import { AddressField, DateField } from "@/components/fields";
+import { Button, Card } from "@/design-system";
 
 const inputStyle = {
   height: 48,
@@ -46,9 +48,9 @@ export default function NewCase() {
       >
         <button
           onClick={() => router.push("/dashboard")}
-          style={{ background: "none", border: "none", fontSize: 22, color: "#0F2A20", padding: "6px 10px" }}
+          style={{ background: "none", border: "none", color: "#17211E", padding: "6px 10px", display: "flex" }}
         >
-          ‹
+          <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
         <span style={{ fontSize: 17, fontWeight: 800 }}>새 케이스</span>
       </div>
@@ -80,29 +82,18 @@ export default function NewCase() {
                   textAlign: "left",
                 }}
               >
-                <span style={{ fontSize: 18, fontWeight: 800, color: t.color }}>{t.label}</span>
-                <span style={{ fontSize: 11.5, lineHeight: 1.45, color: "#4B6157" }}>
+                <span style={{ fontSize: 17, fontWeight: 800, color: t.color }}>{t.label}</span>
+                <span style={{ fontSize: 12, lineHeight: 1.45, color: "#4B6157" }}>
                   {t.risk.split(" — ")[0]}
                 </span>
               </button>
             );
           })}
         </div>
-        <div
-          style={{
-            marginTop: 14,
-            padding: 14,
-            borderRadius: 14,
-            background: "#fff",
-            border: "1px solid #E3E8E3",
-            fontSize: 13,
-            lineHeight: 1.55,
-            color: "#4B6157",
-          }}
-        >
-          <b style={{ color: "#0F2A20" }}>{typ.label}</b>에서 집중해서 보는 것 ·{" "}
+        <Card radius={14} style={{ marginTop: 14, padding: 14, fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
+          <b style={{ color: "#17211E" }}>{typ.label}</b>에서 집중해서 보는 것 ·{" "}
           {typ.focus.join(" · ")}
-        </div>
+        </Card>
 
         <div style={{ marginTop: 20, fontSize: 13, fontWeight: 700, color: "#6E827A" }}>
           기본 정보
@@ -125,9 +116,9 @@ export default function NewCase() {
                     flex: 1,
                     height: 40,
                     borderRadius: 999,
-                    border: `1px solid ${on ? "#0F2A20" : "#DDE3DF"}`,
-                    background: on ? "#0F2A20" : "#fff",
-                    color: on ? "#fff" : "#0F2A20",
+                    border: `1px solid ${on ? "#17211E" : "#DDE3DF"}`,
+                    background: on ? "#17211E" : "#fff",
+                    color: on ? "#fff" : "#17211E",
                     fontSize: 13,
                     fontWeight: 700,
                   }}
@@ -153,7 +144,7 @@ export default function NewCase() {
                   ? [
                       {
                         date: nc.balance,
-                        color: "#1B7F5C",
+                        color: "#16A36A",
                         label: nc.type === "maemae" ? "잔금 예정일" : "입주 예정일",
                       },
                     ]
@@ -178,17 +169,10 @@ export default function NewCase() {
         </div>
         <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
           {typ.docs.map(([k, req]) => (
-            <div
+            <Card
               key={k}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "11px 14px",
-                borderRadius: 12,
-                background: "#fff",
-                border: "1px solid #E3E8E3",
-              }}
+              radius={12}
+              style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px" }}
             >
               <div>
                 <div style={{ fontSize: 14, fontWeight: 600 }}>{D.DOCS[k].name}</div>
@@ -206,34 +190,21 @@ export default function NewCase() {
               >
                 {req}
               </span>
-            </div>
+            </Card>
           ))}
         </div>
 
-        <button
+        <Button
           onClick={() => {
             const target = D.CASES.find((c) => c.type === nc.type).id;
             setCaseId(target);
             toast(`케이스를 만들었어요 (데모: ${typ.label} 샘플로 이동)`);
             router.push("/documents");
           }}
-          style={{
-            display: "flex",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 52,
-            marginTop: 20,
-            background: "#1B7F5C",
-            color: "#fff",
-            border: "none",
-            borderRadius: 999,
-            fontWeight: 700,
-            fontSize: 16,
-          }}
+          style={{ marginTop: 20, fontSize: 16 }}
         >
           케이스 만들고 서류 올리기
-        </button>
+        </Button>
       </div>
     </>
   );

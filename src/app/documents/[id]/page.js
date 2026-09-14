@@ -2,9 +2,24 @@
 
 import { Suspense, use, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  XMarkIcon,
+  CheckCircleIcon,
+  QuestionMarkCircleIcon,
+  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, lawShort } from "@/lib/derive";
 import { LawButton, TermButton } from "@/components/ui";
+import { Button } from "@/design-system";
+
+const STATUS_ICON = {
+  safe: CheckCircleIcon,
+  unknown: QuestionMarkCircleIcon,
+  warn: ExclamationTriangleIcon,
+  danger: ExclamationCircleIcon,
+};
 
 export default function ViewerPage({ params }) {
   const { id } = use(params);
@@ -36,22 +51,14 @@ function Viewer({ docKey }) {
     return (
       <div style={{ padding: 40, textAlign: "center" }}>
         <div style={{ fontSize: 15, fontWeight: 700 }}>표시할 문서가 없어요</div>
-        <button
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={() => router.push("/documents")}
-          style={{
-            marginTop: 16,
-            height: 40,
-            padding: "0 20px",
-            borderRadius: 999,
-            border: "1px solid #CFE3D8",
-            background: "#fff",
-            color: "#1B7F5C",
-            fontWeight: 700,
-            fontSize: 13,
-          }}
+          style={{ display: "inline-flex", width: "auto", padding: "0 20px", marginTop: 16 }}
         >
           서류 목록으로
-        </button>
+        </Button>
       </div>
     );
   }
@@ -101,7 +108,7 @@ function Viewer({ docKey }) {
       >
         <div style={{ minWidth: 0 }}>
           <div style={{ fontSize: 14, fontWeight: 700 }}>{doc.name}</div>
-          <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.6)" }}>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>
             발급 {issued} · {verify}
           </div>
         </div>
@@ -114,11 +121,13 @@ function Viewer({ docKey }) {
             border: "none",
             background: "rgba(255,255,255,.15)",
             color: "#fff",
-            fontSize: 16,
             flex: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          ×
+          <XMarkIcon style={{ width: 16, height: 16 }} />
         </button>
       </div>
 
@@ -132,9 +141,10 @@ function Viewer({ docKey }) {
           overflowX: "auto",
         }}
       >
-        {filters.map(([k, label, glyph, n]) => {
+        {filters.map(([k, label, , n]) => {
           const on = filter === k;
           const st = D.ST[k];
+          const FilterIcon = STATUS_ICON[k];
           return (
             <button
               key={k}
@@ -149,12 +159,13 @@ function Viewer({ docKey }) {
                 borderRadius: 999,
                 border: `1px solid ${on ? "transparent" : "rgba(255,255,255,.2)"}`,
                 background: on ? (st ? st.fg : "#fff") : "rgba(255,255,255,.08)",
-                color: on ? (st ? "#fff" : "#0F2A20") : "rgba(255,255,255,.8)",
+                color: on ? (st ? "#fff" : "#17211E") : "rgba(255,255,255,.8)",
                 fontSize: 12,
                 fontWeight: 700,
               }}
             >
-              {glyph} {label} {n}
+              {FilterIcon && <FilterIcon style={{ width: 12, height: 12 }} />}
+              {label} {n}
             </button>
           );
         })}
@@ -189,7 +200,7 @@ function Viewer({ docKey }) {
                   key={idx}
                   style={{
                     marginTop: 8,
-                    fontSize: 12.5,
+                    fontSize: 13,
                     fontWeight: 800,
                     color: "#222",
                     borderBottom: "1px solid #DDD",
@@ -201,6 +212,7 @@ function Viewer({ docKey }) {
               );
             const it = allItems.find((i) => i.id === l.item);
             const st = it ? D.ST[it.st] : D.ST.unknown;
+            const LineIcon = STATUS_ICON[it ? it.st : "unknown"];
             const dim = filter !== "all" && it && it.st !== filter;
             const active = pin === l.item;
             const open = () => setPin(active ? null : l.item);
@@ -246,8 +258,6 @@ function Viewer({ docKey }) {
                     border: `2px solid ${st.fg}`,
                     background: active ? st.fg : st.bg,
                     color: active ? "#fff" : st.fg,
-                    fontSize: 12,
-                    fontWeight: 900,
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -255,7 +265,7 @@ function Viewer({ docKey }) {
                     marginTop: 1,
                   }}
                 >
-                  {st.glyph}
+                  <LineIcon style={{ width: 13, height: 13 }} />
                 </button>
               </div>
             );
@@ -264,7 +274,7 @@ function Viewer({ docKey }) {
         <div
           style={{
             marginTop: 10,
-            fontSize: 11.5,
+            fontSize: 12,
             color: "rgba(255,255,255,.55)",
             textAlign: "center",
             lineHeight: 1.5,
@@ -280,7 +290,7 @@ function Viewer({ docKey }) {
           style={{
             flex: "none",
             background: "#fff",
-            color: "#0F2A20",
+            color: "#17211E",
             borderRadius: "20px 20px 0 0",
             padding: "14px 20px 22px",
             boxShadow: "0 -10px 30px rgba(0,0,0,.3)",
@@ -304,11 +314,15 @@ function Viewer({ docKey }) {
                   borderRadius: 999,
                   background: D.ST[pinItem.st].bg,
                   color: D.ST[pinItem.st].fg,
-                  fontSize: 11.5,
+                  fontSize: 12,
                   fontWeight: 700,
                 }}
               >
-                {D.ST[pinItem.st].glyph} {D.ST[pinItem.st].label}
+                {(() => {
+                  const PinIcon = STATUS_ICON[pinItem.st];
+                  return PinIcon ? <PinIcon style={{ width: 13, height: 13 }} /> : null;
+                })()}
+                {D.ST[pinItem.st].label}
               </span>
               <span style={{ fontSize: 12, color: "#6E827A" }}>{pinItem.evidence}</span>
             </div>
@@ -320,18 +334,20 @@ function Viewer({ docKey }) {
                 borderRadius: "50%",
                 border: "none",
                 background: "#F1F3F1",
-                fontSize: 14,
                 color: "#4B6157",
                 flex: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              ×
+              <XMarkIcon style={{ width: 14, height: 14 }} />
             </button>
           </div>
           <div style={{ marginTop: 8, fontSize: 15, fontWeight: 700, lineHeight: 1.35 }}>
             {pinItem.title}
           </div>
-          <p style={{ margin: "6px 0 0", fontSize: 13.5, lineHeight: 1.55, color: "#2E463C" }}>
+          <p style={{ margin: "6px 0 0", fontSize: 14, lineHeight: 1.55, color: "#2E463C" }}>
             {pinItem.why}
             {pinItem.term && (
               <>
@@ -351,44 +367,39 @@ function Viewer({ docKey }) {
             }}
           >
             <div style={{ display: "flex", gap: 6 }}>
-              <button
+              <Button
+                variant="neutral"
+                size="sm"
                 onClick={() => router.push("/analysis")}
-                style={{
-                  height: 34,
-                  padding: "0 12px",
-                  borderRadius: 999,
-                  border: "1px solid #DDE3DF",
-                  background: "#fff",
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  color: "#4B6157",
-                }}
+                style={{ display: "inline-flex", width: "auto", padding: "0 12px" }}
               >
                 분석 결과에서
-              </button>
+              </Button>
               {pinItem.law && <LawButton lawKey={pinItem.law} short={lawShort(pinItem.law)} />}
             </div>
             {pinItem.task &&
               (added ? (
-                <span style={{ fontSize: 12.5, fontWeight: 700, color: "#14613F" }}>
-                  ✓ 할 일에 있음
-                </span>
-              ) : (
-                <button
-                  onClick={() => addTaskFromItem(caseId, pinItem)}
+                <span
                   style={{
-                    height: 34,
-                    padding: "0 12px",
-                    borderRadius: 999,
-                    border: "none",
-                    background: "#1B7F5C",
-                    color: "#fff",
-                    fontSize: 12.5,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                    fontSize: 13,
                     fontWeight: 700,
+                    color: "#14613F",
                   }}
                 >
+                  <CheckCircleIcon style={{ width: 14, height: 14 }} />
+                  할 일에 있음
+                </span>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => addTaskFromItem(caseId, pinItem)}
+                  style={{ display: "inline-flex", width: "auto", padding: "0 12px" }}
+                >
                   + 할 일에 추가
-                </button>
+                </Button>
               ))}
           </div>
         </div>

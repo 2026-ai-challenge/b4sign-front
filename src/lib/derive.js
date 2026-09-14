@@ -153,6 +153,7 @@ export function buildDocList(caseId, docs) {
       markChips: ["danger", "warn", "safe", "unknown"]
         .filter((k) => byst[k])
         .map((k) => ({
+          key: k,
           glyph: D.ST[k].glyph,
           n: byst[k],
           bg: D.ST[k].bg,

@@ -2,13 +2,32 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  MagnifyingGlassIcon,
+  ChevronRightIcon,
+  XMarkIcon,
+  ArrowUpTrayIcon,
+  CameraIcon,
+  ExclamationCircleIcon,
+  CheckCircleIcon,
+  QuestionMarkCircleIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, buildDocList } from "@/lib/derive";
 import { TypeBadge } from "@/components/ui";
+import { Button, Card } from "@/design-system";
 import { api, apiUpload } from "@/lib/api";
 
 const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif";
 const MAX_SIZE = 20 * 1024 * 1024;
+const STATUS_ICON = {
+  safe: CheckCircleIcon,
+  unknown: QuestionMarkCircleIcon,
+  warn: ExclamationTriangleIcon,
+  danger: ExclamationCircleIcon,
+};
+
 const fmtSize = (b) =>
   b >= 1024 * 1024 ? (b / 1024 / 1024).toFixed(1) + "MB" : Math.ceil(b / 1024) + "KB";
 
@@ -188,13 +207,13 @@ function Documents() {
           padding: "0 20px",
         }}
       >
-        <span style={{ fontSize: 18, fontWeight: 800 }}>서류</span>
+        <span style={{ fontSize: 17, fontWeight: 800 }}>서류</span>
         <span
           style={{
             display: "flex",
             alignItems: "center",
             gap: 6,
-            fontSize: 12.5,
+            fontSize: 13,
             color: "#6E827A",
           }}
         >
@@ -206,15 +225,14 @@ function Documents() {
       <div style={{ padding: "8px 20px 32px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           {docList.map((d) => (
-            <div
+            <Card
               key={d.key}
+              radius={18}
               style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 8,
                 padding: 14,
-                borderRadius: 18,
-                background: "#fff",
                 border: `1px solid ${d.border}`,
                 minHeight: 150,
               }}
@@ -234,24 +252,29 @@ function Documents() {
                     borderRadius: 999,
                     background: d.st.bg,
                     color: d.st.fg,
-                    fontSize: 11.5,
+                    fontSize: 12,
                     fontWeight: 700,
                   }}
                 >
                   {d.st.label}
                 </span>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#8A968F" }}>{d.req}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#5A6660" }}>{d.req}</span>
               </div>
-              <div style={{ fontSize: 14.5, fontWeight: 700, lineHeight: 1.3 }}>{d.name}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.3 }}>{d.name}</div>
               <div style={{ fontSize: 12, color: "#6E827A", lineHeight: 1.5, flex: 1 }}>
                 {d.meta}
               </div>
               {d.marks > 0 && (
                 <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                  {d.markChips.map((m) => (
+                  {d.markChips.map((m) => {
+                    const MarkIcon = STATUS_ICON[m.key];
+                    return (
                     <span
-                      key={m.glyph}
+                      key={m.key}
                       style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 3,
                         padding: "2px 7px",
                         borderRadius: 5,
                         background: m.bg,
@@ -260,69 +283,54 @@ function Documents() {
                         fontWeight: 700,
                       }}
                     >
-                      {m.glyph} {m.n}
+                      <MarkIcon style={{ width: 11, height: 11 }} />
+                      {m.n}
                     </span>
-                  ))}
+                  );})}
                 </div>
               )}
               {d.stale && (
-                <div style={{ fontSize: 12, color: "#7A4E00", lineHeight: 1.45 }}>
-                  ! 발급 {d.days}일 경과 — 재발급 권장
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 5,
+                    fontSize: 12,
+                    color: "#7A4E00",
+                    lineHeight: 1.45,
+                  }}
+                >
+                  <ExclamationTriangleIcon style={{ width: 13, height: 13, flex: "none" }} />
+                  발급 {d.days}일 경과 — 재발급 권장
                 </div>
               )}
               <div style={{ display: "flex", gap: 6 }}>
                 {d.has ? (
                   <>
-                    <button
-                      onClick={() => router.push(`/documents/${d.key}`)}
-                      style={{
-                        flex: 1,
-                        height: 34,
-                        borderRadius: 999,
-                        border: "none",
-                        background: "#1B7F5C",
-                        color: "#fff",
-                        fontSize: 12,
-                        fontWeight: 700,
-                      }}
-                    >
+                    <Button size="sm" onClick={() => router.push(`/documents/${d.key}`)} style={{ flex: 1 }}>
                       보기
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={() => setUpload({ docKey: d.key, stage: "pick" })}
-                      style={{
-                        flex: 1,
-                        height: 34,
-                        borderRadius: 999,
-                        border: "1px solid #CFE3D8",
-                        background: "#fff",
-                        color: "#1B7F5C",
-                        fontSize: 12,
-                        fontWeight: 700,
-                      }}
+                      style={{ flex: 1 }}
                     >
                       재업로드
-                    </button>
+                    </Button>
                   </>
                 ) : (
-                  <button
+                  <Button
+                    variant="tint"
+                    size="sm"
                     onClick={() => setUpload({ docKey: d.key, stage: "pick" })}
-                    style={{
-                      flex: 1,
-                      height: 34,
-                      borderRadius: 999,
-                      border: "none",
-                      background: "#EEF6F1",
-                      color: "#14613F",
-                      fontSize: 12,
-                      fontWeight: 700,
-                    }}
+                    style={{ flex: 1 }}
                   >
                     올리기
-                  </button>
+                  </Button>
                 )}
               </div>
-            </div>
+            </Card>
           ))}
         </div>
         {/* 등기 변동 모니터링 진입 */}
@@ -336,21 +344,21 @@ function Documents() {
             marginTop: 14,
             padding: "14px",
             borderRadius: 16,
-            background: "#0F2A20",
+            background: "#17211E",
             border: "none",
             textAlign: "left",
           }}
         >
-          <span style={{ fontSize: 18, flex: "none" }}>🔍</span>
+          <MagnifyingGlassIcon style={{ width: 18, height: 18, color: "#fff", flex: "none" }} />
           <span style={{ flex: 1, minWidth: 0 }}>
-            <span style={{ display: "block", fontSize: 13.5, fontWeight: 700, color: "#fff" }}>
+            <span style={{ display: "block", fontSize: 14, fontWeight: 700, color: "#fff" }}>
               등기 변동 모니터링
             </span>
-            <span style={{ display: "block", fontSize: 11.5, color: "#9BD3B9", marginTop: 2 }}>
+            <span style={{ display: "block", fontSize: 12, color: "#9BD3B9", marginTop: 2 }}>
               3개월 주기 재확인 · 재업로드 시 변동 자동 비교
             </span>
           </span>
-          <span style={{ flex: "none", color: "rgba(255,255,255,.6)", fontSize: 14 }}>›</span>
+          <ChevronRightIcon style={{ width: 14, height: 14, color: "rgba(255,255,255,.6)", flex: "none" }} />
         </button>
         <p style={{ margin: "16px 0 0", fontSize: 12, lineHeight: 1.6, color: "#6E827A" }}>
           업로드 시 주민등록번호 뒷자리는 자동 마스킹 후 저장돼요. 원본은 보관하지 않으며, 케이스
@@ -389,10 +397,10 @@ function Documents() {
               }}
             >
               <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#1B7F5C" }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#16A36A" }}>
                   {D.DOCS[upload.docKey].name}
                 </div>
-                <div style={{ marginTop: 2, fontSize: 18, fontWeight: 800 }}>
+                <div style={{ marginTop: 2, fontSize: 17, fontWeight: 800 }}>
                   {
                     {
                       pick: "서류 올리기",
@@ -411,11 +419,13 @@ function Documents() {
                   borderRadius: "50%",
                   border: "none",
                   background: "#F1F3F1",
-                  fontSize: 16,
                   color: "#4B6157",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                ×
+                <XMarkIcon style={{ width: 16, height: 16 }} />
               </button>
             </div>
 
@@ -461,7 +471,7 @@ function Documents() {
                     color: "#14613F",
                   }}
                 >
-                  <span style={{ fontSize: 28, lineHeight: 1 }}>↑</span>
+                  <ArrowUpTrayIcon style={{ width: 26, height: 26 }} />
                   <span style={{ fontSize: 14, fontWeight: 700 }}>
                     눌러서 파일 선택
                   </span>
@@ -469,26 +479,15 @@ function Documents() {
                     PDF · 사진(JPG·PNG·HEIC) · 최대 20MB · 스캔본 가능
                   </span>
                 </button>
-                <button
+                <Button
+                  variant="secondary"
+                  size="md"
                   onClick={() => cameraRef.current?.click()}
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    height: 46,
-                    marginTop: 10,
-                    borderRadius: 999,
-                    border: "1px solid #CFE3D8",
-                    background: "#fff",
-                    color: "#1B7F5C",
-                    fontSize: 14,
-                    fontWeight: 700,
-                  }}
+                  style={{ marginTop: 10 }}
                 >
-                  📷 카메라로 촬영하기
-                </button>
+                  <CameraIcon style={{ width: 17, height: 17 }} />
+                  카메라로 촬영하기
+                </Button>
                 <p style={{ margin: "12px 0 0", fontSize: 12, lineHeight: 1.55, color: "#6E827A" }}>
                   업로드 즉시 주민등록번호 뒷자리를 마스킹하고, 원본은 저장하지 않아요. 사진은
                   문서 전체가 나오게, 최대한 정면에서 찍어주세요.
@@ -534,13 +533,13 @@ function Documents() {
                     style={{
                       height: "100%",
                       width: `${Math.round(upload.pct || 0)}%`,
-                      background: "#1B7F5C",
+                      background: "#16A36A",
                       borderRadius: 4,
                       transition: "width .15s",
                     }}
                   />
                 </div>
-                <p style={{ margin: "12px 0 0", fontSize: 12.5, color: "#6E827A" }}>
+                <p style={{ margin: "12px 0 0", fontSize: 13, color: "#6E827A" }}>
                   {upload.fileSize ? fmtSize(upload.fileSize) : ""} · 업로드 중
                 </p>
               </>
@@ -555,7 +554,7 @@ function Documents() {
                       height: 18,
                       borderRadius: "50%",
                       border: "2.5px solid #CFE3D8",
-                      borderTopColor: "#1B7F5C",
+                      borderTopColor: "#16A36A",
                       animation: "spin .9s linear infinite",
                       display: "inline-block",
                     }}
@@ -578,7 +577,7 @@ function Documents() {
                     />
                   ))}
                 </div>
-                <p style={{ margin: "14px 0 0", fontSize: 12.5, lineHeight: 1.55, color: "#6E827A" }}>
+                <p style={{ margin: "14px 0 0", fontSize: 13, lineHeight: 1.55, color: "#6E827A" }}>
                   텍스트 추출 → 항목 판정(룰) → 설명 생성(AI) 순서로 진행돼요. 완료되면 문서
                   뷰어로 이동합니다.
                 </p>
@@ -606,13 +605,13 @@ function Documents() {
                       color: "#B4231A",
                     }}
                   >
-                    <span>▲</span>
+                    <ExclamationCircleIcon style={{ width: 17, height: 17 }} />
                     {FAILS[upload.fail]?.title ?? "분석에 실패했어요"}
                   </div>
                   <p
                     style={{
                       margin: "8px 0 0",
-                      fontSize: 13.5,
+                      fontSize: 14,
                       lineHeight: 1.6,
                       color: "#7A2A22",
                     }}
@@ -622,38 +621,20 @@ function Documents() {
                   </p>
                 </div>
                 <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-                  <button
-                    onClick={closeUpload}
-                    style={{
-                      flex: 1,
-                      height: 46,
-                      borderRadius: 999,
-                      border: "1px solid #DDE3DF",
-                      background: "#fff",
-                      fontSize: 14,
-                      fontWeight: 700,
-                    }}
-                  >
+                  <Button variant="neutral" size="md" onClick={closeUpload} style={{ flex: 1 }}>
                     나중에
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="dark"
+                    size="md"
                     onClick={() =>
                       // 재시도: 데모 실패 플래그를 지워 이번엔 성공 플로우로
                       setUpload({ docKey: upload.docKey, stage: "pick" })
                     }
-                    style={{
-                      flex: 1,
-                      height: 46,
-                      borderRadius: 999,
-                      border: "none",
-                      background: "#0F2A20",
-                      color: "#fff",
-                      fontSize: 14,
-                      fontWeight: 700,
-                    }}
+                    style={{ flex: 1 }}
                   >
                     {FAILS[upload.fail]?.cta ?? "다시 올리기"}
-                  </button>
+                  </Button>
                 </div>
               </>
             )}

@@ -1,10 +1,26 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import {
+  HomeIcon,
+  DocumentTextIcon,
+  ClipboardDocumentCheckIcon,
+  ChatBubbleLeftRightIcon,
+  UserCircleIcon,
+  ScaleIcon,
+} from "@heroicons/react/24/outline";
+import {
+  HomeIcon as HomeIconSolid,
+  DocumentTextIcon as DocumentTextIconSolid,
+  ClipboardDocumentCheckIcon as ClipboardDocumentCheckIconSolid,
+  ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconSolid,
+  UserCircleIcon as UserCircleIconSolid,
+} from "@heroicons/react/24/solid";
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
 import { Logo } from "@/components/logo";
 import { NotificationHost } from "@/components/notifications";
+import { color } from "@/design-system/tokens";
 
 // 탭바 없이 풀스크린으로 쓰는 라우트: 문서 뷰어 + 인증 플로우
 const NO_TAB_ROUTES = ["/", "/login", "/signup", "/signup/consent", "/find-id", "/find-password"];
@@ -93,10 +109,10 @@ export function Shell({ children }) {
             overscrollBehaviorX: "none",
           }}
         >
+          {!isViewer && <NotificationHost />}
           {children}
         </div>
         {!hideTabs && <TabBar />}
-        {!isViewer && <NotificationHost />}
         <GlobalSheets />
         <Toast />
       </div>
@@ -105,11 +121,11 @@ export function Shell({ children }) {
 }
 
 const TABS = [
-  ["/dashboard", "홈", ["/dashboard", "/analysis"]],
-  ["/documents", "서류", ["/documents"]],
-  ["/tasks", "할 일", ["/tasks", "/checklist"]],
-  ["/chat", "상담", ["/chat"]],
-  ["/me", "MY", ["/me"]],
+  ["/dashboard", "홈", ["/dashboard", "/analysis"], HomeIcon, HomeIconSolid],
+  ["/documents", "서류", ["/documents"], DocumentTextIcon, DocumentTextIconSolid],
+  ["/tasks", "할 일", ["/tasks", "/checklist"], ClipboardDocumentCheckIcon, ClipboardDocumentCheckIconSolid],
+  ["/chat", "상담", ["/chat"], ChatBubbleLeftRightIcon, ChatBubbleLeftRightIconSolid],
+  ["/me", "MY", ["/me"], UserCircleIcon, UserCircleIconSolid],
 ];
 
 export function TabBar() {
@@ -120,16 +136,17 @@ export function TabBar() {
       style={{
         flex: "none",
         padding: "8px 8px calc(14px + env(safe-area-inset-bottom))",
-        background: "#fff",
-        borderTop: "1px solid #E3E8E3",
+        background: color.white,
+        borderTop: `1px solid ${color.borderSoft}`,
         display: "grid",
         gridTemplateColumns: "repeat(5,1fr)",
         zIndex: 10,
       }}
     >
-      {TABS.map(([href, label, act]) => {
+      {TABS.map(([href, label, act, Icon, IconSolid]) => {
         const on = act.some((a) => pathname === a || pathname.startsWith(a + "/"));
-        const color = on ? "#1B7F5C" : "#8A968F";
+        const tint = on ? color.primary : color.textTertiary;
+        const TabIcon = on ? IconSolid : Icon;
         return (
           <button
             key={href}
@@ -139,23 +156,14 @@ export function TabBar() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: 4,
+              gap: 3,
               background: "none",
               border: "none",
-              color,
+              color: tint,
               padding: 0,
             }}
           >
-            <span
-              style={{
-                width: 22,
-                height: 22,
-                borderRadius: 7,
-                background: on ? "#1B7F5C" : "transparent",
-                border: `2px solid ${color}`,
-                display: "inline-block",
-              }}
-            />
+            <TabIcon style={{ width: 22, height: 22 }} />
             <span style={{ fontSize: 11, fontWeight: on ? 800 : 500 }}>{label}</span>
           </button>
         );
@@ -176,9 +184,9 @@ export function Toast() {
         bottom: 100,
         padding: "12px 16px",
         borderRadius: 12,
-        background: "#0F2A20",
+        background: "#17211E",
         color: "#fff",
-        fontSize: 13.5,
+        fontSize: 14,
         fontWeight: 600,
         textAlign: "center",
         boxShadow: "0 8px 24px rgba(0,0,0,.25)",
@@ -229,16 +237,14 @@ function GlobalSheets() {
                   height: 34,
                   borderRadius: 10,
                   background: "#EEF6F1",
-                  color: "#1B7F5C",
+                  color: "#16A36A",
                   display: "inline-flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 17,
-                  fontWeight: 800,
                   flex: "none",
                 }}
               >
-                §
+                <ScaleIcon style={{ width: 18, height: 18 }} />
               </span>
               <span style={{ fontSize: 12, fontWeight: 700, color: "#6E827A" }}>법 근거</span>
               <span
@@ -254,7 +260,7 @@ function GlobalSheets() {
                 요약
               </span>
             </div>
-            <div style={{ marginTop: 12, fontSize: 19, fontWeight: 800, lineHeight: 1.4 }}>
+            <div style={{ marginTop: 12, fontSize: 20, fontWeight: 800, lineHeight: 1.4 }}>
               {D.LAWS[law].title}
             </div>
             <p
@@ -270,7 +276,7 @@ function GlobalSheets() {
             >
               {D.LAWS[law].text}
             </p>
-            <div style={{ marginTop: 12, fontSize: 12.5, color: "#6E827A", lineHeight: 1.6 }}>
+            <div style={{ marginTop: 12, fontSize: 13, color: "#6E827A", lineHeight: 1.6 }}>
               {D.LAWS[law].note} · 조문 원문은 법제처 국가법령정보센터(law.go.kr)에서 확인하세요.
               B4SIGN의 요약은 법률 자문이 아니에요.
             </div>
@@ -283,7 +289,7 @@ function GlobalSheets() {
                 justifyContent: "center",
                 height: 48,
                 marginTop: 16,
-                background: "#0F2A20",
+                background: "#17211E",
                 color: "#fff",
                 border: "none",
                 borderRadius: 999,
@@ -315,7 +321,7 @@ function GlobalSheets() {
               maxWidth: 398,
               padding: "14px 16px",
               borderRadius: 16,
-              background: "#0F2A20",
+              background: "#17211E",
               color: "#fff",
               boxShadow: "0 12px 30px rgba(0,0,0,.3)",
               animation: "sheetUp .22s ease",
@@ -367,7 +373,7 @@ export function StatusChip({ st, children }) {
         borderRadius: 999,
         background: st.bg,
         color: st.fg,
-        fontSize: 11.5,
+        fontSize: 12,
         fontWeight: 700,
         flex: "none",
       }}
@@ -387,8 +393,8 @@ export function TermButton({ termKey, children }) {
         border: "none",
         padding: 0,
         font: "inherit",
-        color: "#0F2A20",
-        borderBottom: "1.5px dashed #1B7F5C",
+        color: "#17211E",
+        borderBottom: "1.5px dashed #16A36A",
         lineHeight: 1.2,
         cursor: "pointer",
       }}
@@ -408,12 +414,15 @@ export function LawButton({ lawKey, short }) {
         borderRadius: 6,
         border: "1px solid #DDE3DF",
         background: "#fff",
-        fontSize: 11.5,
+        fontSize: 12,
         fontWeight: 700,
         color: "#4B6157",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 4,
       }}
     >
-      § {short}
+      <ScaleIcon style={{ width: 13, height: 13 }} /> {short}
     </button>
   );
 }
@@ -446,18 +455,16 @@ export function LawRow({ lawKey }) {
           height: 28,
           borderRadius: 8,
           background: "#EEF6F1",
-          color: "#1B7F5C",
+          color: "#16A36A",
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: 14,
-          fontWeight: 800,
         }}
       >
-        §
+        <ScaleIcon style={{ width: 15, height: 15 }} />
       </span>
       <span style={{ flex: 1, minWidth: 0 }}>
-        <span style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#8A968F" }}>
+        <span style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#5A6660" }}>
           법 근거 · 요약 보기
         </span>
         <span
@@ -465,7 +472,7 @@ export function LawRow({ lawKey }) {
             display: "block",
             fontSize: 13,
             fontWeight: 700,
-            color: "#0F2A20",
+            color: "#17211E",
             marginTop: 1,
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -475,7 +482,7 @@ export function LawRow({ lawKey }) {
           {law.title}
         </span>
       </span>
-      <span style={{ flex: "none", fontSize: 15, color: "#8A968F" }}>›</span>
+      <span style={{ flex: "none", fontSize: 15, color: "#5A6660" }}>›</span>
     </button>
   );
 }

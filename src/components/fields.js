@@ -107,8 +107,8 @@ export function AddressField({ base, detail, onBase, onDetail }) {
               cursor: "pointer",
             }}
           >
-            <span style={{ fontSize: 14.5, lineHeight: 1.4, color: "#0F2A20" }}>{base}</span>
-            <span style={{ flex: "none", fontSize: 12, color: "#1B7F5C", fontWeight: 700 }}>
+            <span style={{ fontSize: 15, lineHeight: 1.4, color: "#17211E" }}>{base}</span>
+            <span style={{ flex: "none", fontSize: 12, color: "#16A36A", fontWeight: 700 }}>
               재검색
             </span>
           </button>
@@ -238,7 +238,7 @@ export function DateField({ value, onChange, placeholder, marks = [] }) {
             borderRadius: 10,
             border: "none",
             background: "#EEF6F1",
-            color: "#1B7F5C",
+            color: "#16A36A",
             fontSize: 16,
           }}
         >
@@ -311,7 +311,7 @@ function CalendarSheet({ title, value, marks, onClose, onSelect }) {
             >
               ‹
             </button>
-            <span style={{ fontSize: 14.5, fontWeight: 700, minWidth: 92, textAlign: "center" }}>
+            <span style={{ fontSize: 15, fontWeight: 700, minWidth: 92, textAlign: "center" }}>
               {y}년 {m + 1}월
             </span>
             <button
@@ -336,9 +336,9 @@ function CalendarSheet({ title, value, marks, onClose, onSelect }) {
               key={w}
               style={{
                 textAlign: "center",
-                fontSize: 11.5,
+                fontSize: 12,
                 fontWeight: 700,
-                color: i === 0 ? "#C25A50" : i === 6 ? "#4A6FA5" : "#8A968F",
+                color: i === 0 ? "#C25A50" : i === 6 ? "#4A6FA5" : "#5A6660",
                 padding: "6px 0",
               }}
             >
@@ -372,10 +372,10 @@ function CalendarSheet({ title, value, marks, onClose, onSelect }) {
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 14.5,
+                    fontSize: 15,
                     fontWeight: sel || mk ? 800 : 500,
-                    background: sel ? "#1B7F5C" : "transparent",
-                    color: sel ? "#fff" : mk ? mk.color : isToday(d) ? "#1B7F5C" : "#0F2A20",
+                    background: sel ? "#16A36A" : "transparent",
+                    color: sel ? "#fff" : mk ? mk.color : isToday(d) ? "#16A36A" : "#17211E",
                     border: sel
                       ? "none"
                       : mk
@@ -448,7 +448,7 @@ const navBtn = {
   border: "1px solid #E3E8E3",
   background: "#fff",
   fontSize: 16,
-  color: "#0F2A20",
+  color: "#17211E",
 };
 
 // ─── 부드러운 접기/펼치기 (grid-rows 트랜지션) ───

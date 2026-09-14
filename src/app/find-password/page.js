@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeftIcon, CheckIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { Button } from "@/design-system";
 
 const TITLES = {
   email: "비밀번호 찾기",
@@ -22,21 +24,6 @@ const inputStyle = {
   width: "100%",
 };
 
-const cta = (bg = "#0F2A20") => ({
-  display: "flex",
-  width: "100%",
-  alignItems: "center",
-  justifyContent: "center",
-  height: 52,
-  marginTop: 20,
-  background: bg,
-  color: "#fff",
-  border: "none",
-  borderRadius: 999,
-  fontWeight: 700,
-  fontSize: 16,
-});
-
 export default function FindPassword() {
   const router = useRouter();
   const [step, setStep] = useState("email"); // email | sent | reset | done | expired
@@ -48,9 +35,9 @@ export default function FindPassword() {
       <div style={{ display: "flex", alignItems: "center", height: 52, padding: "0 12px", flex: "none" }}>
         <button
           onClick={() => router.push("/login")}
-          style={{ background: "none", border: "none", fontSize: 22, color: "#0F2A20", padding: "6px 10px" }}
+          style={{ background: "none", border: "none", color: "#17211E", padding: "6px 10px", display: "flex" }}
         >
-          ‹
+          <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
       </div>
       <div style={{ padding: "8px 20px 32px", flex: 1 }}>
@@ -69,15 +56,16 @@ export default function FindPassword() {
               placeholder="이메일"
               style={{ ...inputStyle, marginTop: 24 }}
             />
-            <button
+            <Button
+              variant="dark"
               onClick={() => {
                 if (!email) setEmail("dlminji@gmail.com");
                 setStep("sent");
               }}
-              style={cta()}
+              style={{ marginTop: 20, fontSize: 16 }}
             >
               재설정 메일 보내기
-            </button>
+            </Button>
           </>
         )}
 
@@ -97,17 +85,15 @@ export default function FindPassword() {
                   width: 48,
                   height: 48,
                   borderRadius: "50%",
-                  background: "#1B7F5C",
+                  background: "#16A36A",
                   color: "#fff",
                   margin: "0 auto",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 22,
-                  fontWeight: 900,
                 }}
               >
-                ✓
+                <CheckIcon style={{ width: 22, height: 22 }} />
               </div>
               <div style={{ marginTop: 12, fontSize: 15, fontWeight: 700 }}>메일을 보냈어요</div>
               <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
@@ -116,25 +102,9 @@ export default function FindPassword() {
                 링크는 30분 동안 유효해요. 스팸함도 확인해 주세요.
               </p>
             </div>
-            <button
-              onClick={() => setStep("reset")}
-              style={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 48,
-                marginTop: 20,
-                background: "#fff",
-                color: "#1B7F5C",
-                border: "1px solid #CFE3D8",
-                borderRadius: 999,
-                fontWeight: 700,
-                fontSize: 14,
-              }}
-            >
+            <Button variant="secondary" size="md" onClick={() => setStep("reset")} style={{ marginTop: 20, fontSize: 14 }}>
               (데모) 메일의 링크 열기
-            </button>
+            </Button>
             <button
               onClick={() => setStep("expired")}
               style={{
@@ -143,7 +113,7 @@ export default function FindPassword() {
                 background: "none",
                 border: "none",
                 color: "#6E827A",
-                fontSize: 12.5,
+                fontSize: 13,
                 textDecoration: "underline",
               }}
             >
@@ -167,9 +137,9 @@ export default function FindPassword() {
               />
               <input type="password" placeholder="새 비밀번호 확인" style={inputStyle} />
             </div>
-            <button onClick={() => setStep("done")} style={cta()}>
+            <Button variant="dark" onClick={() => setStep("done")} style={{ marginTop: 20, fontSize: 16 }}>
               비밀번호 변경
-            </button>
+            </Button>
           </>
         )}
 
@@ -189,9 +159,9 @@ export default function FindPassword() {
                 새 비밀번호로 로그인해 주세요.
               </p>
             </div>
-            <button onClick={() => router.push("/login")} style={cta("#1B7F5C")}>
+            <Button onClick={() => router.push("/login")} style={{ marginTop: 20, fontSize: 16 }}>
               로그인으로
-            </button>
+            </Button>
           </>
         )}
 
@@ -216,15 +186,15 @@ export default function FindPassword() {
                   color: "#B4231A",
                 }}
               >
-                <span>▲</span>링크가 만료됐어요
+                <ExclamationCircleIcon style={{ width: 17, height: 17 }} />링크가 만료됐어요
               </div>
               <p style={{ margin: "8px 0 0", fontSize: 13, lineHeight: 1.55, color: "#7A2A22" }}>
                 재설정 링크는 30분 동안만 유효해요. 새 링크를 다시 요청해 주세요.
               </p>
             </div>
-            <button onClick={() => setStep("email")} style={cta()}>
+            <Button variant="dark" onClick={() => setStep("email")} style={{ marginTop: 20, fontSize: 16 }}>
               다시 요청하기
-            </button>
+            </Button>
           </>
         )}
       </div>

@@ -16,7 +16,7 @@ function Toggle({ on, disabled, onClick }) {
         height: 30,
         borderRadius: 15,
         border: "none",
-        background: on ? "#1B7F5C" : "#C9D2CC",
+        background: on ? "#16A36A" : "#C9D2CC",
         position: "relative",
         padding: 0,
         transition: "background .2s",
@@ -65,7 +65,7 @@ export default function Me() {
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", height: 52, padding: "0 20px", flex: "none" }}>
-        <span style={{ fontSize: 18, fontWeight: 800 }}>내 정보</span>
+        <span style={{ fontSize: 17, fontWeight: 800 }}>내 정보</span>
       </div>
       <div
         style={{
@@ -82,9 +82,9 @@ export default function Me() {
               width: 48,
               height: 48,
               borderRadius: "50%",
-              background: "#1B7F5C",
+              background: "#16A36A",
               color: "#fff",
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: 800,
               display: "inline-flex",
               alignItems: "center",
@@ -104,7 +104,7 @@ export default function Me() {
                   border: "none",
                   padding: 0,
                   fontSize: 12,
-                  color: "#1B7F5C",
+                  color: "#16A36A",
                   fontWeight: 700,
                 }}
               >
@@ -123,7 +123,7 @@ export default function Me() {
               borderRadius: 999,
               background: "#FEE500",
               color: "#191919",
-              fontSize: 11.5,
+              fontSize: 12,
               fontWeight: 700,
             }}
           >
@@ -207,8 +207,8 @@ export default function Me() {
                 background: "none",
                 border: "none",
                 padding: 0,
-                fontSize: 12.5,
-                color: "#1B7F5C",
+                fontSize: 13,
+                color: "#16A36A",
                 fontWeight: 700,
               }}
             >
@@ -292,7 +292,7 @@ export default function Me() {
         {/* 데이터 */}
         <div style={{ ...card, padding: "14px 16px" }}>
           <div style={{ fontSize: 15, fontWeight: 700 }}>데이터</div>
-          <p style={{ margin: "6px 0 0", fontSize: 12.5, lineHeight: 1.55, color: "#4B6157" }}>
+          <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
             업로드한 PDF는 마스킹 후 저장되며 계정 삭제 없이도 지울 수 있어요. 분석 결과는
             유지돼요.
           </p>
@@ -305,9 +305,9 @@ export default function Me() {
               borderRadius: 999,
               border: "1px solid #DDE3DF",
               background: "#fff",
-              fontSize: 13.5,
+              fontSize: 14,
               fontWeight: 700,
-              color: "#0F2A20",
+              color: "#17211E",
             }}
           >
             업로드한 서류 전부 삭제
@@ -326,7 +326,7 @@ export default function Me() {
             background: "#fff",
             fontSize: 14,
             fontWeight: 700,
-            color: "#0F2A20",
+            color: "#17211E",
           }}
         >
           로그아웃
@@ -372,7 +372,7 @@ export default function Me() {
             <div style={{ fontSize: 17, fontWeight: 800 }}>
               이 케이스의 서류를 모두 삭제할까요?
             </div>
-            <p style={{ margin: "10px 0 0", fontSize: 13.5, lineHeight: 1.6, color: "#4B6157" }}>
+            <p style={{ margin: "10px 0 0", fontSize: 14, lineHeight: 1.6, color: "#4B6157" }}>
               원본 PDF와 페이지 이미지가 삭제돼요. 분석 결과와 할 일은 남아 있고, 서류를 다시
               올리면 재분석돼요.
             </p>
@@ -439,7 +439,7 @@ export default function Me() {
             }}
           >
             <div style={{ fontSize: 12, fontWeight: 700, color: "#B4231A" }}>1 / 2</div>
-            <div style={{ marginTop: 4, fontSize: 18, fontWeight: 800 }}>
+            <div style={{ marginTop: 4, fontSize: 17, fontWeight: 800 }}>
               탈퇴하면 이런 것들이 삭제돼요
             </div>
             <div
@@ -464,7 +464,7 @@ export default function Me() {
                 </div>
               ))}
             </div>
-            <p style={{ margin: "14px 0 0", fontSize: 12.5, lineHeight: 1.55, color: "#6E827A" }}>
+            <p style={{ margin: "14px 0 0", fontSize: 13, lineHeight: 1.55, color: "#6E827A" }}>
               삭제 후 복구할 수 없어요. 서류만 지우고 싶다면 &lsquo;업로드한 서류 전부
               삭제&rsquo;를 이용하세요.
             </p>
@@ -490,7 +490,7 @@ export default function Me() {
                   height: 46,
                   borderRadius: 999,
                   border: "none",
-                  background: "#0F2A20",
+                  background: "#17211E",
                   color: "#fff",
                   fontSize: 14,
                   fontWeight: 700,
@@ -527,11 +527,11 @@ export default function Me() {
             }}
           >
             <div style={{ fontSize: 12, fontWeight: 700, color: "#B4231A" }}>2 / 2</div>
-            <div style={{ marginTop: 4, fontSize: 18, fontWeight: 800 }}>
+            <div style={{ marginTop: 4, fontSize: 17, fontWeight: 800 }}>
               확인 문구를 입력해 주세요
             </div>
-            <p style={{ margin: "8px 0 0", fontSize: 13.5, color: "#4B6157" }}>
-              아래 칸에 <b style={{ color: "#0F2A20" }}>탈퇴합니다</b>를 그대로 입력하세요.
+            <p style={{ margin: "8px 0 0", fontSize: 14, color: "#4B6157" }}>
+              아래 칸에 <b style={{ color: "#17211E" }}>탈퇴합니다</b>를 그대로 입력하세요.
             </p>
             <input
               value={delText}

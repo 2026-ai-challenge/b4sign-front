@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CheckIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
+import { Button, Card } from "@/design-system";
 
 export default function Consent() {
   const router = useRouter();
@@ -27,8 +29,8 @@ export default function Consent() {
     width: 24,
     height: 24,
     borderRadius: 8,
-    border: `2px solid ${on ? "#1B7F5C" : "#C9D2CC"}`,
-    background: on ? "#1B7F5C" : "#fff",
+    border: `2px solid ${on ? "#16A36A" : "#C9D2CC"}`,
+    background: on ? "#16A36A" : "#fff",
     color: "#fff",
     display: "inline-flex",
     alignItems: "center",
@@ -48,7 +50,7 @@ export default function Consent() {
           flex: 1,
         }}
       >
-        <div style={{ fontSize: 12, fontWeight: 700, color: "#1B7F5C" }}>마지막 단계</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#16A36A" }}>마지막 단계</div>
         <h1
           style={{
             margin: "6px 0 0",
@@ -63,26 +65,18 @@ export default function Consent() {
           동의해 주세요
         </h1>
 
-        <button
+        <Card
+          as="button"
+          interactive
+          radius={14}
           onClick={() =>
             setChecks(Object.fromEntries(Object.keys(checks).map((k) => [k, !all])))
           }
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            marginTop: 24,
-            padding: 14,
-            borderRadius: 14,
-            background: "#fff",
-            border: "1px solid #E3E8E3",
-            textAlign: "left",
-            width: "100%",
-          }}
+          style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 24, padding: 14 }}
         >
-          <span style={checkbox(all)}>{all ? "✓" : ""}</span>
+          <span style={checkbox(all)}>{all && <CheckIcon style={{ width: 14, height: 14 }} />}</span>
           <span style={{ fontSize: 15, fontWeight: 700 }}>전체 동의</span>
-        </button>
+        </Card>
 
         <div style={{ display: "flex", flexDirection: "column", marginTop: 8 }}>
           {D.CONSENT_ITEMS.map((c) => (
@@ -100,7 +94,7 @@ export default function Consent() {
                 onClick={() => setChecks((s) => ({ ...s, [c.key]: !s[c.key] }))}
                 style={checkbox(checks[c.key])}
               >
-                {checks[c.key] ? "✓" : ""}
+                {checks[c.key] && <CheckIcon style={{ width: 14, height: 14 }} />}
               </button>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div
@@ -114,7 +108,7 @@ export default function Consent() {
                   <span style={{ fontSize: 14, fontWeight: 600 }}>
                     <span
                       style={{
-                        color: c.req === "[필수]" ? "#1B7F5C" : "#8A968F",
+                        color: c.req === "[필수]" ? "#16A36A" : "#5A6660",
                         fontWeight: 700,
                       }}
                     >
@@ -149,11 +143,11 @@ export default function Consent() {
 
         <div style={{ flex: 1 }} />
         {blocked && (
-          <div style={{ marginTop: 16, fontSize: 12.5, color: "#7A4E00", textAlign: "center" }}>
+          <div style={{ marginTop: 16, fontSize: 13, color: "#7A4E00", textAlign: "center" }}>
             필수 항목 {missing}개에 동의해야 시작할 수 있어요
           </div>
         )}
-        <button
+        <Button
           onClick={() => {
             if (blocked) return;
             setConsented(true);
@@ -161,24 +155,10 @@ export default function Consent() {
             router.push("/cases/new");
           }}
           disabled={blocked}
-          style={{
-            display: "flex",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 52,
-            marginTop: 10,
-            background: blocked ? "#B9C2BC" : "#1B7F5C",
-            color: "#fff",
-            border: "none",
-            borderRadius: 999,
-            fontWeight: 700,
-            fontSize: 16,
-            cursor: blocked ? "default" : "pointer",
-          }}
+          style={{ marginTop: 10, fontSize: 16 }}
         >
           동의하고 시작하기
-        </button>
+        </Button>
       </div>
 
       {/* 약관 전문 바텀시트 */}
@@ -221,7 +201,7 @@ export default function Consent() {
             <p
               style={{
                 margin: "12px 0 0",
-                fontSize: 13.5,
+                fontSize: 14,
                 lineHeight: 1.7,
                 color: "#2E463C",
                 whiteSpace: "pre-line",

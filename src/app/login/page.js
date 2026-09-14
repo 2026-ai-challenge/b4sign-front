@@ -2,26 +2,28 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeftIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { api, setToken } from "@/lib/api";
+import { Button } from "@/design-system";
 
 const ERR = {
   cred: {
     bg: "#FDE8E4",
     fg: "#B4231A",
-    glyph: "▲",
+    Icon: ExclamationCircleIcon,
     text: "이메일 또는 비밀번호가 맞지 않아요. 5회 이상 틀리면 잠시 잠겨요.",
   },
   social: {
     bg: "#FFF1D6",
     fg: "#7A4E00",
-    glyph: "!",
+    Icon: ExclamationTriangleIcon,
     text: "이 이메일은 카카오로 가입되어 있어요. 위의 카카오 버튼으로 로그인해 주세요.",
   },
   lock: {
     bg: "#FDE8E4",
     fg: "#B4231A",
-    glyph: "▲",
+    Icon: ExclamationCircleIcon,
     text: "로그인 시도가 너무 많아요. 15분 후 다시 시도해 주세요. (429)",
   },
 };
@@ -81,9 +83,9 @@ export default function Login() {
       <div style={{ display: "flex", alignItems: "center", height: 52, padding: "0 12px", flex: "none" }}>
         <button
           onClick={() => router.push("/")}
-          style={{ background: "none", border: "none", fontSize: 22, color: "#0F2A20", padding: "6px 10px" }}
+          style={{ background: "none", border: "none", color: "#17211E", padding: "6px 10px", display: "flex" }}
         >
-          ‹
+          <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
       </div>
       <div style={{ padding: "8px 20px 32px", display: "flex", flexDirection: "column", flex: 1 }}>
@@ -206,29 +208,13 @@ export default function Login() {
               gap: 8,
             }}
           >
-            <span style={{ fontWeight: 900 }}>{e.glyph}</span>
+            <e.Icon style={{ width: 16, height: 16, flex: "none" }} />
             <span>{e.text}</span>
           </div>
         )}
-        <button
-          onClick={emailLogin}
-          style={{
-            display: "flex",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 52,
-            marginTop: 14,
-            background: "#0F2A20",
-            color: "#fff",
-            border: "none",
-            borderRadius: 999,
-            fontWeight: 700,
-            fontSize: 16,
-          }}
-        >
+        <Button variant="dark" onClick={emailLogin} style={{ marginTop: 14, fontSize: 16 }}>
           로그인
-        </button>
+        </Button>
         <div
           style={{
             display: "flex",
@@ -241,7 +227,7 @@ export default function Login() {
         >
           <button
             onClick={() => router.push("/signup")}
-            style={{ background: "none", border: "none", color: "#1B7F5C", fontWeight: 700, fontSize: 13, padding: 0 }}
+            style={{ background: "none", border: "none", color: "#16A36A", fontWeight: 700, fontSize: 13, padding: 0 }}
           >
             회원가입
           </button>
@@ -271,7 +257,7 @@ export default function Login() {
               padding: "10px 12px",
               borderRadius: 10,
               background: "#F1F3F1",
-              fontSize: 11.5,
+              fontSize: 12,
               lineHeight: 1.6,
               color: "#6E827A",
             }}

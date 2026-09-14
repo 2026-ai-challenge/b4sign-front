@@ -2,9 +2,26 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  ChevronLeftIcon,
+  ChevronDownIcon,
+  CheckCircleIcon,
+  QuestionMarkCircleIcon,
+  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
+  ClockIcon,
+} from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, caseCounts, ddInfo } from "@/lib/derive";
 import { TypeBadge, LawRow, TermButton } from "@/components/ui";
+import { Button, Card } from "@/design-system";
+
+const STATUS_ICON = {
+  safe: CheckCircleIcon,
+  unknown: QuestionMarkCircleIcon,
+  warn: ExclamationTriangleIcon,
+  danger: ExclamationCircleIcon,
+};
 
 export default function AnalysisPage() {
   return (
@@ -15,10 +32,10 @@ export default function AnalysisPage() {
 }
 
 const ST_LABEL = {
-  danger: ["▲ 위험", "#FDE8E4", "#B4231A"],
-  warn: ["! 주의", "#FFF1D6", "#7A4E00"],
-  safe: ["✓ 좋음", "#E3F3E9", "#14613F"],
-  unknown: ["? 확인 불가", "#ECEEEC", "#5A6660"],
+  danger: ["위험", "#FDE8E4", "#B4231A"],
+  warn: ["주의", "#FFF1D6", "#7A4E00"],
+  safe: ["좋음", "#E3F3E9", "#14613F"],
+  unknown: ["확인 불가", "#ECEEEC", "#5A6660"],
 };
 
 function Analysis() {
@@ -81,12 +98,12 @@ function Analysis() {
           style={{
             background: "none",
             border: "none",
-            fontSize: 22,
-            color: "#0F2A20",
+            color: "#17211E",
             padding: "6px 10px",
+            display: "flex",
           }}
         >
-          ‹
+          <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
         <span style={{ fontSize: 17, fontWeight: 800 }}>분석 결과</span>
         <span
@@ -98,14 +115,7 @@ function Analysis() {
 
       <div style={{ padding: "4px 20px 0" }}>
         {/* 종합 카드 */}
-        <div
-          style={{
-            padding: 18,
-            borderRadius: 20,
-            background: "#fff",
-            border: "1px solid #E3E8E3",
-          }}
-        >
+        <Card radius={20} style={{ padding: 18 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             <span
               style={{
@@ -120,7 +130,11 @@ function Analysis() {
                 fontWeight: 800,
               }}
             >
-              {overall.glyph} 종합 {overall.label}
+              {(() => {
+                const OverallIcon = STATUS_ICON[overall.key];
+                return OverallIcon ? <OverallIcon style={{ width: 14, height: 14 }} /> : null;
+              })()}
+              종합 {overall.label}
             </span>
             <TypeBadge type={cur.type} />
             <span style={{ fontSize: 12, color: "#6E827A" }}>{cur.short}</span>
@@ -131,11 +145,15 @@ function Analysis() {
           <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
             {Object.entries(ST_LABEL).map(([k, [label, bg, fg]]) => {
               const on = st === k;
+              const FilterIcon = STATUS_ICON[k];
               return (
                 <button
                   key={k}
                   onClick={() => router.replace(on ? "/analysis" : `/analysis?st=${k}`)}
                   style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
                     padding: "5px 10px",
                     borderRadius: 999,
                     background: bg,
@@ -147,12 +165,13 @@ function Analysis() {
                     cursor: "pointer",
                   }}
                 >
+                  <FilterIcon style={{ width: 12, height: 12 }} />
                   {label} {counts[k]}
                 </button>
               );
             })}
           </div>
-        </div>
+        </Card>
 
         {/* 필터 배너 */}
         {st && (
@@ -208,18 +227,16 @@ function Analysis() {
               <span style={{ fontSize: 13, fontWeight: 700, color: "#14613F" }}>
                 재업로드 후 변경점 · 새 위험 1 · 해소 1
               </span>
-              <span style={{ fontSize: 12, color: "#1B7F5C" }}>
+              <span style={{ fontSize: 12, color: "#16A36A" }}>
                 {showDiff ? "접기" : "보기"}
               </span>
             </button>
             {showDiff && (
-              <div
+              <Card
+                radius={14}
                 style={{
                   marginTop: 8,
                   padding: "14px 16px",
-                  borderRadius: 14,
-                  background: "#fff",
-                  border: "1px solid #E3E8E3",
                   display: "flex",
                   flexDirection: "column",
                   gap: 10,
@@ -261,7 +278,7 @@ function Analysis() {
                     임대인 주민번호 마스킹 누락 — 계약서 v2에서 수정
                   </span>
                 </div>
-              </div>
+              </Card>
             )}
           </>
         )}
@@ -277,15 +294,7 @@ function Analysis() {
         }}
       >
         {sections.map((sec) => (
-          <div
-            key={sec.key}
-            style={{
-              borderRadius: 20,
-              background: "#fff",
-              border: "1px solid #E3E8E3",
-              overflow: "hidden",
-            }}
-          >
+          <Card key={sec.key} radius={20} style={{ overflow: "hidden" }}>
             <button
               onClick={() => setOpenSec((s) => ({ ...s, [sec.key]: !s[sec.key] }))}
               style={{
@@ -300,7 +309,7 @@ function Analysis() {
               }}
             >
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: "#0F2A20" }}>{sec.title}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#17211E" }}>{sec.title}</div>
                 <div style={{ marginTop: 2, fontSize: 12, color: "#6E827A" }}>{sec.source}</div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -313,21 +322,25 @@ function Analysis() {
                     borderRadius: 999,
                     background: sec.worst.bg,
                     color: sec.worst.fg,
-                    fontSize: 11.5,
+                    fontSize: 12,
                     fontWeight: 700,
                   }}
                 >
-                  {sec.worst.glyph} {sec.worst.label}
+                  {(() => {
+                    const WorstIcon = sec.worst.label === "기한" ? ClockIcon : STATUS_ICON[sec.worst.key];
+                    return WorstIcon ? <WorstIcon style={{ width: 12, height: 12 }} /> : null;
+                  })()}
+                  {sec.worst.label}
                 </span>
                 <span
                   style={{
-                    fontSize: 12,
                     color: "#6E827A",
                     transform: openSec[sec.key] ? "rotate(180deg)" : "none",
-                    display: "inline-block",
+                    display: "inline-flex",
+                    transition: "transform .2s",
                   }}
                 >
-                  ▼
+                  <ChevronDownIcon style={{ width: 14, height: 14 }} />
                 </span>
               </div>
             </button>
@@ -376,11 +389,12 @@ function Analysis() {
                                 display: "inline-flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                fontSize: 14,
-                                fontWeight: 900,
                               }}
                             >
-                              {st.glyph}
+                              {(() => {
+                                const ItemIcon = STATUS_ICON[it.st] || QuestionMarkCircleIcon;
+                                return <ItemIcon style={{ width: 16, height: 16 }} />;
+                              })()}
                             </span>
                             <div style={{ minWidth: 0 }}>
                               <div style={{ fontSize: 12, fontWeight: 700, color: st.fg }}>
@@ -391,7 +405,7 @@ function Analysis() {
                                   fontSize: 16,
                                   fontWeight: 700,
                                   lineHeight: 1.35,
-                                  color: "#0F2A20",
+                                  color: "#17211E",
                                 }}
                               >
                                 {it.title}
@@ -409,11 +423,11 @@ function Analysis() {
                               color: "#4B6157",
                             }}
                           >
-                            <Row label="근거" bg="#EEF6F1" fg="#1B7F5C">
+                            <Row label="근거" bg="#EEF6F1" fg="#16A36A">
                               {it.evidence}
                             </Row>
                             {it.compare && (
-                              <Row label="비교" bg="#EEF6F1" fg="#1B7F5C">
+                              <Row label="비교" bg="#EEF6F1" fg="#16A36A">
                                 {it.compare}
                               </Row>
                             )}
@@ -513,28 +527,17 @@ function Analysis() {
                                 fontWeight: 700,
                               }}
                             >
-                              ✓ 할 일에 있음
+                              <CheckCircleIcon style={{ width: 15, height: 15 }} />
+                              할 일에 있음
                             </span>
                           ) : (
-                            <button
+                            <Button
+                              size="sm"
                               onClick={() => addTaskFromItem(caseId, it)}
-                              style={{
-                                flex: "none",
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: 6,
-                                height: 38,
-                                padding: "0 14px",
-                                borderRadius: 999,
-                                border: "none",
-                                background: "#1B7F5C",
-                                color: "#fff",
-                                fontSize: 13,
-                                fontWeight: 700,
-                              }}
+                              style={{ display: "inline-flex", width: "auto", padding: "0 14px" }}
                             >
                               + 할 일에 추가
-                            </button>
+                            </Button>
                           ))}
                       </div>
                     </div>
@@ -542,7 +545,7 @@ function Analysis() {
                 })}
               </div>
             )}
-          </div>
+          </Card>
         ))}
       </div>
 
@@ -554,7 +557,7 @@ function Analysis() {
           background: "rgba(250,250,247,.92)",
           backdropFilter: "blur(8px)",
           borderTop: "1px solid #E3E8E3",
-          fontSize: 11.5,
+          fontSize: 12,
           lineHeight: 1.5,
           color: "#6E827A",
           textAlign: "center",

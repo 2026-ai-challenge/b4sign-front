@@ -5,7 +5,7 @@ body {
   overflow-x: hidden;
   overscroll-behavior-x: none;
   background: #e9eae4;
-  color: #0f2a20;
+  color: #17211E;
   font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
@@ -16,11 +16,11 @@ body {
 }
 
 a {
-  color: #1b7f5c;
+  color: #176B57;
   text-decoration: none;
 }
 a:hover {
-  color: #14613f;
+  color: #14613F;
 }
 
 button {

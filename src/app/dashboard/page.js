@@ -2,6 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  ChevronDownIcon,
+  CalculatorIcon,
+  ArchiveBoxIcon,
+  CheckCircleIcon,
+  QuestionMarkCircleIcon,
+  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import {
   D,
@@ -18,6 +27,14 @@ import {
 } from "@/lib/derive";
 import { TypeBadge, StatusChip } from "@/components/ui";
 import { Collapse } from "@/components/fields";
+import { Button, Card } from "@/design-system";
+
+const STATUS_ICON = {
+  safe: CheckCircleIcon,
+  unknown: QuestionMarkCircleIcon,
+  warn: ExclamationTriangleIcon,
+  danger: ExclamationCircleIcon,
+};
 
 export default function Dashboard() {
   const router = useRouter();
@@ -69,7 +86,7 @@ export default function Dashboard() {
             padding: 0,
             fontSize: 16,
             fontWeight: 800,
-            color: "#0F2A20",
+            color: "#17211E",
             maxWidth: 280,
           }}
         >
@@ -83,7 +100,7 @@ export default function Dashboard() {
           >
             {cur.short}
           </span>
-          <span style={{ fontSize: 11, color: "#6E827A" }}>▼</span>
+          <ChevronDownIcon style={{ width: 13, height: 13, color: "#6E827A", flex: "none" }} />
         </button>
         <button
           onClick={() => router.push("/me")}
@@ -91,7 +108,7 @@ export default function Dashboard() {
             width: 32,
             height: 32,
             borderRadius: "50%",
-            background: "#1B7F5C",
+            background: "#16A36A",
             color: "#fff",
             border: "none",
             fontSize: 13,
@@ -135,9 +152,9 @@ export default function Dashboard() {
                 borderRadius: 10,
                 border: "none",
                 background: c.id === caseId ? "#EEF6F1" : "#fff",
-                fontSize: 13.5,
+                fontSize: 14,
                 fontWeight: 600,
-                color: "#0F2A20",
+                color: "#17211E",
               }}
             >
               <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -159,9 +176,9 @@ export default function Dashboard() {
               borderRadius: 10,
               border: "none",
               background: "#fff",
-              fontSize: 13.5,
+              fontSize: 14,
               fontWeight: 600,
-              color: "#0F2A20",
+              color: "#17211E",
             }}
           >
             + 새 케이스 만들기
@@ -172,10 +189,10 @@ export default function Dashboard() {
       {!hasAnyDoc ? (
         // 빈 상태
         <div style={{ padding: "8px 20px 32px" }}>
-          <div
+          <Card
+            radius={20}
             style={{
               padding: "24px 20px",
-              borderRadius: 20,
               background: "linear-gradient(#EEF6F1,#fff)",
               border: "1px solid #DCE9E1",
             }}
@@ -185,7 +202,7 @@ export default function Dashboard() {
                 width: 44,
                 height: 44,
                 borderRadius: 14,
-                background: "#1B7F5C",
+                background: "#16A36A",
                 color: "#fff",
                 display: "flex",
                 alignItems: "center",
@@ -202,42 +219,19 @@ export default function Dashboard() {
             <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: 1.6, color: "#4B6157" }}>
               등기부등본부터 올리면 소유자·담보 위험을 먼저 볼 수 있어요.
             </p>
-            <button
-              onClick={() => router.push("/documents?upload=registry")}
-              style={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 50,
-                marginTop: 18,
-                background: "#1B7F5C",
-                color: "#fff",
-                border: "none",
-                borderRadius: 999,
-                fontWeight: 700,
-                fontSize: 15,
-              }}
-            >
+            <Button onClick={() => router.push("/documents?upload=registry")} style={{ marginTop: 18 }}>
               등기부등본 올리기
-            </button>
-          </div>
+            </Button>
+          </Card>
           <div style={{ marginTop: 20, fontSize: 13, fontWeight: 700, color: "#6E827A" }}>
             {typ.label} 추천 순서
           </div>
           <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
             {docList.map((d, i) => (
-              <div
+              <Card
                 key={d.key}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: "12px 14px",
-                  borderRadius: 14,
-                  background: "#fff",
-                  border: "1px solid #E3E8E3",
-                }}
+                radius={14}
+                style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px" }}
               >
                 <span
                   style={{
@@ -245,7 +239,7 @@ export default function Dashboard() {
                     height: 24,
                     borderRadius: "50%",
                     background: "#EEF6F1",
-                    color: "#1B7F5C",
+                    color: "#16A36A",
                     fontSize: 12,
                     fontWeight: 800,
                     display: "inline-flex",
@@ -260,7 +254,7 @@ export default function Dashboard() {
                   <div style={{ fontSize: 12, color: "#6E827A" }}>{d.where}</div>
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#6E827A" }}>{d.req}</span>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -274,14 +268,7 @@ export default function Dashboard() {
           }}
         >
           {/* 케이스 카드 */}
-          <div
-            style={{
-              padding: 18,
-              borderRadius: 20,
-              background: "#fff",
-              border: "1px solid #E3E8E3",
-            }}
-          >
+          <Card radius={20} style={{ padding: 18 }}>
             <div
               style={{
                 display: "flex",
@@ -312,7 +299,11 @@ export default function Dashboard() {
                   fontWeight: 700,
                 }}
               >
-                {overall.glyph} {overall.label}
+                {(() => {
+                  const OverallIcon = STATUS_ICON[overall.key];
+                  return OverallIcon ? <OverallIcon style={{ width: 13, height: 13 }} /> : null;
+                })()}
+                {overall.label}
               </span>
             </div>
             <div
@@ -343,7 +334,7 @@ export default function Dashboard() {
                           display: "block",
                           height: "100%",
                           width: `${p.pct}%`,
-                          background: "#1B7F5C",
+                          background: "#16A36A",
                           borderRadius: 2,
                           transition: "width .4s ease",
                         }}
@@ -351,14 +342,14 @@ export default function Dashboard() {
                     </span>
                     <span
                       style={{
-                        fontSize: 10.5,
+                        fontSize: 11,
                         fontWeight: isCur || (progress.allDone && i === typ.phases.length - 1) ? 800 : 500,
                         color:
                           p.pct === 100
                             ? "#14613F"
                             : isCur
-                              ? "#0F2A20"
-                              : "#8A968F",
+                              ? "#17211E"
+                              : "#5A6660",
                       }}
                     >
                       {p.pct === 100 ? "✓ " : ""}
@@ -368,11 +359,11 @@ export default function Dashboard() {
                 );
               })}
             </div>
-          </div>
+          </Card>
 
           {/* 지금 해야 할 일 / 전체 완료 축하 */}
           {progress.allDone ? (
-            <div style={{ padding: 20, borderRadius: 20, background: "#0F2A20", color: "#fff" }}>
+            <div style={{ padding: 20, borderRadius: 20, background: "#17211E", color: "#fff" }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: "#9BD3B9" }}>
                 모든 할 일 완료
               </span>
@@ -391,40 +382,26 @@ export default function Dashboard() {
                 <b style={{ color: "#9BD3B9" }}>3개월 주기</b>로 계속 확인하는 게 안전해요.
               </div>
               <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
-                <button
+                <Button
+                  variant="inverse"
+                  size="md"
                   onClick={() => router.push("/documents/registry")}
-                  style={{
-                    flex: 1,
-                    height: 44,
-                    borderRadius: 999,
-                    border: "none",
-                    background: "#fff",
-                    color: "#0F2A20",
-                    fontSize: 14,
-                    fontWeight: 700,
-                  }}
+                  style={{ flex: 1 }}
                 >
                   등기부 확인하기
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="inverseGhost"
+                  size="md"
                   onClick={() => router.push("/tasks")}
-                  style={{
-                    flex: 1,
-                    height: 44,
-                    borderRadius: 999,
-                    border: "1px solid rgba(255,255,255,.3)",
-                    background: "none",
-                    color: "#fff",
-                    fontSize: 14,
-                    fontWeight: 600,
-                  }}
+                  style={{ flex: 1 }}
                 >
                   할 일 돌아보기
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
-            <div style={{ padding: 20, borderRadius: 20, background: "#0F2A20", color: "#fff" }}>
+            <div style={{ padding: 20, borderRadius: 20, background: "#17211E", color: "#fff" }}>
               <div
                 style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
               >
@@ -466,7 +443,7 @@ export default function Dashboard() {
                       borderTop: "1px solid rgba(255,255,255,.12)",
                     }}
                   >
-                    <div style={{ fontSize: 11.5, fontWeight: 700, color: "#9BD3B9" }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#9BD3B9" }}>
                       이 단계({typ.phases[progress.current]})에서 할 일 ·{" "}
                       {phaseTasks.filter((t) => t.done).length}/{phaseTasks.length}
                     </div>
@@ -494,8 +471,8 @@ export default function Dashboard() {
                                 borderRadius: 5,
                                 border: `1.5px solid ${t.done ? "#9BD3B9" : "rgba(255,255,255,.4)"}`,
                                 background: t.done ? "#9BD3B9" : "transparent",
-                                color: "#0F2A20",
-                                fontSize: 10,
+                                color: "#17211E",
+                                fontSize: 11,
                                 fontWeight: 900,
                                 display: "inline-flex",
                                 alignItems: "center",
@@ -508,7 +485,7 @@ export default function Dashboard() {
                               style={{
                                 flex: 1,
                                 minWidth: 0,
-                                fontSize: 12.5,
+                                fontSize: 13,
                                 lineHeight: 1.4,
                                 color: t.done
                                   ? "rgba(255,255,255,.45)"
@@ -525,7 +502,7 @@ export default function Dashboard() {
                               <span
                                 style={{
                                   flex: "none",
-                                  fontSize: 10.5,
+                                  fontSize: 11,
                                   fontWeight: 700,
                                   color: dd.fg === "#B4231A" ? "#FFB4AC" : "#9BD3B9",
                                 }}
@@ -541,41 +518,22 @@ export default function Dashboard() {
                 );
               })()}
               <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
-                <button
+                <Button
+                  variant="inverse"
+                  size="md"
                   onClick={() => {
                     if (next) {
                       toggleTask(caseId, next.id);
                       toast("완료! 다음 할 일로 넘어가요");
                     }
                   }}
-                  style={{
-                    flex: 1,
-                    height: 44,
-                    borderRadius: 999,
-                    border: "none",
-                    background: "#fff",
-                    color: "#0F2A20",
-                    fontSize: 14,
-                    fontWeight: 700,
-                  }}
+                  style={{ flex: 1 }}
                 >
                   완료했어요
-                </button>
-                <button
-                  onClick={() => router.push("/tasks")}
-                  style={{
-                    flex: 1,
-                    height: 44,
-                    borderRadius: 999,
-                    border: "1px solid rgba(255,255,255,.3)",
-                    background: "none",
-                    color: "#fff",
-                    fontSize: 14,
-                    fontWeight: 600,
-                  }}
-                >
+                </Button>
+                <Button variant="inverseGhost" size="md" onClick={() => router.push("/tasks")} style={{ flex: 1 }}>
                   자세히
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -590,46 +548,40 @@ export default function Dashboard() {
               }}
             >
               {[
-                ["danger", "▲ 위험", "#FDE8E4", "#B4231A"],
-                ["warn", "! 주의", "#FFF1D6", "#7A4E00"],
-                ["safe", "✓ 좋음", "#E3F3E9", "#14613F"],
-                ["unknown", "? 미확인", "#ECEEEC", "#5A6660"],
-              ].map(([k, label, bg, fg]) => (
-                <button
-                  key={k}
-                  onClick={() => router.push(`/analysis?st=${k}`)}
-                  style={{
-                    padding: "12px 10px",
-                    borderRadius: 16,
-                    background: bg,
-                    border: "none",
-                    textAlign: "left",
-                  }}
-                >
-                  <div style={{ fontSize: 20, fontWeight: 800, color: fg }}>{counts[k]}</div>
-                  <div style={{ fontSize: 11.5, fontWeight: 700, color: fg }}>{label}</div>
-                </button>
-              ))}
+                ["danger", "위험", "#B4231A"],
+                ["warn", "주의", "#7A4E00"],
+                ["safe", "좋음", "#14613F"],
+                ["unknown", "미확인", "#5A6660"],
+              ].map(([k, label, fg]) => {
+                const TileIcon = STATUS_ICON[k];
+                return (
+                  <Card
+                    key={k}
+                    as="button"
+                    interactive
+                    radius={16}
+                    onClick={() => router.push(`/analysis?st=${k}`)}
+                    style={{ padding: "12px 10px" }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      <TileIcon style={{ width: 14, height: 14, color: fg, flex: "none" }} />
+                      <span style={{ fontSize: 20, fontWeight: 800, color: fg }}>{counts[k]}</span>
+                    </div>
+                    <div style={{ marginTop: 2, fontSize: 12, fontWeight: 600, color: "#6E827A" }}>
+                      {label}
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
-            <button
+            <Button
+              variant="secondary"
+              size="md"
               onClick={() => router.push("/analysis")}
-              style={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 44,
-                marginTop: 8,
-                borderRadius: 14,
-                border: "1px solid #CFE3D8",
-                background: "#fff",
-                color: "#1B7F5C",
-                fontSize: 13.5,
-                fontWeight: 700,
-              }}
+              style={{ marginTop: 8, borderRadius: 14, fontSize: 14 }}
             >
               분석 결과 전체 보기 →
-            </button>
+            </Button>
           </div>
 
           {/* 서류 */}
@@ -647,8 +599,8 @@ export default function Dashboard() {
                 style={{
                   background: "none",
                   border: "none",
-                  fontSize: 12.5,
-                  color: "#1B7F5C",
+                  fontSize: 13,
+                  color: "#16A36A",
                   fontWeight: 600,
                   padding: 0,
                 }}
@@ -658,8 +610,11 @@ export default function Dashboard() {
             </div>
             <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
               {docList.map((d) => (
-                <button
+                <Card
                   key={d.key}
+                  as="button"
+                  interactive
+                  radius={14}
                   onClick={() =>
                     d.has
                       ? router.push(`/documents/${d.key}`)
@@ -670,68 +625,48 @@ export default function Dashboard() {
                     justifyContent: "space-between",
                     alignItems: "center",
                     padding: "12px 14px",
-                    borderRadius: 14,
-                    background: "#fff",
-                    border: "1px solid #E3E8E3",
-                    textAlign: "left",
                   }}
                 >
-                  <span style={{ fontSize: 14, fontWeight: 600, color: "#0F2A20" }}>{d.name}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: "#17211E" }}>{d.name}</span>
                   <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     {d.marks > 0 && (
-                      <span style={{ fontSize: 11.5, color: "#6E827A" }}>표시 {d.marks}</span>
+                      <span style={{ fontSize: 12, color: "#6E827A" }}>표시 {d.marks}</span>
                     )}
                     <StatusChip st={{ ...d.st, glyph: "" }}>{d.st.label}</StatusChip>
                   </span>
-                </button>
+                </Card>
               ))}
             </div>
           </div>
 
           {/* 도구: 중개보수 계산 · 이사 체크리스트 */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-            <button
+            <Card
+              as="button"
+              interactive
               onClick={() => setFeeOpen(true)}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                gap: 4,
-                padding: "14px",
-                borderRadius: 16,
-                background: "#fff",
-                border: "1px solid #E3E8E3",
-                textAlign: "left",
-              }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4, padding: "14px" }}
             >
-              <span style={{ fontSize: 17 }}>🧮</span>
-              <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0F2A20" }}>
+              <CalculatorIcon style={{ width: 20, height: 20, color: "#16A36A" }} />
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#17211E" }}>
                 중개보수 계산
               </span>
-              <span style={{ fontSize: 11.5, color: "#6E827A" }}>법정 상한 요율로 미리 계산</span>
-            </button>
-            <button
+              <span style={{ fontSize: 12, color: "#6E827A" }}>법정 상한 요율로 미리 계산</span>
+            </Card>
+            <Card
+              as="button"
+              interactive
               onClick={() => router.push("/moving")}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                gap: 4,
-                padding: "14px",
-                borderRadius: 16,
-                background: "#fff",
-                border: "1px solid #E3E8E3",
-                textAlign: "left",
-              }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4, padding: "14px" }}
             >
-              <span style={{ fontSize: 17 }}>📦</span>
-              <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0F2A20" }}>
+              <ArchiveBoxIcon style={{ width: 20, height: 20, color: "#16A36A" }} />
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#17211E" }}>
                 이사 체크리스트
               </span>
-              <span style={{ fontSize: 11.5, color: "#6E827A" }}>
+              <span style={{ fontSize: 12, color: "#6E827A" }}>
                 입주 하자 체크 · 퇴거 시 주의
               </span>
-            </button>
+            </Card>
           </div>
         </div>
       )}
@@ -771,7 +706,7 @@ export default function Dashboard() {
               }}
             />
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 18 }}>🧮</span>
+              <CalculatorIcon style={{ width: 20, height: 20, color: "#16A36A" }} />
               <span style={{ fontSize: 17, fontWeight: 800 }}>중개보수 계산</span>
               <TypeBadge type={cur.type} size="sm" />
             </div>
@@ -870,7 +805,7 @@ export default function Dashboard() {
                         borderTop: "1px solid #CFE3D8",
                       }}
                     >
-                      <span style={{ fontSize: 13.5, fontWeight: 700 }}>중개보수 상한</span>
+                      <span style={{ fontSize: 14, fontWeight: 700 }}>중개보수 상한</span>
                       <span style={{ fontSize: 20, fontWeight: 800, color: "#14613F" }}>
                         {r.fee.toLocaleString()}원
                       </span>

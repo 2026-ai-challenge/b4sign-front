@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { BellIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { apiAvailable } from "@/lib/api";
 import { D, resolveTaskDue, dday } from "@/lib/derive";
@@ -68,11 +70,11 @@ export function NotificationHost() {
   return (
     <div
       style={{
-        position: "absolute",
-        top: 52,
-        left: 12,
-        right: 12,
-        zIndex: 45,
+        flex: "none",
+        position: "sticky",
+        top: 0,
+        zIndex: 20,
+        padding: "8px 12px 0",
         display: "flex",
         flexDirection: "column",
         gap: 6,
@@ -87,13 +89,13 @@ export function NotificationHost() {
             gap: 10,
             padding: "11px 12px",
             borderRadius: 14,
-            background: "#0F2A20",
+            background: "#17211E",
             color: "#fff",
             boxShadow: "0 8px 24px rgba(15,42,32,.35)",
             animation: "sheetUp .25s ease",
           }}
         >
-          <span style={{ fontSize: 15, flex: "none" }}>🔔</span>
+          <BellIcon style={{ width: 16, height: 16, flex: "none" }} />
           <button
             onClick={() => router.push("/tasks")}
             style={{
@@ -118,7 +120,7 @@ export function NotificationHost() {
             >
               {n.title}
             </span>
-            <span style={{ display: "block", fontSize: 11.5, color: "#9BD3B9", marginTop: 2 }}>
+            <span style={{ display: "block", fontSize: 12, color: "#9BD3B9", marginTop: 2 }}>
               {n.label} · {n.due} · {n.caseShort}
             </span>
           </button>
@@ -136,10 +138,12 @@ export function NotificationHost() {
               border: "none",
               background: "rgba(255,255,255,.15)",
               color: "#fff",
-              fontSize: 13,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            ×
+            <XMarkIcon style={{ width: 14, height: 14 }} />
           </button>
         </div>
       ))}

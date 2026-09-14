@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { CheckIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, ddInfo, balanceWord, resolveTaskDue, phaseAnchor, taskProgress } from "@/lib/derive";
 import { TypeBadge } from "@/components/ui";
 import { Collapse } from "@/components/fields";
+import { Button, Card } from "@/design-system";
 
 export default function Tasks() {
   const router = useRouter();
@@ -53,7 +55,7 @@ export default function Tasks() {
           padding: "0 20px",
         }}
       >
-        <span style={{ fontSize: 18, fontWeight: 800 }}>해야 할 일</span>
+        <span style={{ fontSize: 17, fontWeight: 800 }}>해야 할 일</span>
         <button
           onClick={() => router.push("/checklist")}
           style={{
@@ -61,8 +63,8 @@ export default function Tasks() {
             border: "1px solid #CFE3D8",
             borderRadius: 999,
             padding: "6px 12px",
-            fontSize: 12.5,
-            color: "#1B7F5C",
+            fontSize: 13,
+            color: "#16A36A",
             fontWeight: 700,
           }}
         >
@@ -72,16 +74,9 @@ export default function Tasks() {
 
       <div style={{ padding: "4px 20px 32px" }}>
         {/* 진행률 */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "12px 16px",
-            borderRadius: 14,
-            background: "#fff",
-            border: "1px solid #E3E8E3",
-          }}
+        <Card
+          radius={14}
+          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px" }}
         >
           <span
             style={{
@@ -98,7 +93,7 @@ export default function Tasks() {
           <span style={{ fontSize: 14, fontWeight: 800 }}>
             {doneCount} / {caseTasks.length}
           </span>
-        </div>
+        </Card>
         <div
           style={{
             height: 6,
@@ -112,7 +107,7 @@ export default function Tasks() {
             style={{
               height: "100%",
               width: `${pct}%`,
-              background: "#1B7F5C",
+              background: "#16A36A",
               borderRadius: 3,
               transition: "width .3s",
             }}
@@ -145,9 +140,9 @@ export default function Tasks() {
                       width: 24,
                       height: 24,
                       borderRadius: "50%",
-                      background: active ? "#1B7F5C" : "#fff",
-                      color: active ? "#fff" : "#8A968F",
-                      border: `2px solid ${active ? "#1B7F5C" : "#C9D2CC"}`,
+                      background: active ? "#16A36A" : "#fff",
+                      color: active ? "#fff" : "#5A6660",
+                      border: `2px solid ${active ? "#16A36A" : "#C9D2CC"}`,
                       fontSize: 11,
                       fontWeight: 800,
                       display: "inline-flex",
@@ -156,13 +151,13 @@ export default function Tasks() {
                       transition: "background .35s, border-color .35s, color .35s",
                     }}
                   >
-                    {past || allDone ? "✓" : i + 1}
+                    {past || allDone ? <CheckIcon style={{ width: 12, height: 12 }} /> : i + 1}
                   </span>
                   <span
                     style={{
                       flex: 1,
                       width: 2,
-                      background: past || allDone ? "#1B7F5C" : "#E3E8E3",
+                      background: past || allDone ? "#16A36A" : "#E3E8E3",
                       margin: "4px 0",
                       transition: "background .35s",
                     }}
@@ -188,7 +183,7 @@ export default function Tasks() {
                           display: "block",
                           fontSize: 16,
                           fontWeight: 800,
-                          color: isCur ? "#0F2A20" : "#6E827A",
+                          color: isCur ? "#17211E" : "#6E827A",
                         }}
                       >
                         {label}
@@ -202,8 +197,8 @@ export default function Tasks() {
                             style={{
                               display: "block",
                               marginTop: 2,
-                              fontSize: 11.5,
-                              color: allDone ? "#8A968F" : dd && dd.fg === "#B4231A" ? "#B4231A" : "#6E827A",
+                              fontSize: 12,
+                              color: allDone ? "#5A6660" : dd && dd.fg === "#B4231A" ? "#B4231A" : "#6E827A",
                               fontWeight: 600,
                             }}
                           >
@@ -237,17 +232,10 @@ export default function Tasks() {
                         const resolved = resolveTaskDue(t, cur);
                         const dd = resolved.due ? ddInfo(resolved.due) : null;
                         return (
-                          <div
+                          <Card
                             key={t.id}
-                            style={{
-                              display: "flex",
-                              alignItems: "flex-start",
-                              gap: 10,
-                              padding: "12px 14px",
-                              borderRadius: 14,
-                              background: "#fff",
-                              border: "1px solid #E3E8E3",
-                            }}
+                            radius={14}
+                            style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "12px 14px" }}
                           >
                             <button
                               onClick={() => toggleTask(caseId, t.id)}
@@ -256,16 +244,17 @@ export default function Tasks() {
                                 width: 22,
                                 height: 22,
                                 borderRadius: 7,
-                                border: `2px solid ${t.done ? "#1B7F5C" : "#C9D2CC"}`,
-                                background: t.done ? "#1B7F5C" : "#fff",
+                                border: `2px solid ${t.done ? "#16A36A" : "#C9D2CC"}`,
+                                background: t.done ? "#16A36A" : "#fff",
                                 color: "#fff",
-                                fontSize: 12,
-                                fontWeight: 900,
                                 padding: 0,
                                 marginTop: 1,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
                               }}
                             >
-                              {t.done ? "✓" : ""}
+                              {t.done && <CheckIcon style={{ width: 13, height: 13 }} />}
                             </button>
                             <button
                               onClick={() => setDetailId(t.id)}
@@ -283,7 +272,7 @@ export default function Tasks() {
                                   fontSize: 14,
                                   fontWeight: 600,
                                   lineHeight: 1.4,
-                                  color: t.done ? "#8A968F" : "#0F2A20",
+                                  color: t.done ? "#5A6660" : "#17211E",
                                   textDecoration: t.done ? "line-through" : "none",
                                 }}
                               >
@@ -330,7 +319,7 @@ export default function Tasks() {
                                 )}
                               </div>
                             </button>
-                          </div>
+                          </Card>
                         );
                       })}
                     </div>
@@ -346,7 +335,7 @@ export default function Tasks() {
             padding: "12px 16px",
             borderRadius: 14,
             background: "#F4F6F4",
-            fontSize: 12.5,
+            fontSize: 13,
             lineHeight: 1.55,
             color: "#4B6157",
           }}
@@ -399,7 +388,7 @@ export default function Tasks() {
                   borderRadius: 5,
                   background: detail.source === "auto" ? "#EEF6F1" : "#F1F3F1",
                   color: detail.source === "auto" ? "#14613F" : "#5A6660",
-                  fontSize: 11.5,
+                  fontSize: 12,
                   fontWeight: 700,
                 }}
               >
@@ -416,7 +405,7 @@ export default function Tasks() {
                       borderRadius: 5,
                       background: r.recommended ? "#FFF6E3" : dd.bg,
                       color: r.recommended ? "#8A6100" : dd.fg,
-                      fontSize: 11.5,
+                      fontSize: 12,
                       fontWeight: 700,
                     }}
                   >
@@ -456,7 +445,7 @@ export default function Tasks() {
                       padding: 0,
                       font: "inherit",
                       textAlign: "left",
-                      color: "#1B7F5C",
+                      color: "#16A36A",
                       fontWeight: 700,
                     }}
                   >
@@ -491,7 +480,8 @@ export default function Tasks() {
                         textDecoration: "none",
                       }}
                     >
-                      {l.label} ↗
+                      {l.label}
+                      <ArrowTopRightOnSquareIcon style={{ width: 13, height: 13 }} />
                     </a>
                   ))}
                 </div>
@@ -509,7 +499,7 @@ export default function Tasks() {
                   background: "#F4F6F4",
                 }}
               >
-                <span style={{ fontSize: 13.5, fontWeight: 600 }}>기한 하루 전 알림</span>
+                <span style={{ fontSize: 14, fontWeight: 600 }}>기한 하루 전 알림</span>
                 <button
                   onClick={() => toggleRemind(caseId, detail.id)}
                   style={{
@@ -517,7 +507,7 @@ export default function Tasks() {
                     height: 30,
                     borderRadius: 15,
                     border: "none",
-                    background: detail.remind ? "#1B7F5C" : "#C9D2CC",
+                    background: detail.remind ? "#16A36A" : "#C9D2CC",
                     position: "relative",
                     padding: 0,
                     transition: "background .2s",
@@ -539,25 +529,13 @@ export default function Tasks() {
                 </button>
               </div>
             )}
-            <button
+            <Button
+              variant={detail.done ? "neutral" : "primary"}
               onClick={() => toggleTask(caseId, detail.id)}
-              style={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 50,
-                marginTop: 16,
-                background: detail.done ? "#fff" : "#1B7F5C",
-                color: detail.done ? "#0F2A20" : "#fff",
-                border: `1px solid ${detail.done ? "#DDE3DF" : "#1B7F5C"}`,
-                borderRadius: 999,
-                fontWeight: 700,
-                fontSize: 15,
-              }}
+              style={{ marginTop: 16 }}
             >
               {detail.done ? "완료 취소" : "완료했어요"}
-            </button>
+            </Button>
           </div>
         </div>
       )}

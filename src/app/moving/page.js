@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeftIcon, ArchiveBoxIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { TermButton } from "@/components/ui";
+import { Card } from "@/design-system";
 
 // 입주 당일 하자 체크 (계약서 기준으로 대조하며 전부 사진·영상 기록)
 const MOVE_IN = [
@@ -54,25 +56,21 @@ export default function Moving() {
       >
         <button
           onClick={() => router.push("/dashboard")}
-          style={{ background: "none", border: "none", fontSize: 22, color: "#0F2A20", padding: "6px 10px" }}
+          style={{ background: "none", border: "none", color: "#17211E", padding: "6px 10px", display: "flex" }}
         >
-          ‹
+          <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
-        <span style={{ fontSize: 17, fontWeight: 800 }}>📦 이사 체크리스트</span>
+        <span style={{ fontSize: 17, fontWeight: 800, display: "flex", alignItems: "center", gap: 6 }}>
+          <ArchiveBoxIcon style={{ width: 18, height: 18 }} />
+          이사 체크리스트
+        </span>
       </div>
 
       <div style={{ padding: "4px 20px 32px", display: "flex", flexDirection: "column", gap: 16 }}>
         {/* 입주 당일 하자 체크 */}
-        <div
-          style={{
-            borderRadius: 18,
-            background: "#fff",
-            border: "1px solid #E3E8E3",
-            padding: 16,
-          }}
-        >
+        <Card radius={18} style={{ padding: 16 }}>
           <div style={{ fontSize: 15, fontWeight: 800 }}>입주 당일 하자 체크</div>
-          <p style={{ margin: "6px 0 0", fontSize: 12.5, lineHeight: 1.55, color: "#4B6157" }}>
+          <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
             계약서(시설 상태·옵션·특약)를 기준으로 대조하고, 전부{" "}
             <b>날짜가 남는 사진·영상</b>으로 기록하세요. 퇴거 시 원상복구 분쟁의 증거가 돼요.
           </p>
@@ -101,8 +99,8 @@ export default function Moving() {
                     width: 20,
                     height: 20,
                     borderRadius: 6,
-                    border: `2px solid ${checked[i] ? "#1B7F5C" : "#C9D2CC"}`,
-                    background: checked[i] ? "#1B7F5C" : "#fff",
+                    border: `2px solid ${checked[i] ? "#16A36A" : "#C9D2CC"}`,
+                    background: checked[i] ? "#16A36A" : "#fff",
                     color: "#fff",
                     fontSize: 11,
                     fontWeight: 900,
@@ -112,10 +110,10 @@ export default function Moving() {
                     marginTop: 1,
                   }}
                 >
-                  {checked[i] ? "✓" : ""}
+                  {checked[i] && <CheckIcon style={{ width: 12, height: 12 }} />}
                 </span>
                 <span style={{ minWidth: 0 }}>
-                  <span style={{ display: "block", fontSize: 13.5, fontWeight: 700 }}>{title}</span>
+                  <span style={{ display: "block", fontSize: 14, fontWeight: 700 }}>{title}</span>
                   <span
                     style={{
                       display: "block",
@@ -131,17 +129,10 @@ export default function Moving() {
               </button>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* 집주인 권리가 아닌 것 */}
-        <div
-          style={{
-            borderRadius: 18,
-            background: "#EEF6F1",
-            border: "1px solid #CFE3D8",
-            padding: 16,
-          }}
-        >
+        <Card radius={18} style={{ background: "#EEF6F1", border: "1px solid #CFE3D8", padding: 16 }}>
           <div style={{ fontSize: 15, fontWeight: 800, color: "#14613F" }}>
             알아두세요 — 이런 건 집주인의 권리가 아니에요
           </div>
@@ -167,17 +158,10 @@ export default function Moving() {
             근거가 궁금하면 분석 결과의 <b>§ 법 근거</b> 카드나{" "}
             <TermButton termKey="daehang">용어 사전</TermButton>을 참고하세요.
           </p>
-        </div>
+        </Card>
 
         {/* 퇴거할 때 */}
-        <div
-          style={{
-            borderRadius: 18,
-            background: "#fff",
-            border: "1px solid #E3E8E3",
-            padding: 16,
-          }}
-        >
+        <Card radius={18} style={{ padding: 16 }}>
           <div style={{ fontSize: 15, fontWeight: 800 }}>퇴거할 때 꼭 지키세요</div>
           <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10 }}>
             {MOVE_OUT.map((m) => (
@@ -189,16 +173,16 @@ export default function Moving() {
                   background: "#F4F6F4",
                 }}
               >
-                <div style={{ fontSize: 13.5, fontWeight: 700 }}>{m.title}</div>
+                <div style={{ fontSize: 14, fontWeight: 700 }}>{m.title}</div>
                 <div
-                  style={{ marginTop: 4, fontSize: 12.5, lineHeight: 1.55, color: "#4B6157" }}
+                  style={{ marginTop: 4, fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}
                 >
                   {m.desc}
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
     </>
   );
