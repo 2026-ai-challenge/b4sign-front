@@ -60,6 +60,17 @@
 - [ ] Vercel env `NEXT_PUBLIC_API_URL` (백엔드 배포 후) — 백엔드 CORS에 vercel.app 이미 포함
 - [ ] Web Push, 등기 자동 열람 경로 확정 (ISSUES #1·#3, 대행 API: CODEF/Tilko 조사됨)
 
+## 백엔드 (2026-09-17 3차 — 키 투입·라이브 검증)
+
+- **Claude 상담 실전환 확인**: 실키로 SSE 스트리밍 라이브 테스트 통과 (케이스 컨텍스트 인용·시세 거절 가드레일 동작). 키는 `.env`에만 (메모리·저장소에 기록 금지 — 사용자 지시)
+- **Voyage 키 수령** → `.env` (RAG 시 사용 예정)
+- **틸코 실검증**: 키 유효·암호화 흐름 통과, 주소검색 최소바디(Address+Page, v2.0) 확정.
+  막힌 곳 = 계정의 **API 사용 신청/정액제 미활성(9910025)** → 대시보드 신청 필요 (ISSUES #1)
+- **Swagger**: `/api/docs` (JSON `/api/docs-json`) — 404 핸들러보다 먼저 등록
+- e2e는 실키 무시(빈 값 강제)로 결정적·무과금 유지. 40/40
+- Redis 불필요 결정: 중복 방지는 DB 기반 Idempotency-Key로 이미 해결 (단일 인스턴스)
+- Upstage(Document Parse) 키 아직 없음 — 실검증 대기. 업로드→분석은 아직 시뮬레이션(실추출 미구현)
+
 ## 마지막 갱신
 
-2026-09-17 — 백엔드 2차: 멱등성(Idempotency-Key)·오류로그 영속(/admin/errors)·틸코 등기부 발급 스캐폴드·데모 서류 PDF 8종·Kafka/Redpanda 불채택 기록
+2026-09-17 — 3차: 키 투입(Anthropic·Voyage·틸코), Claude 실스트리밍 검증, 틸코 실호출 검증(계정 활성화 대기), Swagger 추가
