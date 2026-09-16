@@ -265,6 +265,28 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
 - `POST /push/subscribe` `{ subscription }` (Web Push 구독 객체)
 - 개별 on/off는 `PATCH /me`의 `notif`로
 
+## 11. 운영·시연 (2026-09-17 추가 — 백엔드 구현 완료분)
+
+| Method | Path | 설명 |
+|---|---|---|
+| GET | `/health` | 헬스체크 `{ ok, uptime }` (DB ping 포함, 인증 불필요) |
+| GET | `/admin/errors?limit=50` | 최근 서버 오류 로그 (ErrorLog 테이블). `ADMIN_KEY` env 설정 시 `X-Admin-Key` 헤더 필요 |
+| POST | `/cases` | 케이스 생성 — `{ type, addr, short?, housing?, amount?, contractDate?, balanceDate?, midDate?, moveDate?, id?(클라이언트 멱등 id) }` → 201 케이스 요약. 서류 상태·기본 할 일 자동 생성 |
+| PATCH | `/cases/{caseId}` | 기본 정보 수정 (주소·금액·날짜·phase) |
+| DELETE | `/cases/{caseId}` | 보관(archive) — 목록·알림에서 제외 |
+| GET | `/demo/documents` | 시연용 샘플 PDF 목록 `[{ file, docKey, name, url }]` (등기부·계약서 3종·건축물대장·전입세대·토지대장·등기완료) |
+| GET | `/demo/documents/{file}` | 샘플 PDF 다운로드 — 받아서 업로드 화면에 그대로 올리면 기능 시연 가능 |
+| POST | `/registry/search` | 부동산 주소 검색 (틸코) `{ keyword }` — 미설정 시 501 `NOT_CONFIGURED` + `missingEnv` |
+| POST | `/registry/issue` | 등기부등본 실시간 열람 (틸코, 유료) `{ caseId, uniqueNo }` — **`Idempotency-Key` 헤더 필수** |
+
+### 멱등성 (Idempotency-Key)
+
+변경 요청(POST/PATCH/DELETE)에 `Idempotency-Key: <임의 고유값>` 헤더를 붙이면:
+- 같은 키 재요청 → 저장된 첫 응답을 그대로 재생 (핸들러 재실행 없음 — 중복 클릭·재시도 안전)
+- 처리 중 동시 재요청 → `409 DUPLICATE_REQUEST`
+- 실패한 요청의 키는 지워져 재시도 가능. 키는 24시간 보관.
+- 유료 API 경유 라우트(`/registry/issue`)는 헤더가 없으면 `400 IDEMPOTENCY_KEY_REQUIRED`
+
 ---
 
 ## 프론트 연동 메모
