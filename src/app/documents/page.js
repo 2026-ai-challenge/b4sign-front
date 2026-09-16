@@ -17,7 +17,7 @@ import { useApp } from "@/lib/store";
 import { D, buildDocList } from "@/lib/derive";
 import { TypeBadge } from "@/components/ui";
 import { Button, Card } from "@/design-system";
-import { api, apiUpload } from "@/lib/api";
+import { uploadDocument } from "@/lib/document-upload";
 
 const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif";
 const MAX_SIZE = 20 * 1024 * 1024;
@@ -41,6 +41,16 @@ export default function DocumentsPage() {
 
 // 분석 실패 3종: 원인과 해결 방법을 다르게 안내 (api-spec §4 reason 코드와 동일)
 const FAILS = {
+  connection: {
+    title: "서버 응답을 확인하지 못했어요",
+    body: "업로드 또는 분석 결과를 확인하지 못했어요. 완료로 처리하지 않았으니 연결 상태를 확인한 뒤 다시 시도해 주세요.",
+    cta: "다시 시도하기",
+  },
+  timeout: {
+    title: "분석 응답이 지연되고 있어요",
+    body: "서버에서 처리가 계속되고 있을 수 있어요. 잠시 후 서류 상태를 확인해 주세요.",
+    cta: "다시 시도하기",
+  },
   scan: {
     title: "스캔 품질이 낮아요",
     body: "글자가 흐릿하거나 기울어져 있어요. 인터넷등기소에서 PDF로 직접 발급하거나 300dpi 이상으로 다시 스캔해 주세요.",
@@ -68,6 +78,17 @@ function Documents() {
   // 업로드 모달 상태: { docKey, stage: 'pick'|'progress'|'analyzing'|'fail', pct, eta, fail, demoFail, fileName, fileSize }
   const [upload, setUpload] = useState(null);
   const timer = useRef(null);
+  const uploadController = useRef(null);
+  const serverUpload = apiOn || !!process.env.NEXT_PUBLIC_API_URL;
+
+  // 케이스 전환·이탈 시 진행 중인 요청과 데모 타이머를 무효화한다.
+  useEffect(() => {
+    setUpload(null);
+    return () => {
+      uploadController.current?.abort();
+      clearTimeout(timer.current);
+    };
+  }, [caseId]);
   const fileRef = useRef(null); // 파일 선택 input
   const cameraRef = useRef(null); // 카메라 촬영 input (모바일)
 
@@ -80,59 +101,35 @@ function Documents() {
       setUpload({ docKey: key, stage: "pick", demoFail: fail || undefined });
   }, [params]);
 
-  useEffect(() => () => clearTimeout(timer.current), []);
-
-  const finishUpload = (key) => {
+  const finishDemoUpload = (key) => {
     completeUpload(caseId, key);
-    refreshDocs(caseId);
-    toast("분석이 끝났어요");
+    toast("데모가 끝났어요. 예시 문서를 표시합니다.");
     const hasText = D.DOCTEXT[caseId] && D.DOCTEXT[caseId][key];
     router.push(hasText ? `/documents/${key}` : "/analysis");
   };
 
-  // 백엔드 업로드: multipart POST → jobId 폴링 (uploading/analyzing/done/failed)
-  const startUploadApi = async (key, demoFail, file) => {
-    let jobId;
-    if (file) {
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("docKey", key);
-      if (demoFail) fd.append("demoFail", demoFail);
-      ({ jobId } = await apiUpload(`/cases/${caseId}/documents`, fd));
-    } else {
-      ({ jobId } = await api(`/cases/${caseId}/documents`, {
-        method: "POST",
-        body: { docKey: key, demoFail },
-      }));
-    }
-    const poll = async () => {
-      let j;
-      try {
-        j = await api(`/jobs/${jobId}`);
-      } catch {
-        setUpload(null);
-        return;
-      }
-      if (j.status === "uploading") {
-        setUpload((u) => u && { ...u, stage: "progress", pct: j.progress });
-      } else if (j.status === "analyzing") {
-        setUpload((u) => u && { ...u, stage: "analyzing", eta: j.eta });
-      } else if (j.status === "failed") {
-        setUpload((u) => u && { ...u, stage: "fail", fail: j.reason });
-        return;
-      } else if (j.status === "done") {
-        setUpload(null);
-        finishUpload(key);
-        return;
-      }
-      timer.current = setTimeout(poll, 400);
-    };
-    timer.current = setTimeout(poll, 300);
+  const startUploadApi = async (key, demoFail, file, signal) => {
+    await uploadDocument({
+      caseId, docKey: key, file, demoFail, signal,
+      onProgress: (job) => setUpload((u) => u && {
+        ...u,
+        stage: job.status === "uploading" ? "progress" : "analyzing",
+        pct: job.progress,
+        eta: job.eta,
+      }),
+    });
+    signal.throwIfAborted();
+    // 성공 응답 뒤에도 가상 완료 상태·고정 발급일을 덮어쓰지 않는다.
+    await refreshDocs(caseId, { signal, docKey: key });
+    signal.throwIfAborted();
+    setUpload(null);
+    toast("서버 분석이 끝났어요. 결과 화면은 아직 예시입니다.");
+    router.push("/analysis");
   };
 
   // 파일 선택/촬영 결과 처리 — 모바일에서는 탭하면 파일 선택 또는 카메라가 뜬다
   const onFilePicked = (file) => {
-    if (!file) return;
+    if (!file || !upload) return;
     if (file.size > MAX_SIZE) {
       toast("파일이 너무 커요. 20MB 이하로 올려주세요.");
       return;
@@ -146,23 +143,29 @@ function Documents() {
       fileName: file.name,
       fileSize: file.size,
     }));
-    if (apiOn) {
-      startUploadApi(key, demoFail, file).catch((e) => {
-        if (e.code === "UNSUPPORTED_FILE_TYPE") {
-          setUpload((u) => u && { ...u, stage: "fail", fail: "unsupported" });
-        } else {
-          startUploadLocal(key, demoFail);
-        }
+    uploadController.current?.abort();
+    clearTimeout(timer.current);
+    const controller = new AbortController();
+    uploadController.current = controller;
+    if (serverUpload) {
+      startUploadApi(key, demoFail, file, controller.signal).catch((e) => {
+        if (controller.signal.aborted) return;
+        const fail = e.code === "UNSUPPORTED_FILE_TYPE" ? "unsupported"
+          : e.code === "UPLOAD_TIMEOUT" ? "timeout"
+          : e.code === "ANALYSIS_FAILED" ? e.reason
+          : "connection";
+        setUpload((u) => u && { ...u, stage: "fail", fail });
       });
       return;
     }
-    startUploadLocal(key, demoFail);
+    startUploadLocal(key, demoFail, controller.signal);
   };
 
-  // 로컬 폴백 시뮬레이션 (API 미기동 시)
-  const startUploadLocal = (key, demoFail) => {
+  // API 미설정 데모에서만 사용. 서버 요청 실패 시에는 호출하지 않는다.
+  const startUploadLocal = (key, demoFail, signal) => {
     let pct = 0;
     const tick = () => {
+      if (signal.aborted) return;
       pct = Math.min(100, pct + 9 + Math.random() * 12);
       setUpload((u) => ({ ...u, stage: "progress", pct }));
       if (pct < 100) {
@@ -172,6 +175,7 @@ function Documents() {
       let eta = 12;
       setUpload((u) => ({ ...u, stage: "analyzing", eta }));
       const t2 = () => {
+        if (signal.aborted) return;
         eta -= 4;
         if (eta > 0) {
           setUpload((u) => ({ ...u, eta }));
@@ -183,7 +187,7 @@ function Documents() {
           return;
         }
         setUpload(null);
-        finishUpload(key);
+        finishDemoUpload(key);
       };
       timer.current = setTimeout(t2, 700);
     };
@@ -191,6 +195,7 @@ function Documents() {
   };
 
   const closeUpload = () => {
+    uploadController.current?.abort();
     clearTimeout(timer.current);
     setUpload(null);
     if (params.get("upload")) router.replace("/documents");
@@ -413,6 +418,7 @@ function Documents() {
               </div>
               <button
                 onClick={closeUpload}
+                aria-label="업로드 창 닫기"
                 style={{
                   width: 32,
                   height: 32,
@@ -428,6 +434,12 @@ function Documents() {
                 <XMarkIcon style={{ width: 16, height: 16 }} />
               </button>
             </div>
+
+            {!serverUpload && (
+              <p role="status" style={{ fontSize: 13, lineHeight: 1.5, color: "#7A4E00" }}>
+                데모 모드예요. 선택한 파일은 서버에 전송하거나 분석하지 않으며, 예시 결과만 표시해요.
+              </p>
+            )}
 
             {upload.stage === "pick" && (
               <>

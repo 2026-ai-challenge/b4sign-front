@@ -1,4 +1,4 @@
-import { ZIPSALPI_DATA as D } from "@/data/zipsalpi";
+import { ZIPSALPI_DATA as D } from "../data/zipsalpi.js";
 
 // ─── 날짜는 항상 한국시간(KST, UTC+9 고정 — 서머타임 없음) 기준 ───
 export function kstTodayStr() {
@@ -43,14 +43,14 @@ export function maskAddr(addr) {
 export function caseCounts(caseId) {
   const judged = (D.ANALYSIS[caseId] || []).filter((i) => !i.deadline);
   const counts = { safe: 0, warn: 0, danger: 0, unknown: 0 };
-  judged.forEach((i) => counts[i.st]++);
+  judged.forEach((i) => counts[Object.hasOwn(counts, i.st) ? i.st : "unknown"]++);
   const overall = counts.danger
     ? D.ST.danger
     : counts.warn
       ? D.ST.warn
-      : judged.length
-        ? D.ST.safe
-        : D.ST.unknown;
+      : counts.unknown || !judged.length
+        ? D.ST.unknown
+        : D.ST.safe;
   return { counts, overall, judged };
 }
 
@@ -147,7 +147,7 @@ export function buildDocList(caseId, docs) {
       missing: !has,
       stale: dd.status === "stale",
       days,
-      meta: has ? "발급일 " + dd.issued + " · 텍스트 추출 완료" : doc.where,
+      meta: has ? (dd.issued ? "발급일 " + dd.issued : "발급일 확인 필요") : doc.where,
       border: dd.status === "stale" ? "#F1D9A6" : "#E3E8E3",
       marks: has ? marks.length : 0,
       markChips: ["danger", "warn", "safe", "unknown"]

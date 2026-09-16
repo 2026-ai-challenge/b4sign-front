@@ -179,7 +179,7 @@ export default function Landing() {
                 </div>
                 <div style={{ ...mock.okRow, display: "flex", alignItems: "center", gap: 5 }}>
                   <CheckIcon style={{ width: 11, height: 11 }} />
-                  국토부 건축물대장 교차검증 완료
+                  건축물대장 대조 결과 예시
                 </div>
               </div>
             </div>

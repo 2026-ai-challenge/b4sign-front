@@ -13,6 +13,7 @@ import { useApp } from "@/lib/store";
 import { D, lawShort } from "@/lib/derive";
 import { LawButton, TermButton } from "@/components/ui";
 import { Button } from "@/design-system";
+import { SampleAnalysisNotice } from "@/components/sample-analysis-notice";
 
 const STATUS_ICON = {
   safe: CheckCircleIcon,
@@ -68,7 +69,7 @@ function Viewer({ docKey }) {
   const issued = (docs[caseId] && docs[caseId][docKey] && docs[caseId][docKey].issued) || "—";
   const verify =
     docKey === "building"
-      ? "국토부 API 교차 검증"
+      ? "건축물대장 대조 예시"
       : docKey === "registry"
         ? "등기 항목 검증 · 진위 확인 제외"
         : "필수 특약 대조";
@@ -131,6 +132,7 @@ function Viewer({ docKey }) {
         </button>
       </div>
 
+      <SampleAnalysisNotice />
       {/* 필터 칩 */}
       <div
         style={{

@@ -183,12 +183,15 @@ export function AppProvider({ children }) {
           ...s,
           [cid]: { ...s[cid], [key]: { status: "ok", issued: "2026-09-10" } },
         })),
-      refreshDocs: async (cid) => {
-        if (!apiOnRef.current) return;
-        try {
-          const d = await api(`/cases/${cid}/documents`);
-          setDocs((s) => ({ ...s, [cid]: d }));
-        } catch {}
+      refreshDocs: async (cid, { signal, docKey } = {}) => {
+        const d = await api(`/cases/${cid}/documents`, { signal });
+        signal?.throwIfAborted();
+        if (!d || typeof d !== "object" || Array.isArray(d) ||
+            (docKey && !["ok", "stale"].includes(d[docKey]?.status))) {
+          throw new Error("완료된 서류 상태를 확인하지 못했어요");
+        }
+        setDocs((s) => ({ ...s, [cid]: d }));
+        return d;
       },
       clearDocs: (cid) => {
         setDocs((s) => ({

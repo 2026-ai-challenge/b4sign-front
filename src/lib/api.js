@@ -31,12 +31,13 @@ export function setToken(token) {
   } catch {}
 }
 
-export async function api(path, { method = "GET", body } = {}) {
+export async function api(path, { method = "GET", body, signal } = {}) {
   const headers = { "Content-Type": "application/json" };
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(BASE + path, {
     method,
+    signal,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
@@ -52,11 +53,11 @@ export async function api(path, { method = "GET", body } = {}) {
 }
 
 /** multipart 업로드 (FormData — Content-Type은 브라우저가 boundary와 함께 설정) */
-export async function apiUpload(path, formData) {
+export async function apiUpload(path, formData, { signal } = {}) {
   const headers = {};
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch(BASE + path, { method: "POST", headers, body: formData });
+  const res = await fetch(BASE + path, { method: "POST", headers, body: formData, signal });
   const data = await res.json().catch(() => null);
   if (!res.ok) {
     const err = new Error(data?.error?.message || `API ${res.status}`);
