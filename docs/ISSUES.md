@@ -52,7 +52,29 @@ Redis를 추가하는 건 3개월 주기 리마인더 하나를 위해 인프라
 `vercel deploy`가 Windows 심볼릭 링크 권한(EPERM)으로 로컬 빌드 실패 → **Vercel Git 연동**으로
 배포 중 (main 푸시 = 자동 배포). CLI가 필요하면 Windows 개발자 모드 활성화 필요.
 
-## 6. Prisma --force-reset 가드
+## 6. 프론트 케이스 동적화 — 백엔드는 준비됨, 프론트가 정적
+
+백엔드에 케이스 CRUD(`POST/PATCH/DELETE /cases`)가 구현됐다 (생성 시 서류 상태·유형별 기본
+할 일 자동 준비). 그러나 **프론트는 12개 파일에서 `D.CASES`(데모 3건)를 정적으로 참조**하고,
+케이스 생성 화면도 "샘플로 이동" 데모 동작이다. 새 케이스를 실제로 쓰려면 프론트가
+bootstrap의 `cases`를 상태로 들고 전 화면을 동적 참조로 바꿔야 한다 — 별도 작업 (판정
+ANALYSIS·문서 본문이 없는 새 케이스의 빈 상태 UI 포함).
+
+## 7. 멀티유저 데이터 스코핑 — 미구현
+
+인증은 실구현됐지만(가입=이메일 코드+scrypt 해시, 로그인=실제 비밀번호 검증) **데이터는
+아직 단일 사용자 기준**이다: store가 첫 번째 사용자(데모 김민지)의 케이스를 모두에게
+보여주고, JWT의 sub로 필터하지 않는다. 진짜 멀티유저는 store 전 메서드에 userId 스코프 +
+프론트 빈 상태 UI가 필요. 그전까지 배포는 데모 계정 공유 전제 (`AUTH_ENFORCE`도 그래서
+기본 꺼짐 — 켜면 미가입 로그인 차단이지만 데이터는 여전히 공유).
+
+## 8. 아직 목(mock)인 인증 부가 기능
+
+- 아이디 찾기(`/auth/find-id`), 비밀번호 재설정(`/auth/password-reset/*`) — 고정 응답
+- 소셜 로그인(카카오/구글) — 데모 토큰 발급 (실 OAuth는 각 플랫폼 앱 등록 + 콜백 구현 필요,
+  `AUTH_ENFORCE=true`면 501로 거절)
+
+## 9. Prisma --force-reset 가드
 
 Prisma 6가 AI 에이전트의 `db push --force-reset`을 차단함 → 테스트 DB는
 파일 삭제 + `db push` 방식으로 우회(`test/setup-e2e.mjs`). `npm run db:reset`(dev.db)은

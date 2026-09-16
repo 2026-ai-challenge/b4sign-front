@@ -32,13 +32,24 @@
 전세 13·월세 12·매매 11 — 임대차 신고 30일(2025.6.1 과태료), 임대인 미납 국세·지방세 확인,
 보증보험 신청(계약기간 ½ 전), 자금조달계획서, 확정일자 "전입 당일 즉시"로 정정 등
 
+## 백엔드 (2026-09-17 완성 점검)
+
+- 프론트가 호출하는 API는 **전부 연결 확인** (bootstrap·tasks·documents·jobs·chat SSE·auth·notifications SSE)
+- 케이스 CRUD 완비: `POST/PATCH/DELETE /cases` (생성 시 서류 상태 + 유형별 기본 할 일 자동, 할 일 id는 `caseId.기본id`)
+- 인증 실구현: 가입 = 이메일 코드 + **scrypt 해시** 저장(의존성 0), 가입된 사용자는 **항상 실제 비밀번호 검증**(오답 401),
+  미가입은 `AUTH_ENFORCE=true`면 401 / 아니면 데모 규칙 유지. 탈퇴 = 실제 cascade 삭제. 재가입 409 EMAIL_TAKEN
+- `GET /health` (DB ping 포함) — ALB·모니터링용. e2e 35개
+- **AWS 배포 가이드: `zipsalpi-api/docs/DEPLOY.md`** — EC2+Docker+Caddy(HTTPS 필수!), GitHub secrets, 시드, RDS 전환 절차
+- 미구현(의도): 멀티유저 스코핑(ISSUES #7), 프론트 케이스 동적화(#6), 아이디찾기·비번재설정·소셜 OAuth 목(#8)
+
 ## 다음 할 일
 
+- [ ] **AWS 배포 (사용자)**: EC2 생성 → `docs/DEPLOY.md` 1~7 순서대로 (도메인+HTTPS 필수, GitHub secrets 3개)
 - [ ] 실데이터 오면: **골든셋 20~30개 먼저** → 법령 수집(조문 청킹) → Postgres+pgvector → 상담 출처 칩(RAG)
-- [ ] ANTHROPIC_API_KEY / RESEND_API_KEY / S3 버킷 / EC2 secrets 투입
+- [ ] ANTHROPIC_API_KEY / RESEND_API_KEY / S3 버킷 투입 (b4sign.env)
 - [ ] Vercel env `NEXT_PUBLIC_API_URL` (백엔드 배포 후) — 백엔드 CORS에 vercel.app 이미 포함
-- [ ] Web Push, 등기 자동 열람 경로 확정 (ISSUES #1·#3)
+- [ ] Web Push, 등기 자동 열람 경로 확정 (ISSUES #1·#3, 대행 API: CODEF/Tilko 조사됨)
 
 ## 마지막 갱신
 
-2026-09-11 — 홈 할 일 요약·SSE 알림·중개보수 계산기·이사 체크리스트·등기 모니터링 메뉴 추가
+2026-09-17 — 백엔드 완성 점검: 케이스 CRUD·실인증(scrypt)·실탈퇴·/health·e2e 35, AWS 배포 가이드(DEPLOY.md) 작성
