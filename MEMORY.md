@@ -71,6 +71,16 @@
 - Redis 불필요 결정: 중복 방지는 DB 기반 Idempotency-Key로 이미 해결 (단일 인스턴스)
 - Upstage(Document Parse) 키 아직 없음 — 실검증 대기. 업로드→분석은 아직 시뮬레이션(실추출 미구현)
 
+## 백엔드 (2026-09-17 4차 — PDF 실파이프라인 가동)
+
+- **Upstage Document Parse 실검증·연동 완료**: 업로드(PDF/사진) → 스토리지 저장 → **자동 파싱 →
+  DocumentState.parsedText 저장** → `GET /cases/:id/documents/:docKey`의 `parsed {at, chars, preview}`로 확인.
+  엔드포인트 `api.upstage.ai/v1/document-digitization` (model=document-parse), 데모 등기부로 E2E 실동작 확인
+- parsedText가 룰엔진·RAG 입력 — 다음 단계: 파싱 텍스트 → Claude 판정 → ANALYSIS 실데이터화(빨간 하이라이트 실구동)
+- **틸코 원인 확정**: API KEY TYPE이 "정액제"라 포인트 호출 불가 → **포인트제 키 재발급 필요** (ISSUES #1).
+  선불수단 = 전자민원캐시(1만원 충전됨), 남은 입력값은 캐시 비밀번호(IROS_EMONEY_PWD)
+- e2e 40/40 (실키는 테스트에서 빈 값 강제 — Upstage 포함)
+
 ## 마지막 갱신
 
-2026-09-17 — 3차: 키 투입(Anthropic·Voyage·틸코), Claude 실스트리밍 검증, 틸코 실호출 검증(계정 활성화 대기), Swagger 추가
+2026-09-17 — 4차: Upstage 실검증+업로드 자동파싱 연동, 틸코 정액제 키 원인 확정, IROS·전자민원캐시 정보 정리
