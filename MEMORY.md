@@ -77,10 +77,10 @@
   DocumentState.parsedText 저장** → `GET /cases/:id/documents/:docKey`의 `parsed {at, chars, preview}`로 확인.
   엔드포인트 `api.upstage.ai/v1/document-digitization` (model=document-parse), 데모 등기부로 E2E 실동작 확인
 - parsedText가 룰엔진·RAG 입력 — 다음 단계: 파싱 텍스트 → Claude 판정 → ANALYSIS 실데이터화(빨간 하이라이트 실구동)
-- **틸코 원인 확정**: API KEY TYPE이 "정액제"라 포인트 호출 불가 → **포인트제 키 재발급 필요** (ISSUES #1).
-  선불수단 = 전자민원캐시(1만원 충전됨), 남은 입력값은 캐시 비밀번호(IROS_EMONEY_PWD)
+- **틸코 주소검색 실검증 완료**: "일반용" 키 = 포인트 종량제. 개인정보 없는 필드는 **평문** 규칙 확정.
+  `/registry/search` → 실제 pin 목록 수신·포인트 차감 확인. 발급은 캐시 비밀번호(IROS_EMONEY_PWD)만 남음 (ISSUES #1)
 - e2e 40/40 (실키는 테스트에서 빈 값 강제 — Upstage 포함)
 
 ## 마지막 갱신
 
-2026-09-17 — 4차: Upstage 실검증+업로드 자동파싱 연동, 틸코 정액제 키 원인 확정, IROS·전자민원캐시 정보 정리
+2026-09-17 — 4차: Upstage 실검증+업로드 자동파싱 연동, 틸코 주소검색 실검증 완료(일반용 키·평문 규칙), AWS 배포는 사용자와 나중에 함께 진행하기로
