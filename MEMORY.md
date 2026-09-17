@@ -159,7 +159,7 @@
 
 - **Postgres(pgvector) 전환**: 로컬 `b4pg` 컨테이너(pw b4sign-local) / EC2 `b4pg`(b4net 네트워크, pw는 EC2 env에만).
   RDS 불채택 — 컨테이너로 비용 0. e2e는 b4sign_test DB(스키마 드롭 리셋), CI에 pgvector 서비스
-- **법령 RAG 가동**: 8개 법령 258조문 voyage-4 임베딩 → 상담에 top-5 조문 주입 (항 단위 인용 실측).
+- **법령 RAG 가동**: 17개 법령 708조문 (전세사기특별법·민사집행법·조세우선 등 포함) voyage-4 임베딩 → 상담에 top-5 조문 주입 (항 단위 인용 실측).
   `POST /admin/laws/ingest`(멱등) · `GET /laws-search`. LangChain/LangGraph 불채택 유지
 - **EC2 = PG+RAG 최신**: 시드·공시가 25만·법령 258 전부 라이브 검증. 단 이번 배포는 CI 실패로
   **로컬 빌드 이미지를 수동 전송**(docker save/scp/load, 이미지명 b4sign-local:latest)
