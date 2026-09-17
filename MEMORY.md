@@ -155,6 +155,19 @@
 - CORS: vercel.app + localhost:3000 허용됨 (팀원 로컬 개발 가능)
 - Vercel env: `NEXT_PUBLIC_API_URL=https://43-201-119-217.sslip.io/api/v1` 넣고 Redeploy
 
+## 백엔드 (2026-09-17 12차 — Postgres+RAG, EC2 이전 완료)
+
+- **Postgres(pgvector) 전환**: 로컬 `b4pg` 컨테이너(pw b4sign-local) / EC2 `b4pg`(b4net 네트워크, pw는 EC2 env에만).
+  RDS 불채택 — 컨테이너로 비용 0. e2e는 b4sign_test DB(스키마 드롭 리셋), CI에 pgvector 서비스
+- **법령 RAG 가동**: 8개 법령 258조문 voyage-4 임베딩 → 상담에 top-5 조문 주입 (항 단위 인용 실측).
+  `POST /admin/laws/ingest`(멱등) · `GET /laws-search`. LangChain/LangGraph 불채택 유지
+- **EC2 = PG+RAG 최신**: 시드·공시가 25만·법령 258 전부 라이브 검증. 단 이번 배포는 CI 실패로
+  **로컬 빌드 이미지를 수동 전송**(docker save/scp/load, 이미지명 b4sign-local:latest)
+- ⚠️ **미해결 2건**: ① CI가 8245ee3에서 실패 — Actions 로그 확인 필요 (사용자에게 요청함)
+  ② law.go.kr가 **호출 서버 IP 검증** — open.law.go.kr 신청 수정에서 43.201.119.217 추가 필요
+  (전까지 EC2에서 재인제스트 불가 — 로컬 인제스트 후 pg_dump로 복사하는 우회 사용)
+- 이전 SQLite 데이터(EC2 볼륨 b4sign-data의 prod.db)는 백업으로 잔존
+
 ## 마지막 갱신
 
 2026-09-17 — 11차 + **EC2 배포 완료**. 남은 것: 도메인/HTTPS → Vercel 연결
