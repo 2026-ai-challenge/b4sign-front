@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Button, Card } from "@/design-system";
+import { api } from "@/lib/api";
+import { useApp } from "@/lib/store";
 
 const inputStyle = {
   height: 48,
@@ -18,9 +20,31 @@ const inputStyle = {
 
 export default function FindId() {
   const router = useRouter();
+  const { toast } = useApp();
   const [step, setStep] = useState("form"); // form | result
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [result, setResult] = useState(null); // { maskedEmail, provider }
+  const [busy, setBusy] = useState(false);
+
+  const find = async () => {
+    if (!name.trim()) return toast("이름을 입력해 주세요");
+    setBusy(true);
+    try {
+      const r = await api("/auth/find-id", {
+        method: "POST",
+        body: { name: name.trim(), emailPrefix: email.trim() || undefined },
+      });
+      setResult(r);
+      setStep("result");
+    } catch (e) {
+      if (e.status === 404) toast("해당 이름으로 가입된 계정을 찾지 못했어요");
+      else if (e.status) toast(e.message);
+      else toast("서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <>
@@ -55,8 +79,8 @@ export default function FindId() {
                 style={inputStyle}
               />
             </div>
-            <Button variant="dark" onClick={() => setStep("result")} style={{ marginTop: 20, fontSize: 16 }}>
-              찾기
+            <Button variant="dark" onClick={find} disabled={busy} style={{ marginTop: 20, fontSize: 16 }}>
+              {busy ? "찾는 중…" : "찾기"}
             </Button>
           </>
         ) : (
@@ -65,7 +89,8 @@ export default function FindId() {
               일치하는 계정 1개를 찾았어요.
             </p>
             <Card style={{ marginTop: 24, padding: 18 }}>
-              <div style={{ fontSize: 20, fontWeight: 800 }}>dl***@gmail.com</div>
+              <div style={{ fontSize: 20, fontWeight: 800 }}>{result?.maskedEmail}</div>
+              {result?.provider === "kakao" && (
               <div
                 style={{
                   marginTop: 10,
@@ -88,8 +113,11 @@ export default function FindId() {
                 </svg>
                 카카오로 가입됨
               </div>
+              )}
               <p style={{ margin: "12px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
-                이 계정은 비밀번호가 없어요. 로그인 화면에서 카카오 버튼을 눌러주세요.
+                {result?.provider === "email"
+                  ? "이 이메일과 비밀번호로 로그인하세요. 비밀번호를 잊었다면 비밀번호 찾기를 이용해 주세요."
+                  : "이 계정은 비밀번호가 없어요. 로그인 화면에서 소셜 버튼을 눌러주세요."}
               </p>
             </Card>
             <Button onClick={() => router.push("/login")} style={{ marginTop: 20, fontSize: 16 }}>

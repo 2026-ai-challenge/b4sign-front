@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon, ArchiveBoxIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
@@ -39,8 +39,20 @@ const MOVE_OUT = [
 
 export default function Moving() {
   const router = useRouter();
-  const { toast } = useApp();
-  const [checked, setChecked] = useState({});
+  const { toast, caseId } = useApp();
+  const storeKey = `b4sign_moving_${caseId}`;
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || "{}");
+    } catch {
+      return {};
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(checked));
+    } catch {}
+  }, [checked, storeKey]);
 
   return (
     <>

@@ -50,7 +50,7 @@ const card = {
 
 export default function Me() {
   const router = useRouter();
-  const { caseId, me, patchMe, clearDocs, setLoggedIn, setConsented, toast } = useApp();
+  const { caseId, me, patchMe, clearDocs, setLoggedIn, setConsented, toast, removeCase, logout, cases } = useApp();
   const notif = me.notif;
   // 알림 설정 변경은 로컬 반영 + PATCH /me 동기화
   const setNotif = (fn) => patchMe({ notif: fn(notif) });
@@ -100,7 +100,14 @@ export default function Me() {
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 16, fontWeight: 800 }}>{me.name}</span>
               <button
-                onClick={() => toast("이름 수정 (데모)")}
+                onClick={() => {
+                  const next = window.prompt("표시할 이름을 입력하세요", me.name || "");
+                  if (next === null) return;
+                  const trimmed = next.trim().slice(0, 20);
+                  if (!trimmed) return toast("이름을 입력해 주세요");
+                  patchMe({ name: trimmed });
+                  toast("이름을 바꿨어요");
+                }}
                 style={{
                   background: "none",
                   border: "none",
@@ -214,7 +221,7 @@ export default function Me() {
               + 새 케이스
             </button>
           </div>
-          {D.CASES.map((c) => (
+          {cases.map((c) => (
             <div
               key={c.id}
               style={{
@@ -254,7 +261,7 @@ export default function Me() {
               </div>
               <div style={{ display: "flex", gap: 6, flex: "none" }}>
                 <button
-                  onClick={() => toast("보관함으로 옮겼어요")}
+                  onClick={() => removeCase(c.id, false)}
                   style={{
                     height: 32,
                     padding: "0 10px",
@@ -269,7 +276,10 @@ export default function Me() {
                   보관
                 </button>
                 <button
-                  onClick={() => toast("삭제 전 확인 모달이 열려요 (데모)")}
+                  onClick={() => {
+                    if (window.confirm(`"${c.short}" 케이스를 삭제할까요?\n서류·할 일·상담 기록이 함께 지워져요.`))
+                      removeCase(c.id, true);
+                  }}
                   style={{
                     height: 32,
                     padding: "0 10px",
@@ -315,7 +325,7 @@ export default function Me() {
 
         <button
           onClick={() => {
-            setLoggedIn(false);
+            logout(); // 토큰(액세스·리프레시)까지 정리
             router.push("/");
           }}
           style={{

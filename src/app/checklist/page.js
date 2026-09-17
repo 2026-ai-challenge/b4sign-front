@@ -22,14 +22,19 @@ export default function Checklist() {
   const cur = D.CASES.find((c) => c.id === caseId);
   const typ = D.TYPES[cur.type];
 
-  // 백엔드 특약 판정 (계약서 재업로드 시 재판정 반영) — 실패 시 로컬 목
+  // 백엔드 특약 목록 — 계약서 실판정이 있으면 source:"live"로 present/missing/weak가 실제 판정값
   const [serverList, setServerList] = useState(null);
+  const [clauseSource, setClauseSource] = useState(null);
   useEffect(() => {
     setServerList(null);
     if (!apiOn) return;
     let off = false;
     api(`/cases/${caseId}/clauses`)
-      .then((d) => !off && Array.isArray(d?.clauses) && setServerList(d.clauses))
+      .then((d) => {
+        if (off || !Array.isArray(d?.clauses)) return;
+        setServerList(d.clauses);
+        setClauseSource(d.source || null);
+      })
       .catch(() => {});
     return () => {
       off = true;
@@ -68,6 +73,22 @@ export default function Checklist() {
           <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
         <span style={{ fontSize: 17, fontWeight: 800 }}>{typ.label} 필수 특약</span>
+        {clauseSource === "live" && (
+          <span
+            style={{
+              marginLeft: "auto",
+              marginRight: 8,
+              padding: "2px 8px",
+              borderRadius: 6,
+              background: "#E3F3E9",
+              color: "#14613F",
+              fontSize: 11,
+              fontWeight: 700,
+            }}
+          >
+            계약서 실판정
+          </span>
+        )}
       </div>
 
       <div style={{ padding: "4px 20px 0", display: "flex", gap: 6, flex: "none" }}>

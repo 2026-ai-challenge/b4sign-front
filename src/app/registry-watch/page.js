@@ -22,7 +22,8 @@ function addMonths(dateStr, n) {
  */
 export default function RegistryWatch() {
   const router = useRouter();
-  const { caseId, docs } = useApp();
+  const { caseId, docs, me, patchMe, toast } = useApp();
+  const watchOn = !!(me.notif?.master && me.notif?.stale);
   const cur = D.CASES.find((c) => c.id === caseId);
   const reg = (docs[caseId] || {}).registry || { status: "missing" };
   const lastChecked = reg.issued || null;
@@ -49,20 +50,28 @@ export default function RegistryWatch() {
           <ChevronLeftIcon style={{ width: 20, height: 20 }} />
         </button>
         <span style={{ fontSize: 17, fontWeight: 800 }}>등기 변동 모니터링</span>
-        <span
+        <button
+          onClick={() => {
+            // 서류 최신본 경고(stale) 알림 설정과 연동 — MY의 같은 토글과 동기화
+            patchMe({ notif: { ...me.notif, stale: !me.notif?.stale, master: true } });
+            toast(watchOn ? "모니터링 알림을 꺼요" : "모니터링 알림을 켰어요");
+          }}
+          aria-pressed={watchOn}
           style={{
             marginLeft: "auto",
             marginRight: 8,
             padding: "3px 9px",
             borderRadius: 999,
-            background: "#E3F3E9",
-            color: "#14613F",
+            border: "none",
+            background: watchOn ? "#E3F3E9" : "#ECEEEC",
+            color: watchOn ? "#14613F" : "#5A6660",
             fontSize: 12,
             fontWeight: 700,
+            cursor: "pointer",
           }}
         >
-          켜짐
-        </span>
+          {watchOn ? "켜짐" : "꺼짐"}
+        </button>
       </div>
 
       <div style={{ padding: "4px 20px 32px", display: "flex", flexDirection: "column", gap: 14 }}>

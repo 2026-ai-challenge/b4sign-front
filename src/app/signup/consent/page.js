@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
+import { api, getToken } from "@/lib/api";
 import { D } from "@/lib/derive";
 import { Button, Card } from "@/design-system";
 
@@ -150,6 +151,8 @@ export default function Consent() {
         <Button
           onClick={() => {
             if (blocked) return;
+            // 동의 내역 서버 영속 (가입 토큰이 있을 때) — 실패해도 흐름은 진행
+            if (getToken()) api("/auth/consent", { method: "POST", body: checks }).catch(() => {});
             setConsented(true);
             setLoggedIn(true);
             router.push("/cases/new");

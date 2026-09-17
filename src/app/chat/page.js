@@ -29,6 +29,7 @@ export default function Chat() {
     chatRenameSession,
     chatDeleteSession,
     addTaskRaw,
+    cases,
   } = useApp();
   const [input, setInput] = useState("");
   const [drawer, setDrawer] = useState(false);
@@ -151,7 +152,7 @@ export default function Chat() {
             transition: "opacity .3s ease, transform .3s ease",
           }}
         >
-          {D.CASES.map((c) => (
+          {cases.map((c) => (
             <button
               key={c.id}
               onClick={() => {
@@ -255,8 +256,8 @@ export default function Chat() {
                   style={{
                     padding: "12px 14px",
                     borderRadius: "18px 18px 18px 4px",
-                    background: m.refused ? "#F4F6F4" : "#fff",
-                    border: `1px solid ${m.refused ? "#DDE3DF" : "#E3E8E3"}`,
+                    background: m.error ? "#FFF1D6" : m.refused ? "#F4F6F4" : "#fff",
+                    border: `1px solid ${m.error ? "#F1D9A8" : m.refused ? "#DDE3DF" : "#E3E8E3"}`,
                     fontSize: 14,
                     lineHeight: 1.6,
                     color: "#17211E",

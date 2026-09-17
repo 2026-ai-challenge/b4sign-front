@@ -24,7 +24,7 @@ import { Button, Card, color } from "@/design-system";
 
 export default function Dashboard() {
   const router = useRouter();
-  const { caseId, setCaseId, docs, tasks, toggleTask, toast, apiOn } = useApp();
+  const { caseId, setCaseId, docs, tasks, toggleTask, toast, apiOn, cases } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
 
   // 실데이터: 깡통 위험률(실거래 시세 기반) + 실판정 카운트 — 실패 시 조용히 로컬 유지
@@ -135,7 +135,7 @@ export default function Dashboard() {
             transition: "opacity .3s ease, transform .3s ease",
           }}
         >
-          {D.CASES.map((c) => (
+          {cases.map((c) => (
             <button
               key={c.id}
               onClick={() => {
@@ -587,13 +587,19 @@ export default function Dashboard() {
                   style={{
                     padding: "3px 9px",
                     borderRadius: 999,
-                    background: D.ST[risk.grade]?.bg ?? D.ST.unknown.bg,
-                    color: D.ST[risk.grade]?.fg ?? D.ST.unknown.fg,
+                    background: risk.metricsAvailable ? (D.ST[risk.grade]?.bg ?? D.ST.unknown.bg) : D.ST.unknown.bg,
+                    color: risk.metricsAvailable ? (D.ST[risk.grade]?.fg ?? D.ST.unknown.fg) : D.ST.unknown.fg,
                     fontSize: 12,
                     fontWeight: 700,
                   }}
                 >
-                  {risk.grade === "danger" ? "위험" : risk.grade === "warn" ? "주의" : "양호"}
+                  {!risk.metricsAvailable
+                    ? "참고치"
+                    : risk.grade === "danger"
+                      ? "위험"
+                      : risk.grade === "warn"
+                        ? "주의"
+                        : "양호"}
                 </span>
               </div>
               <div style={{ marginTop: 8, display: "flex", alignItems: "baseline", gap: 8 }}>
@@ -614,6 +620,11 @@ export default function Dashboard() {
                 </span>
               </div>
               <div style={{ marginTop: 8, fontSize: 12, color: color.textSecondary, lineHeight: 1.5 }}>
+                {!risk.metricsAvailable && (
+                  <b style={{ color: "#7A4E00" }}>
+                    등기부가 아직 분석되지 않아 선순위 근저당이 반영되지 않았어요 — 등기부를 올리면 정확해져요.{" "}
+                  </b>
+                )}
                 {risk.valueSource === "gongsi"
                   ? "실거래가 없어 공시가격 ×140% 근사 시세를 사용했어요."
                   : `최근 12개월 실거래 ${risk.sampleCount}건 기반 추정 시세예요.`}{" "}

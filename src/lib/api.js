@@ -16,6 +16,7 @@ export function apiAvailable() {
 }
 
 const TOKEN_KEY = "zipsalpi_token";
+const REFRESH_KEY = "zipsalpi_refresh";
 
 export function getToken() {
   try {
@@ -32,6 +33,61 @@ export function setToken(token) {
   } catch {}
 }
 
+export function setRefreshToken(token) {
+  try {
+    if (token) localStorage.setItem(REFRESH_KEY, token);
+    else localStorage.removeItem(REFRESH_KEY);
+  } catch {}
+}
+
+/** 로그인 응답 {accessToken, refreshToken} 저장 (둘 다) */
+export function saveTokens(res) {
+  setToken(res?.accessToken || null);
+  setRefreshToken(res?.refreshToken || null);
+}
+
+export function clearTokens() {
+  setToken(null);
+  setRefreshToken(null);
+}
+
+/**
+ * 액세스 토큰 만료(401) 시 리프레시로 1회 갱신. 실패하면 토큰을 지우고
+ * 'auth:expired' 이벤트를 던져 앱이 로그아웃 처리(데모 데이터로 조용히 전환하지 않는다).
+ */
+let refreshing = null;
+export async function refreshAccessToken() {
+  if (refreshing) return refreshing;
+  refreshing = (async () => {
+    let refreshToken = null;
+    try {
+      refreshToken = localStorage.getItem(REFRESH_KEY);
+    } catch {}
+    if (!refreshToken) return false;
+    try {
+      const res = await fetch(BASE + "/auth/refresh", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      });
+      if (!res.ok) return false;
+      saveTokens(await res.json());
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+  const ok = await refreshing;
+  refreshing = null;
+  if (!ok) {
+    clearTokens();
+    try {
+      window.dispatchEvent(new CustomEvent("auth:expired"));
+    } catch {}
+  }
+  return ok;
+}
+
 export async function api(path, { method = "GET", body } = {}, _retried = false) {
   const headers = { "Content-Type": "application/json" };
   const token = getToken();
@@ -41,10 +97,10 @@ export async function api(path, { method = "GET", body } = {}, _retried = false)
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
-  // 만료/무효 토큰(401): 지우고 무토큰(데모)으로 1회 재시도 — 앱이 멈추지 않게
+  // 만료 토큰(401): 리프레시 성공 시 1회 재시도, 실패 시 로그아웃 이벤트 (데모로 바꿔치기 금지)
   if (res.status === 401 && token && !_retried) {
-    setToken(null);
-    return api(path, { method, body }, true);
+    const ok = await refreshAccessToken();
+    if (ok) return api(path, { method, body }, true);
   }
   const data = await res.json().catch(() => null);
   if (!res.ok) {

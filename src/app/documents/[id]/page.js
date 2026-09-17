@@ -46,16 +46,20 @@ function Viewer({ docKey }) {
   // 로컬 D 형식({h}/{pre,mark,post,item})으로 변환해 기존 렌더를 그대로 재사용한다.
   const [liveText, setLiveText] = useState(null);
   const [liveItems, setLiveItems] = useState(null);
+  const [liveChecked, setLiveChecked] = useState(false); // API 응답을 받았는지 (무한 로딩 방지)
   useEffect(() => {
     setLiveText(null);
     setLiveItems(null);
+    setLiveChecked(!apiOn);
     if (!apiOn) return;
     let off = false;
     Promise.all([
       api(`/cases/${caseId}/documents/${docKey}`).catch(() => null),
       api(`/cases/${caseId}/analysis`).catch(() => null),
     ]).then(([d, a]) => {
-      if (off || d?.source !== "live") return;
+      if (off) return;
+      setLiveChecked(true);
+      if (d?.source !== "live") return;
       setLiveText(
         d.lines.map((l) =>
           l.kind === "heading"
@@ -79,7 +83,7 @@ function Viewer({ docKey }) {
   const items = allItems.filter((i) => i.doc === docKey);
   const caseTasks = tasks[caseId] || [];
 
-  if (doc && !text && apiOn) {
+  if (doc && !text && apiOn && !liveChecked) {
     // 실서류 본문 로딩 중 (API 응답 대기)
     return (
       <div style={{ padding: 60, textAlign: "center", fontSize: 14, color: "#6E827A" }}>

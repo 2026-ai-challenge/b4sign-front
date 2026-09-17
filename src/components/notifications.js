@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { BellIcon } from "@heroicons/react/24/solid";
 import { useApp } from "@/lib/store";
-import { api, apiAvailable, getToken } from "@/lib/api";
+import { api, apiAvailable, getToken, refreshAccessToken } from "@/lib/api";
 import { D, resolveTaskDue, dday } from "@/lib/derive";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
@@ -42,6 +42,7 @@ export function useDueNotifications() {
   const preAuth = PRE_AUTH_ROUTES.includes(pathname);
   const [items, setItems] = useState([]);
   const [dismissVer, setDismissVer] = useState(0); // 지우기 발생 시 리렌더
+  const [retry, setRetry] = useState(0); // 토큰 갱신 후 SSE 재연결 트리거
 
   // 로컬 계산 폴백 (SSE와 동일 규칙)
   const computeLocal = () => {
@@ -89,15 +90,26 @@ export function useDueNotifications() {
           setItems(JSON.parse(e.data));
         } catch {}
       });
-      es.onerror = () => {}; // EventSource가 자동 재접속
-      return () => es.close();
+      // 오류 시: 토큰이 있으면 리프레시 시도 후 재연결, 실패(세션 만료)면 스트림 중단
+      let closed = false;
+      es.onerror = async () => {
+        if (closed || !tok) return;
+        es.close();
+        closed = true;
+        const ok = await refreshAccessToken();
+        if (ok) setRetry((n) => n + 1); // 새 토큰으로 effect 재실행
+      };
+      return () => {
+        closed = true;
+        es.close();
+      };
     }
     // 로컬 폴백: 즉시 + 60초 주기
     setItems(computeLocal());
     const t = setInterval(() => setItems(computeLocal()), 60_000);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiOn, me.notif?.master, me.notif?.due, preAuth]);
+  }, [apiOn, me.notif?.master, me.notif?.due, preAuth, retry]);
 
   void dismissVer; // 지우기 시 필터 재평가 트리거
   if (preAuth) return [];

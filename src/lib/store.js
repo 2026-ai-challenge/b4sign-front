@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { D } from "@/lib/derive";
-import { api, apiStream, apiAvailable } from "@/lib/api";
+import { api, apiStream, apiAvailable, clearTokens } from "@/lib/api";
 
 const AppContext = createContext(null);
 
@@ -66,6 +66,8 @@ export function AppProvider({ children }) {
     notif: { master: true, due: true, stale: true, done: false },
   });
   const [apiOn, setApiOn] = useState(false); // 백엔드 연결 여부 (실패 시 로컬 목으로 동작)
+  // 케이스 목록: 서버 bootstrap 값 우선 (보관·삭제 반영), 없으면 데모 3건
+  const [cases, setCases] = useState(() => D.CASES.map((c) => ({ ...c })));
   const [docs, setDocs] = useState(() =>
     JSON.parse(JSON.stringify(D.INITIAL_DOCS))
   );
@@ -95,6 +97,11 @@ export function AppProvider({ children }) {
         setMe(b.me);
         setDocs(b.docs);
         setTasksState(b.tasks);
+        // 서버 케이스 중 화면이 렌더할 수 있는 것(데모 콘텐츠 보유)만 목록에 반영 — 보관된 케이스는 빠진다
+        if (Array.isArray(b.cases)) {
+          const known = b.cases.filter((c) => D.CASES.some((d) => d.id === c.id));
+          if (known.length) setCases(known.map((c) => ({ ...D.CASES.find((d) => d.id === c.id), ...c })));
+        }
         setChat((s) => ({ ...s, sessions: b.chat.sessions, active: b.chat.active }));
         setApiOn(true);
       })
@@ -104,6 +111,17 @@ export function AppProvider({ children }) {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  // 세션 만료(리프레시 실패) → 로그아웃 처리. 데모 데이터로 조용히 전환하지 않는다.
+  useEffect(() => {
+    const onExpired = () => {
+      setLoggedIn(false);
+      setToastMsg("로그인이 만료됐어요. 다시 로그인해 주세요.");
+      setTimeout(() => setToastMsg(null), 2500);
+    };
+    window.addEventListener("auth:expired", onExpired);
+    return () => window.removeEventListener("auth:expired", onExpired);
   }, []);
 
   const store = useMemo(() => {
@@ -203,6 +221,29 @@ export function AppProvider({ children }) {
         setMe((m) => ({ ...m, ...patch }));
         sync("/me", { method: "PATCH", body: patch });
       },
+      logout: () => {
+        clearTokens();
+        setLoggedIn(false);
+        setConsented(false);
+      },
+      // 케이스 보관/삭제 — 서버 반영 후 목록에서 제거, 현재 케이스면 남은 것으로 전환
+      removeCase: async (cid, hard) => {
+        if (apiOnRef.current) {
+          try {
+            await api(`/cases/${cid}${hard ? "?hard=1" : ""}`, { method: "DELETE" });
+          } catch (e) {
+            toast(e.message || "처리하지 못했어요");
+            return false;
+          }
+        }
+        setCases((list) => {
+          const rest = list.filter((c) => c.id !== cid);
+          if (rest.length) setCaseId((cur) => (cur === cid ? rest[0].id : cur));
+          return rest.length ? rest : list; // 마지막 케이스는 화면 유지를 위해 남긴다
+        });
+        toast(hard ? "케이스를 삭제했어요" : "보관함으로 옮겼어요");
+        return true;
+      },
 
       // ─── AI 상담 ───
       chatSend: (cid, text) => {
@@ -287,6 +328,13 @@ export function AppProvider({ children }) {
                 streaming: false,
                 canAdd: !!d?.canAdd,
                 taskTitle: d?.taskTitle,
+                // 서버가 스트림 중 오류를 알린 경우 — 빈 답변으로 끝내지 않고 안내
+                ...(d?.error
+                  ? {
+                      error: true,
+                      text: m.text || "답변을 만드는 중 문제가 생겼어요. 잠시 후 다시 질문해 주세요.",
+                    }
+                  : {}),
               }));
               finish();
             },
@@ -365,6 +413,7 @@ export function AppProvider({ children }) {
     setConsented,
     caseId,
     setCaseId,
+    cases,
     me,
     apiOn,
     docs,

@@ -187,3 +187,21 @@ AI 상담 SSE(+법령 출처 칩) / 세션 CRUD / 가입·로그인·코드 재�
 - bootstrap `cases` 프론트가 버림 (#6 근본 원인), POST /cases에 id 없어 더블클릭=중복
 
 **계약 정합**: 프론트가 부르는 경로는 전부 존재 ✓, SSE 이벤트명(meta/delta/refs/done, due) 일치 ✓, 법령 칩 렌더 ✓
+
+## 13. QA #12 조치 결과 (2026-09-18)
+
+**🔴 8건 전부 수정** — ①로그아웃 토큰 정리 ②job을 실파이프라인(파싱→판정)과 동기화, 텍스트 없으면 failed
+③live 항목 task/law/term/quote 복원 ④refreshToken 저장·/auth/refresh 갱신, 실패 시 `auth:expired`로 로그아웃(데모 전환 금지),
+알림 SSE 재연결 ⑤위험률 카드 "참고치"+등기부 미분석 경고 ⑥서버 거절 시 로그인 통과 금지(네트워크 미기동만 폴백)
+⑦뷰어 무한 로딩 제거 ⑧챗 done.error 안내 렌더
+
+**🟡 죽은 버튼 전부 실동작** — 이름 수정(prompt→PATCH /me), 케이스 보관/삭제(DELETE /cases/:id[?hard=1], store.cases 갱신),
+아이디 찾기(실조회·마스킹), 비번 찾기(코드 메일→새 비번 저장), 약관 동의(POST /auth/consent 영속),
+registry-watch 「켜짐」= 서류 최신본 알림 토글, 이사 체크리스트 localStorage 영속, `[입력 필요]` 13곳 → 실제 문구
+(⚠️ 약관·개인정보처리방침 문구는 **법무 최종 검토 필요** — 사업자 정보는 비영리 시범 서비스로 기재)
+
+**백엔드 스텁 → 실구현**: find-id·password-reset·consent. `/clauses`는 계약서 실판정 시 present/missing/weak 실값(source:live).
+push/subscribe 스텁 제거. 고아 라우트 중 `/building/title`은 등기부 판정 교차검증에 내부 연결, `/auth/refresh`·`/cases/:id DELETE`는 프론트 연결.
+잔여 고아(REST 완결성용, 무해): `/market/rents`, `/laws/:key`, `/terms/:key`, `/cases/:id` GET/PATCH, 세션 GET, `/notifications` GET
+
+**남은 구조적 과제**: #6 프론트 케이스 동적화 (신규 케이스가 화면에 안 뜸 — bootstrap cases 중 데모 id만 렌더)

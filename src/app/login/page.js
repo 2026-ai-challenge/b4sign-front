@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
-import { api, setToken } from "@/lib/api";
+import { api, saveTokens } from "@/lib/api";
 import { Button } from "@/design-system";
 
 const ERR = {
@@ -41,7 +41,7 @@ const inputStyle = (borderColor = "#DDE3DF") => ({
 
 export default function Login() {
   const router = useRouter();
-  const { loggedIn, setLoggedIn, consented, setConsented } = useApp();
+  const { loggedIn, setLoggedIn, consented, setConsented, toast } = useApp();
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [err, setErr] = useState(null);
@@ -49,7 +49,7 @@ export default function Login() {
 
   const afterAuth = () => router.push(consented ? "/dashboard" : "/signup/consent");
   const pass = (tokens) => {
-    if (tokens?.accessToken) setToken(tokens.accessToken);
+    if (tokens?.accessToken) saveTokens(tokens); // 액세스+리프레시 둘 다 저장
     setLoggedIn(true);
     afterAuth();
   };
@@ -69,8 +69,10 @@ export default function Login() {
   const socialLogin = async (provider) => {
     try {
       pass(await api(`/auth/social/${provider}`, { method: "POST", body: { authCode: "demo" } }));
-    } catch {
-      pass(null); // API 미기동 폴백
+    } catch (e) {
+      // 서버가 응답한 오류(거절)는 통과시키지 않는다 — 네트워크 미기동(status 없음)만 로컬 데모
+      if (e.status) toast(e.message || "소셜 로그인을 사용할 수 없어요");
+      else pass(null);
     }
   };
   const emailLogin = async () => {
@@ -79,8 +81,9 @@ export default function Login() {
     } catch (e) {
       if (e.status === 409) setErr("social");
       else if (e.status === 429) setErr("lock");
-      else if (e.status === 400) setErr("cred");
-      else localRules(); // 네트워크 오류 → 로컬 데모 규칙
+      else if (e.status === 400 || e.status === 401) setErr("cred");
+      else if (e.status) toast(e.message || "로그인에 실패했어요");
+      else localRules(); // 네트워크 오류(API 미기동)만 로컬 데모 규칙
     }
   };
 

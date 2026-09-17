@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon, CheckIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
-import { api, setToken } from "@/lib/api";
+import { api, saveTokens } from "@/lib/api";
 import { Button } from "@/design-system";
 
 const inputStyle = (borderColor = "#DDE3DF") => ({
@@ -48,7 +48,7 @@ export default function Signup() {
         method: "POST",
         body: { email: su.email, code: su.code },
       });
-      if (r?.accessToken) setToken(r.accessToken);
+      if (r?.accessToken) saveTokens(r);
       setLoggedIn(true);
       router.push("/signup/consent");
     } catch (e) {
