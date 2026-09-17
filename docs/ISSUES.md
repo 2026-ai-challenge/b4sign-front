@@ -159,3 +159,31 @@ AI 상담 SSE(+법령 출처 칩) / 세션 CRUD / 가입·로그인·코드 재�
 **D. 현재 의미 없는 것**:
 - `POST /push/subscribe` — 자리만 (Web Push 후속 전까지 무의미)
 - auth find-id / password-reset 3종 — 백엔드 목 응답 + 프론트 미호출 (심사엔 영향 없음)
+
+## 12. 적대적 QA 2차 (2026-09-18) — 코드 전수 + 계약 대조
+
+**🔴 실버그 (사용자 기대와 다르게 동작)**
+1. MY 로그아웃이 토큰을 안 지움 (`me/page.js:316`) — 다음 요청에 이전 사용자 Bearer가 그대로 나감
+2. 업로드 job 상태가 **벽시계 시뮬레이션** (`store.service getJob`) — 실분석 끝나기 전에 done → 프론트가 /analysis로 이동해 1회 fetch → 목 표시. 실판정 도착 시 재조회 없음
+3. live 판정 항목에 `task/term/law/quote` 필드 없음 (`getAnalysis` live 매핑) → 실서류 분석 결과에서 "할 일에 추가"·용어·법령 행이 안 뜸
+4. 액세스 토큰 30분 만료 → api.js가 토큰 지우고 **데모 사용자로 조용히 재시도** → 실가입자가 남의 데이터를 봄. refreshToken은 프론트가 버림(/auth/refresh 미사용). 알림 SSE는 만료 토큰으로 무한 재접속
+5. risk `metricsAvailable=false`(등기부 미분석)일 때 선순위 0으로 "양호" 표시 — 근거 부족 표기 없음
+6. 소셜 로그인·이메일 로그인 catch가 어떤 실패에도 `pass(null)` → 서버가 거절해도 로그인됨 (API-off 폴백 의도가 과함)
+7. 뷰어: apiOn이고 live 아니고 DOCTEXT 없는 서류(c1 건축물대장 등) → "불러오는 중…" 무한
+8. 챗 SSE `done.error` 프론트 미처리 (에러 시 빈 답변으로 종료)
+
+**🟡 죽은/의미 없는 버튼 (프론트)**
+- MY: 이름 「수정」·케이스 「보관」·「삭제」 = toast만 (`me/page.js:103,257,272`)
+- 아이디 찾기 「찾기」: 입력 무시, 하드코딩 결과 / 비번 찾기 전체 플로우 로컬(두번째 입력 uncontrolled, 존재하지 않는 /reset-password 표기)
+- 약관 동의: 체크값 어디에도 안 보냄 (`/auth/consent` 미호출)
+- 케이스 생성: POST 응답 버리고 샘플로 이동 (#6)
+- 이용약관/개인정보처리방침에 `[입력 필요]` 플레이스홀더 13곳 노출
+- registry-watch 「켜짐」 배지 정적, 이사 체크리스트 체크 미영속, `NAV` 데드 데이터
+
+**🟡 백엔드 스텁/미사용**
+- 스텁: find-id·password-reset×2·push/subscribe·consent(검증만, 미영속)·social(데모 토큰)
+- `/clauses`는 유형별 정적 (프론트 주석 "재판정 반영"은 거짓)
+- 프론트가 안 쓰는 라우트 31개 — 내부용(risk가 estimate/gongsi/geo 사용, 자동발급이 registry 사용) 제외하면 진짜 고아: `/building/title`, `/market/rents`, `/laws/:key`, `/terms/:key`, `/auth/refresh`, `/cases/:id` GET/PATCH/DELETE, `/chat/sessions` GET, `/notifications` GET
+- bootstrap `cases` 프론트가 버림 (#6 근본 원인), POST /cases에 id 없어 더블클릭=중복
+
+**계약 정합**: 프론트가 부르는 경로는 전부 존재 ✓, SSE 이벤트명(meta/delta/refs/done, due) 일치 ✓, 법령 칩 렌더 ✓
