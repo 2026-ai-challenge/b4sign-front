@@ -77,10 +77,11 @@
   DocumentState.parsedText 저장** → `GET /cases/:id/documents/:docKey`의 `parsed {at, chars, preview}`로 확인.
   엔드포인트 `api.upstage.ai/v1/document-digitization` (model=document-parse), 데모 등기부로 E2E 실동작 확인
 - parsedText가 룰엔진·RAG 입력 — 다음 단계: 파싱 텍스트 → Claude 판정 → ANALYSIS 실데이터화(빨간 하이라이트 실구동)
-- **틸코 주소검색 실검증 완료**: "일반용" 키 = 포인트 종량제. 개인정보 없는 필드는 **평문** 규칙 확정.
-  `/registry/search` → 실제 pin 목록 수신·포인트 차감 확인. 발급은 캐시 비밀번호(IROS_EMONEY_PWD)만 남음 (ISSUES #1)
+- **틸코 등기부 실발급 E2E 완료 (2026-09-17)**: 검색→발급→실제 등기부 PDF(말소포함) 수신→Upstage 파싱까지 전부 실검증.
+  확정 스펙(암호화 5필드만, Pin·플래그 평문, 캐시 8+4 분할, AbsCls 11/12)은 **ISSUES #1** 참고.
+  ⚠️ 발급 실패도 100p 차감 — 재시도 주의. IROS 계정·캐시 정보는 .env에만
 - e2e 40/40 (실키는 테스트에서 빈 값 강제 — Upstage 포함)
 
 ## 마지막 갱신
 
-2026-09-17 — 4차: Upstage 실검증+업로드 자동파싱 연동, 틸코 주소검색 실검증 완료(일반용 키·평문 규칙), AWS 배포는 사용자와 나중에 함께 진행하기로
+2026-09-17 — 5차: **등기부 실발급 E2E 성공** (틸코→등기소→PDF→Upstage 파싱). AWS 배포는 사용자와 나중에 함께
