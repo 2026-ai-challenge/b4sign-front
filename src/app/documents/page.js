@@ -122,6 +122,24 @@ function Documents() {
     timer.current = setTimeout(poll, 300);
   };
 
+  // 샘플 PDF를 받아서 그대로 업로드 — 다운로드→다시 올리기 없이 실제 파이프라인을 태운다
+  const uploadSample = async (d) => {
+    if (!apiOn) return;
+    setUpload({ docKey: d.docKey, stage: "progress", pct: 0, fileName: d.file });
+    try {
+      const blob = await fetch(API_BASE.replace(/\/api\/v1$/, "") + d.url).then((r) => {
+        if (!r.ok) throw new Error("샘플을 받지 못했어요");
+        return r.blob();
+      });
+      const file = new File([blob], d.file, { type: "application/pdf" });
+      setUpload((u) => u && { ...u, fileSize: file.size });
+      await startUploadApi(d.docKey, undefined, file);
+    } catch (e) {
+      setUpload(null);
+      toast(e.message || "샘플 업로드에 실패했어요");
+    }
+  };
+
   // 파일 선택/촬영 결과 처리 — 모바일에서는 탭하면 파일 선택 또는 카메라가 뜬다
   const onFilePicked = (file) => {
     if (!file) return;
@@ -352,7 +370,7 @@ function Documents() {
           </span>
           <ChevronRightIcon style={{ width: 14, height: 14, color: "rgba(255,255,255,.6)", flex: "none" }} />
         </button>
-        <SampleDocs />
+        <SampleDocs caseType={cur?.type} onUpload={uploadSample} />
         <p style={{ margin: "16px 0 0", fontSize: 12, lineHeight: 1.6, color: "#6E827A" }}>
           업로드 시 주민등록번호 뒷자리는 자동 마스킹 후 저장돼요. 원본은 보관하지 않으며, 케이스
           삭제 시 함께 지워집니다.
@@ -641,7 +659,7 @@ function Documents() {
 }
 
 /** 시연용 샘플 서류 — 서버의 데모 PDF를 받아 업로드 기능을 바로 체험 */
-function SampleDocs() {
+function SampleDocs({ caseType, onUpload }) {
   const { apiOn } = useApp();
   const [open, setOpen] = useState(false);
   const [list, setList] = useState(null);
@@ -651,6 +669,13 @@ function SampleDocs() {
     setOpen((v) => !v);
     if (!list) api("/demo/documents").then(setList).catch(() => setList([]));
   };
+  // 이 케이스 유형에 맞는 샘플만 — 계약서는 유형별 파일(contract-jeonse 등), 나머지는 공통
+  const typeDocs = caseType ? D.TYPES[caseType].docs.map(([k]) => k) : null;
+  const visible = (list || []).filter((d) => {
+    if (typeDocs && !typeDocs.includes(d.docKey)) return false;
+    const m = d.file.match(/-(jeonse|wolse|maemae)\.pdf$/);
+    return !(m && d.docKey === "contract" && caseType && m[1] !== caseType);
+  });
 
   return (
     <div style={{ marginTop: 10 }}>
@@ -673,30 +698,54 @@ function SampleDocs() {
           {!list ? (
             <div style={{ padding: "10px 0", fontSize: 13, color: "#6E827A" }}>불러오는 중…</div>
           ) : (
-            list.map((d) => (
-              <a
+            visible.map((d) => (
+              <div
                 key={d.file}
-                href={API_BASE.replace(/\/api\/v1$/, "") + d.url}
-                target="_blank"
-                rel="noreferrer"
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  gap: 8,
                   padding: "10px 0",
                   borderBottom: "1px solid #EEF1EE",
                   fontSize: 13,
                   color: "#17211E",
-                  textDecoration: "none",
                 }}
               >
-                <span>{d.name}</span>
-                <span style={{ fontSize: 12, color: "#16A36A", fontWeight: 700 }}>PDF 받기</span>
-              </a>
+                <span style={{ flex: 1, minWidth: 0 }}>{d.name}</span>
+                <a
+                  href={API_BASE.replace(/\/api\/v1$/, "") + d.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ fontSize: 12, color: "#6E827A", fontWeight: 700, textDecoration: "none", flex: "none" }}
+                >
+                  PDF 받기
+                </a>
+                {onUpload && (
+                  <button
+                    onClick={() => onUpload(d)}
+                    style={{
+                      flex: "none",
+                      height: 30,
+                      padding: "0 12px",
+                      borderRadius: 999,
+                      border: "none",
+                      background: "#16A36A",
+                      color: "#fff",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    바로 올리기
+                  </button>
+                )}
+              </div>
             ))
           )}
           <div style={{ padding: "8px 0", fontSize: 11.5, color: "#6E827A", lineHeight: 1.5 }}>
-            받은 PDF를 위의 [올리기]로 업로드하면 파싱→AI 판정까지 실제 흐름을 볼 수 있어요.
+            [바로 올리기]를 누르면 샘플 PDF가 이 케이스에 업로드되어 파싱→AI 판정→(계약서면) 자동
+            등기부 발급까지 실제 흐름이 돌아가요. 직접 올려보려면 [PDF 받기] 후 위의 [올리기]를 쓰세요.
           </div>
         </Card>
       )}

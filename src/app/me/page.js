@@ -55,6 +55,24 @@ export default function Me() {
   // 알림 설정 변경은 로컬 반영 + PATCH /me 동기화
   const setNotif = (fn) => patchMe({ notif: fn(notif) });
   const [delDocs, setDelDocs] = useState(false);
+  const [resetting, setResetting] = useState(false);
+
+  // 데모 초기화 — 데모 계정(me.isDemo)에서만 노출. 서버가 케이스·서류·할 일·상담을 전부 지우고,
+  // 새로고침으로 부트스트랩을 다시 받아 빈 상태(첫 케이스 만들기)에서 시연을 시작한다.
+  const resetDemo = async () => {
+    if (!window.confirm("데모 데이터를 전부 지우고 빈 상태로 되돌릴까요?\n케이스·서류·할 일·상담이 모두 삭제돼요.")) return;
+    setResetting(true);
+    try {
+      await api("/demo/reset", { method: "POST" });
+      try {
+        localStorage.removeItem("zipsalpi_case");
+      } catch {}
+      window.location.href = "/dashboard";
+    } catch (e) {
+      setResetting(false);
+      toast(e.message || "초기화하지 못했어요");
+    }
+  };
   const [delStep, setDelStep] = useState(0); // 0 | 1 | 2
   const [delText, setDelText] = useState("");
 
@@ -322,6 +340,34 @@ export default function Me() {
             업로드한 서류 전부 삭제
           </button>
         </div>
+
+        {me?.isDemo && (
+          <div style={{ ...card, padding: "14px 16px", border: "1px dashed #B9C2BC" }}>
+            <div style={{ fontSize: 15, fontWeight: 700 }}>데모 초기화</div>
+            <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
+              공유 데모 계정의 케이스·서류·할 일·상담을 전부 지우고 빈 상태로 되돌려요. 새 케이스를
+              만들고 서류 탭의 샘플 PDF를 올리면 파싱→AI 판정→자동 등기부까지 처음부터 볼 수 있어요.
+            </p>
+            <button
+              onClick={resetDemo}
+              disabled={resetting}
+              style={{
+                marginTop: 12,
+                height: 42,
+                width: "100%",
+                borderRadius: 999,
+                border: "1px solid #B4231A",
+                background: "#fff",
+                fontSize: 14,
+                fontWeight: 700,
+                color: "#B4231A",
+                opacity: resetting ? 0.6 : 1,
+              }}
+            >
+              {resetting ? "초기화 중…" : "데모 데이터 전부 지우기"}
+            </button>
+          </div>
+        )}
 
         <button
           onClick={() => {

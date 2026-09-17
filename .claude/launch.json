@@ -4,8 +4,21 @@
     {
       "name": "zipsalpi-next",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000
+    },
+    {
+      "name": "zipsalpi-api",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "start:dev"
+      ],
+      "cwd": "../zipsalpi-api",
+      "port": 4000
     }
   ]
 }

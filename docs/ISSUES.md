@@ -213,3 +213,19 @@ push/subscribe 스텁 제거. 고아 라우트 중 `/building/title`은 등기�
 잔여 고아(REST 완결성용, 무해): `/market/rents`, `/laws/:key`, `/terms/:key`, `/cases/:id` GET/PATCH, 세션 GET, `/notifications` GET
 
 **남은 구조적 과제**: #6 프론트 케이스 동적화 (신규 케이스가 화면에 안 뜸 — bootstrap cases 중 데모 id만 렌더)
+
+## 14. 데모 초기화 + 샘플 바로 올리기 (2026-09-18)
+
+사용자 요청: "데모 싹 비우고 서류 받아 넣어보기 가능하게, MY에 데모계정에서만 보이는 초기화 버튼".
+
+- 백엔드 `POST /demo/reset` (데모 계정만, 그 외 403 `DEMO_ONLY`) — 케이스 deleteMany(cascade)
+  + NotificationDismiss 삭제. `GET /me`에 `isDemo` 추가. 데모 계정의 `?hard=1` 삭제도 이제 진짜 삭제
+  (초기화 버튼이 있으니 "데모가 죽는" 걱정은 초기화로 대체; 탈퇴 보호는 유지).
+- 프론트 MY: `me.isDemo`일 때만 「데모 초기화」 카드 → confirm → POST → `zipsalpi_case` 제거 → /dashboard 새로고침(빈 상태 NoCase).
+- 프론트 서류: 샘플 목록이 **현재 케이스 유형에 맞는 것만** 보이고(계약서는 유형별 파일), 각 항목에
+  [바로 올리기] — PDF를 fetch해 File로 만들어 기존 업로드 경로(startUploadApi)로 태운다. 다운로드→재업로드 없이
+  파싱→AI 판정→(계약서면) 자동 등기부까지 실제 파이프라인.
+- 로컬 검증: 초기화 → 빈 대시보드 → 전세 케이스 → 등기부 샘플 바로 올리기 → 35초 뒤 /analysis 실서류 분석
+  (위험 1·주의 3·좋음 2·확인불가 2), 뷰어 하이라이트, 대시보드 카운트 반영. e2e 59/59.
+- 스토리지(S3/로컬)의 업로드 원본은 초기화 때 지우지 않는다 — DB 키를 잃어 접근 불가, 용량 무시 수준. 필요 시 후속.
+- 하이드레이션 경고(#6 남은 것)는 caseId useEffect 복원 이후 dev/prod 모두 재현되지 않아 **해결로 본다**.

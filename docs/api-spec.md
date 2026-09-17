@@ -274,9 +274,10 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
 | GET | `/admin/costs?limit=50` | 유료 API 비용 원장 `{totals:[{provider,action,calls,units}], rows}` (틸코 p·Upstage 페이지·Claude 토큰) |
 | POST | `/cases` | 케이스 생성 — `{ type, addr, short?, housing?, amount?, contractDate?, balanceDate?, midDate?, moveDate?, id?(클라이언트 멱등 id) }` → 201 케이스 요약. 서류 상태·기본 할 일 자동 생성 |
 | PATCH | `/cases/{caseId}` | 기본 정보 수정 (주소·금액·날짜·phase) |
-| DELETE | `/cases/{caseId}` | 보관(archive) — 목록·알림에서 제외 |
+| DELETE | `/cases/{caseId}` | 보관(archive) — 목록·알림에서 제외. `?hard=1`이면 영구 삭제(하위 데이터 cascade, 데모 계정 포함) |
 | GET | `/demo/documents` | 시연용 샘플 PDF 목록 `[{ file, docKey, name, url }]` (등기부·계약서 3종·건축물대장·전입세대·토지대장·등기완료) |
-| GET | `/demo/documents/{file}` | 샘플 PDF 다운로드 — 받아서 업로드 화면에 그대로 올리면 기능 시연 가능 |
+| GET | `/demo/documents/{file}` | 샘플 PDF 다운로드 — 받아서 업로드 화면에 그대로 올리면 기능 시연 가능. 프론트 서류 탭의 [바로 올리기]는 이 PDF를 fetch해 `POST /cases/{id}/documents`로 그대로 올린다 |
+| POST | `/demo/reset` | **데모 초기화** — 데모 계정(`me.isDemo`)의 케이스·서류·할 일·상담·판정·알림 dismiss 전부 삭제 → `{ ok, deletedCases, deletedDismiss }`. 데모 계정 외 403 `DEMO_ONLY`. 재호출 무해. 프론트 MY의 「데모 초기화」 카드는 `GET /me`의 `isDemo: true`일 때만 노출 |
 | POST | `/registry/search` | 부동산 주소 검색 (틸코) `{ keyword }` — 미설정 시 501 `NOT_CONFIGURED` + `missingEnv` |
 | POST | `/registry/issue` | 등기부등본 실시간 열람 (틸코, 유료) `{ caseId, uniqueNo }` — **`Idempotency-Key` 헤더 필수** |
 
