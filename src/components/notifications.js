@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { BellIcon } from "@heroicons/react/24/solid";
 import { useApp } from "@/lib/store";
 import { api, apiAvailable, getToken } from "@/lib/api";
@@ -32,8 +32,14 @@ export async function dismissDueNotification(n) {
  * 같은 규칙(D-1·D-day·D+7 이내 지남)으로 계산. 헤더 알림 배지·상단 배너·알림함
  * 화면이 모두 이 훅 하나를 공유해 "새로고침하면 떴던 알림"을 한곳에서 모아본다.
  */
+// 로그인 전 화면(랜딩·인증 플로우)에서는 알림을 아예 계산·구독하지 않는다
+// (ui.js NO_TAB_ROUTES와 동일 목록 — 변경 시 함께 갱신)
+const PRE_AUTH_ROUTES = ["/", "/login", "/signup", "/signup/consent", "/find-id", "/find-password"];
+
 export function useDueNotifications() {
   const { tasks, apiOn, me } = useApp();
+  const pathname = usePathname();
+  const preAuth = PRE_AUTH_ROUTES.includes(pathname);
   const [items, setItems] = useState([]);
   const [dismissVer, setDismissVer] = useState(0); // 지우기 발생 시 리렌더
 
@@ -67,7 +73,7 @@ export function useDueNotifications() {
   }, []);
 
   useEffect(() => {
-    if (!me.notif?.master || !me.notif?.due) {
+    if (preAuth || !me.notif?.master || !me.notif?.due) {
       setItems([]);
       return;
     }
@@ -91,9 +97,10 @@ export function useDueNotifications() {
     const t = setInterval(() => setItems(computeLocal()), 60_000);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiOn, me.notif?.master, me.notif?.due]);
+  }, [apiOn, me.notif?.master, me.notif?.due, preAuth]);
 
   void dismissVer; // 지우기 시 필터 재평가 트리거
+  if (preAuth) return [];
   return items.filter((n) => !dismissedLocal.has(`${n.id}|${n.due}`));
 }
 
