@@ -109,7 +109,17 @@ export function useDueNotifications() {
 export function NotificationHost() {
   const router = useRouter();
   const items = useDueNotifications();
-  if (!items.length) return null;
+  // 배너는 10초만 보여주고 접는다 — 상시 노출 대신 헤더 종 배지·알림함이 이어받는다.
+  // 알림 구성이 바뀌면(새 알림 도착) 다시 10초 노출.
+  const sig = items.map((n) => `${n.id}|${n.due}`).join(",");
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (!sig) return;
+    setVisible(true);
+    const t = setTimeout(() => setVisible(false), 10_000);
+    return () => clearTimeout(t);
+  }, [sig]);
+  if (!items.length || !visible) return null;
   const worst = items[0]; // dday 오름차순 정렬 — 가장 오래 지난 것
 
   return (
