@@ -329,6 +329,15 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
   - `GET /notifications/stream?token=...` ← **프론트 NotificationHost에 이 한 줄 수정 필요**
   - (상담 SSE는 fetch 기반이라 기존 Authorization 헤더 그대로 동작)
 
+### 알림 닫기 영속 (2026-09-17)
+
+| Method | Path | 설명 |
+|---|---|---|
+| POST |  |  저장 — **같은 할일·같은 기한은 재알림 안 함** (기한 바뀌면 다시 알림) |
+
+**프론트 NotificationHost 수정 2가지**: ① X(닫기) 클릭 시 위 API 호출(멱등이라 실패 무시 가능)
+② EventSource URL에  부착 (사용자 스코핑 절 참고)
+
 ### 멱등성 (Idempotency-Key)
 
 변경 요청(POST/PATCH/DELETE)에 `Idempotency-Key: <임의 고유값>` 헤더를 붙이면:
