@@ -283,10 +283,16 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
 ### 실분석 모드 (2026-09-17 — 실서류 판정 가동)
 
 서류 업로드(또는 `/registry/issue` 자동 발급) 시 백엔드가 **Upstage 파싱 → Claude 판정**을
-자동 실행해 DB(AnalysisItem)에 저장한다. 실판정이 존재하는 케이스는:
+자동 실행해 DB(AnalysisItem)에 저장한다. 판정 대상: **등기부(registry) + 계약서(contract)** —
+계약서는 필수 특약 유무·불리 조항에 더해, 등기부 파싱본이 있으면 **임대인↔소유자·주소·면적
+교차검증**(sec=owner/consistency)까지 수행. `POST /cases/{id}/reanalyze`는 `{docKey}` 바디로
+등기부/계약서 선택(기본 registry). 실판정이 존재하는 케이스는:
 - `GET /cases/{id}/analysis` → 실판정 항목 서빙, 응답에 **`source: "live"`** 추가 (없으면 기존 데모 콘텐츠)
 - `GET /cases/{id}/documents/{docKey}` → 파싱 원문 기반 `lines` (판정 인용구가 `kind:"mark"` 빨간 하이라이트, `itemId`는 AnalysisItem id), `source: "live"`
 - 판정 멱등: 같은 파싱 텍스트(sha256)면 Claude 재판정·재과금하지 않음
+- **상담 출처 칩 (실동작)**: Claude 상담이 근거로 쓴 법령을 SSE `refs` 이벤트(`{laws:["jl3",...]}`)로
+  전송하고 메시지에 저장 — 기존 칩 UI 그대로 렌더, `/laws/{key}/original`로 원문 연결 가능.
+  상담 컨텍스트도 실판정(AnalysisItem)이 있으면 그것을 사용
 
 ### 시세·깡통 위험률 (2026-09-17 — 국토부 실거래가 실데이터)
 
