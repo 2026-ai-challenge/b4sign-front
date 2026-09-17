@@ -142,6 +142,16 @@
   말소 근저당 제외 논리까지. 출처 칩 jl3_2
 - e2e 45/45
 
+## 배포 (2026-09-17 — EC2 가동 🚀)
+
+- **EC2**: 서울 리전, Ubuntu 26.04, t3.small, 탄력적 IP **43.201.119.217** (인스턴스명 B4Sign)
+- 보안그룹: 22(전체 — GitHub Actions 배포용)/80/443. **4000은 외부 비공개** (Caddy가 프록시 예정)
+- GHCR 패키지는 조직 정책상 공개 불가 → EC2에 **read:packages PAT로 docker login** 저장됨 (자동배포 동작)
+- 배포 완료 상태: 컨테이너 b4sign 가동, health ok, **시드 + 공시가 253,730건 적재 완료**, bootstrap·gongsi 검증
+- env: EC2 `~/b4sign.env` (로컬 `zipsalpi-api/deploy/b4sign.env` 사본, git 제외)
+- 이후 main 푸시 = 자동 배포 (secrets EC2_HOST/USER/SSH_KEY 설정됨)
+- **남은 것: 도메인 + HTTPS(Caddy)** → 그다음 Vercel `NEXT_PUBLIC_API_URL` 연결
+
 ## 마지막 갱신
 
-2026-09-17 — 11차: 챗 DB 스냅샷 컨텍스트. **4 Checks 전부 실데이터 가동** — 남은 것: AWS 배포(사용자 EC2 생성 대기)
+2026-09-17 — 11차 + **EC2 배포 완료**. 남은 것: 도메인/HTTPS → Vercel 연결
