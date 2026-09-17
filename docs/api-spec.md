@@ -319,6 +319,16 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
 
 - `/cases/{id}/risk`의 시세: 실거래 없으면 **공시가격 × 140% 근사**로 폴백 (`valueSource: "trade" | "gongsi"`)
 
+### 사용자 스코핑 (2026-09-17 — JWT 기준 데이터 분리)
+
+모든 사용자 데이터(케이스·서류·할일·상담·알림·업로드 job)가 **JWT의 사용자(sub)로 분리**된다:
+- `Authorization: Bearer <accessToken>` 있으면 그 사용자의 데이터만 보이고, 남의 리소스는 **404**
+- 토큰 없으면 **데모 사용자(김민지)** 컨텍스트 — 데모 로그인(아무 이메일)도 데모 사용자 토큰을 받아 동일
+- 실가입(이메일 인증) 사용자는 빈 상태에서 시작 — `POST /cases`로 자기 케이스 생성
+- ⚠️ **SSE 두 곳은 헤더를 못 보내므로 `?token=<accessToken>` 쿼리로 전달**:
+  - `GET /notifications/stream?token=...` ← **프론트 NotificationHost에 이 한 줄 수정 필요**
+  - (상담 SSE는 fetch 기반이라 기존 Authorization 헤더 그대로 동작)
+
 ### 멱등성 (Idempotency-Key)
 
 변경 요청(POST/PATCH/DELETE)에 `Idempotency-Key: <임의 고유값>` 헤더를 붙이면:
