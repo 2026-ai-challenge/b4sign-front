@@ -132,3 +132,30 @@ BullMQ 때와 같은 결론(#2) — 인프라 추가 없이 해결되는 규모.
 Prisma 6가 AI 에이전트의 `db push --force-reset`을 차단함 → 테스트 DB는
 파일 삭제 + `db push` 방식으로 우회(`test/setup-e2e.mjs`). `npm run db:reset`(dev.db)은
 사용자가 직접 실행해야 함.
+
+## 11. QA 감사 — 버튼↔API 연결 매트릭스 (2026-09-17)
+
+**A. 정상 연결·검증됨**: bootstrap 하이드레이션 / 할일 토글·추가 / 서류 업로드(+S3)·job 폴링 /
+AI 상담 SSE(+법령 출처 칩) / 세션 CRUD / 가입·로그인·코드 재전송 / 알림 SSE(?token=)·지우기 / 알림설정 PATCH
+
+**B. 프론트 화면은 있는데 백엔드 미연결 (실데이터가 화면에 안 나옴)** — 심사 임팩트 순:
+1. 🔴 **분석 화면 + 문서 뷰어가 로컬 D.ANALYSIS/DOCTEXT 사용** — `GET /cases/:id/analysis`(source:live
+   실판정)와 `GET /cases/:id/documents/:docKey`(실 하이라이트)를 안 씀 → **백엔드가 만든 실판정·빨간
+   하이라이트가 사용자에게 안 보인다**. 프론트 최우선 작업.
+2. 필수 특약 화면: `GET /clauses` 미사용 (로컬)
+3. 법 근거 모달: `GET /laws/:key/original`(실 조문) 미사용 — "법제처에서 확인" 문구만
+4. 케이스 생성: `POST /cases` 미사용 (샘플 이동 데모) — #6과 동일
+5. 회원 탈퇴: 확인문구 UI까지 있으나 `DELETE /me` 미호출 (로컬 데모)
+6. 홈 판정 타일 counts: bootstrap의 cases.counts 대신 로컬 D 계산
+7. 아이디/비번 찾기: API 미호출 (양쪽 다 목 — 의도된 데모라 낮음)
+
+**C. 백엔드만 있고 프론트가 안 쓰는 API (기능 손실)**:
+- 🔴 `GET /cases/:id/risk` (깡통 위험률 실계산) — 홈 타일로 노출 가치 최상
+- `GET /market/rents·estimate`, `GET /gongsi/search`(HUG 한도), `GET /building/title`
+- `POST /registry/search·issue` (등기부 자동발급 — registry-watch에 버튼 없음)
+- `GET /demo/documents` (샘플 서류 받기 버튼 없음 — 심사 시연에 유용)
+- 운영용이라 미연결이 정상: admin/errors·costs, reanalyze, laws-search, geo/resolve(서버 내부용), health
+
+**D. 현재 의미 없는 것**:
+- `POST /push/subscribe` — 자리만 (Web Push 후속 전까지 무의미)
+- auth find-id / password-reset 3종 — 백엔드 목 응답 + 프론트 미호출 (심사엔 영향 없음)
