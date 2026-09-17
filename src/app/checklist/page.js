@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ChevronLeftIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
 import { Card } from "@/design-system";
@@ -16,12 +11,6 @@ const CLST = {
   present: { ...D.ST.safe, label: "있음" },
   missing: { ...D.ST.danger, label: "없음" },
   weak: { ...D.ST.warn, label: "불충분" },
-};
-
-const CLST_ICON = {
-  present: CheckCircleIcon,
-  missing: ExclamationCircleIcon,
-  weak: ExclamationTriangleIcon,
 };
 
 export default function Checklist() {
@@ -108,7 +97,6 @@ export default function Checklist() {
         )}
         {filtered.map((c) => {
           const st = CLST[c.st];
-          const ClauseIcon = CLST_ICON[c.st];
           return (
             <Card key={c.id} radius={18} style={{ padding: 16 }}>
               <div
@@ -125,7 +113,6 @@ export default function Checklist() {
                     flex: "none",
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: 4,
                     padding: "4px 9px",
                     borderRadius: 999,
                     background: st.bg,
@@ -134,7 +121,6 @@ export default function Checklist() {
                     fontWeight: 700,
                   }}
                 >
-                  <ClauseIcon style={{ width: 13, height: 13 }} />
                   {st.label}
                 </span>
               </div>
@@ -149,10 +135,8 @@ export default function Checklist() {
               <div
                 style={{
                   marginTop: 12,
-                  padding: 12,
-                  borderRadius: 12,
-                  background: "#F4F6F4",
-                  border: "1px dashed #CFD6D2",
+                  paddingTop: 12,
+                  borderTop: "1px solid #EEF1EE",
                 }}
               >
                 <div
@@ -185,9 +169,8 @@ export default function Checklist() {
                 <div
                   style={{
                     marginTop: 10,
-                    padding: 12,
-                    borderRadius: 12,
-                    background: "#EEF6F1",
+                    paddingTop: 10,
+                    borderTop: "1px solid #EEF1EE",
                   }}
                 >
                   <div

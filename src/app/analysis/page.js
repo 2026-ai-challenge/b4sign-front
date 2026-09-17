@@ -9,7 +9,6 @@ import {
   QuestionMarkCircleIcon,
   ExclamationTriangleIcon,
   ExclamationCircleIcon,
-  ClockIcon,
 } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, caseCounts, ddInfo } from "@/lib/derive";
@@ -121,7 +120,6 @@ function Analysis() {
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 6,
                 padding: "6px 12px",
                 borderRadius: 999,
                 background: overall.bg,
@@ -130,10 +128,6 @@ function Analysis() {
                 fontWeight: 800,
               }}
             >
-              {(() => {
-                const OverallIcon = STATUS_ICON[overall.key];
-                return OverallIcon ? <OverallIcon style={{ width: 14, height: 14 }} /> : null;
-              })()}
               종합 {overall.label}
             </span>
             <TypeBadge type={cur.type} />
@@ -145,7 +139,6 @@ function Analysis() {
           <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
             {Object.entries(ST_LABEL).map(([k, [label, bg, fg]]) => {
               const on = st === k;
-              const FilterIcon = STATUS_ICON[k];
               return (
                 <button
                   key={k}
@@ -153,7 +146,6 @@ function Analysis() {
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: 4,
                     padding: "5px 10px",
                     borderRadius: 999,
                     background: bg,
@@ -165,7 +157,6 @@ function Analysis() {
                     cursor: "pointer",
                   }}
                 >
-                  <FilterIcon style={{ width: 12, height: 12 }} />
                   {label} {counts[k]}
                 </button>
               );
@@ -275,7 +266,7 @@ function Analysis() {
                     해소됨
                   </span>
                   <span style={{ color: "#4B6157", textDecoration: "line-through" }}>
-                    임대인 주민번호 마스킹 누락 — 계약서 v2에서 수정
+                    임대인 주민번호 마스킹 누락: 계약서 v2에서 수정
                   </span>
                 </div>
               </Card>
@@ -317,7 +308,6 @@ function Analysis() {
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: 4,
                     padding: "4px 9px",
                     borderRadius: 999,
                     background: sec.worst.bg,
@@ -326,10 +316,6 @@ function Analysis() {
                     fontWeight: 700,
                   }}
                 >
-                  {(() => {
-                    const WorstIcon = sec.worst.label === "기한" ? ClockIcon : STATUS_ICON[sec.worst.key];
-                    return WorstIcon ? <WorstIcon style={{ width: 12, height: 12 }} /> : null;
-                  })()}
                   {sec.worst.label}
                 </span>
                 <span

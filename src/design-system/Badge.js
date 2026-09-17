@@ -44,7 +44,7 @@ const STATUS_STYLE = {
 };
 
 // 기존 StatusChip — safe/warn/danger/unknown 판정 표시. glyph 문자 대신 Heroicons 아이콘 사용.
-export function StatusBadge({ status, children, showIcon = true, label }) {
+export function StatusBadge({ status, children, showIcon = false, label }) {
   const s = STATUS_STYLE[status];
   if (!s) return null;
   const Icon = s.Icon;
@@ -54,7 +54,7 @@ export function StatusBadge({ status, children, showIcon = true, label }) {
         display: "inline-flex",
         alignItems: "center",
         gap: 4,
-        padding: "4px 9px",
+        padding: "4px 8px",
         borderRadius: radius.pill,
         background: s.bg,
         color: s.fg,

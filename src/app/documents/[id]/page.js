@@ -144,7 +144,6 @@ function Viewer({ docKey }) {
         {filters.map(([k, label, , n]) => {
           const on = filter === k;
           const st = D.ST[k];
-          const FilterIcon = STATUS_ICON[k];
           return (
             <button
               key={k}
@@ -153,7 +152,6 @@ function Viewer({ docKey }) {
                 flex: "none",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 5,
                 height: 30,
                 padding: "0 11px",
                 borderRadius: 999,
@@ -164,7 +162,6 @@ function Viewer({ docKey }) {
                 fontWeight: 700,
               }}
             >
-              {FilterIcon && <FilterIcon style={{ width: 12, height: 12 }} />}
               {label} {n}
             </button>
           );
@@ -309,7 +306,6 @@ function Viewer({ docKey }) {
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: 4,
                   padding: "4px 9px",
                   borderRadius: 999,
                   background: D.ST[pinItem.st].bg,
@@ -318,10 +314,6 @@ function Viewer({ docKey }) {
                   fontWeight: 700,
                 }}
               >
-                {(() => {
-                  const PinIcon = STATUS_ICON[pinItem.st];
-                  return PinIcon ? <PinIcon style={{ width: 13, height: 13 }} /> : null;
-                })()}
                 {D.ST[pinItem.st].label}
               </span>
               <span style={{ fontSize: 12, color: "#6E827A" }}>{pinItem.evidence}</span>

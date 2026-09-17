@@ -90,7 +90,7 @@ export default function RegistryWatch() {
                 <>
                   {nextCheck}{" "}
                   <b style={{ color: overdue ? "#B4231A" : "#14613F" }}>
-                    ({overdue ? `지남 — 지금 확인하세요` : `D-${nextDd}`})
+                    ({overdue ? `지남, 지금 확인하세요` : `D-${nextDd}`})
                   </b>
                 </>
               ) : (
@@ -147,7 +147,7 @@ export default function RegistryWatch() {
                   해소됨
                 </span>
                 <span style={{ color: "#4B6157", textDecoration: "line-through" }}>
-                  임대인 주민번호 마스킹 누락 — 계약서 v2에서 수정
+                  임대인 주민번호 마스킹 누락: 계약서 v2에서 수정
                 </span>
               </div>
             </div>

@@ -4,7 +4,7 @@ import { color, radius } from "./tokens";
 
 export const inputStyle = {
   height: 48,
-  padding: "0 14px",
+  padding: "0 12px",
   borderRadius: radius.md,
   border: `1px solid ${color.border}`,
   background: color.white,
