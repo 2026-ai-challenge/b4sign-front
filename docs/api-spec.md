@@ -271,6 +271,7 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
 |---|---|---|
 | GET | `/health` | 헬스체크 `{ ok, uptime }` (DB ping 포함, 인증 불필요) |
 | GET | `/admin/errors?limit=50` | 최근 서버 오류 로그 (ErrorLog 테이블). `ADMIN_KEY` env 설정 시 `X-Admin-Key` 헤더 필요 |
+| GET | `/admin/costs?limit=50` | 유료 API 비용 원장 `{totals:[{provider,action,calls,units}], rows}` (틸코 p·Upstage 페이지·Claude 토큰) |
 | POST | `/cases` | 케이스 생성 — `{ type, addr, short?, housing?, amount?, contractDate?, balanceDate?, midDate?, moveDate?, id?(클라이언트 멱등 id) }` → 201 케이스 요약. 서류 상태·기본 할 일 자동 생성 |
 | PATCH | `/cases/{caseId}` | 기본 정보 수정 (주소·금액·날짜·phase) |
 | DELETE | `/cases/{caseId}` | 보관(archive) — 목록·알림에서 제외 |
@@ -278,6 +279,14 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
 | GET | `/demo/documents/{file}` | 샘플 PDF 다운로드 — 받아서 업로드 화면에 그대로 올리면 기능 시연 가능 |
 | POST | `/registry/search` | 부동산 주소 검색 (틸코) `{ keyword }` — 미설정 시 501 `NOT_CONFIGURED` + `missingEnv` |
 | POST | `/registry/issue` | 등기부등본 실시간 열람 (틸코, 유료) `{ caseId, uniqueNo }` — **`Idempotency-Key` 헤더 필수** |
+
+### 실분석 모드 (2026-09-17 — 실서류 판정 가동)
+
+서류 업로드(또는 `/registry/issue` 자동 발급) 시 백엔드가 **Upstage 파싱 → Claude 판정**을
+자동 실행해 DB(AnalysisItem)에 저장한다. 실판정이 존재하는 케이스는:
+- `GET /cases/{id}/analysis` → 실판정 항목 서빙, 응답에 **`source: "live"`** 추가 (없으면 기존 데모 콘텐츠)
+- `GET /cases/{id}/documents/{docKey}` → 파싱 원문 기반 `lines` (판정 인용구가 `kind:"mark"` 빨간 하이라이트, `itemId`는 AnalysisItem id), `source: "live"`
+- 판정 멱등: 같은 파싱 텍스트(sha256)면 Claude 재판정·재과금하지 않음
 
 ### 멱등성 (Idempotency-Key)
 
