@@ -27,13 +27,14 @@ function Toggle({ on, disabled, onClick }) {
         style={{
           position: "absolute",
           top: 3,
-          left: on ? 23 : 3,
+          left: 3,
           width: 24,
           height: 24,
           borderRadius: "50%",
           background: "#fff",
           boxShadow: "0 1px 3px rgba(0,0,0,.2)",
-          transition: "left .2s",
+          transform: `translateX(${on ? 20 : 0}px)`,
+          transition: "transform .2s",
         }}
       />
     </button>
@@ -127,15 +128,12 @@ export default function Me() {
               fontWeight: 700,
             }}
           >
-            <span
-              style={{
-                width: 11,
-                height: 10,
-                background: "#191919",
-                borderRadius: "50% 50% 50% 50%/60% 60% 40% 40%",
-                display: "inline-block",
-              }}
-            />
+            <svg width="12" height="11" viewBox="0 0 99.61801 92.147011" aria-hidden="true">
+              <path
+                fill="#191919"
+                d="M49.80801,1c-26.953,0,-48.80801,17.256,-48.80801,38.555,0,13.68101,9.05201,25.69301,22.64601,32.54901l-4.599,17.167c-0.176,0.527,-0.03,1.085,0.352,1.465,0.263,0.265,0.614,0.411,0.995,0.411,0.294,0,0.586,-0.117,0.85,-0.322l19.775,-13.36c2.872,0.41,5.802,0.644,8.789,0.644,26.953,0,48.81,-17.255,48.81,-38.55401,0,-21.299,-21.857,-38.555,-48.81,-38.555z"
+              />
+            </svg>
             카카오
           </span>
         </div>
@@ -338,7 +336,6 @@ export default function Me() {
             border: "none",
             fontSize: 13,
             color: "#6E827A",
-            textDecoration: "underline",
             padding: 4,
           }}
         >
