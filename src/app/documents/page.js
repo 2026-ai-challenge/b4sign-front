@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, buildDocList } from "@/lib/derive";
-import { TypeBadge } from "@/components/ui";
+import { TypeBadge, NoCase } from "@/components/ui";
 import { Button, Card } from "@/design-system";
 import { api, apiUpload, API_BASE } from "@/lib/api";
 
@@ -53,9 +53,9 @@ const FAILS = {
 function Documents() {
   const router = useRouter();
   const params = useSearchParams();
-  const { caseId, docs, completeUpload, refreshDocs, apiOn, toast } = useApp();
-  const cur = D.CASES.find((c) => c.id === caseId);
-  const docList = buildDocList(caseId, docs[caseId]);
+  const { caseId, docs, completeUpload, refreshDocs, apiOn, toast, currentCase } = useApp();
+  const cur = currentCase;
+  const docList = buildDocList(cur, docs[caseId]);
 
   // 업로드 모달 상태: { docKey, stage: 'pick'|'progress'|'analyzing'|'fail', pct, eta, fail, demoFail, fileName, fileSize }
   const [upload, setUpload] = useState(null);
@@ -187,6 +187,8 @@ function Documents() {
     setUpload(null);
     if (params.get("upload")) router.replace("/documents");
   };
+
+  if (!cur) return <NoCase />;
 
   return (
     <>

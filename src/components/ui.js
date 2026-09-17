@@ -528,6 +528,36 @@ export function LawRow({ lawKey }) {
   );
 }
 
+/** 케이스가 없을 때(신규 가입·전부 보관) 탭 화면 공용 빈 상태 */
+export function NoCase({ title = "아직 케이스가 없어요" }) {
+  const router = useRouter();
+  return (
+    <div style={{ padding: "48px 24px", textAlign: "center" }}>
+      <div style={{ fontSize: 17, fontWeight: 800 }}>{title}</div>
+      <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: 1.6, color: color.textSecondary }}>
+        계약 유형과 주소를 입력해 첫 케이스를 만들면, 서류를 올리고 판정을 받을 수 있어요.
+      </p>
+      <button
+        onClick={() => router.push("/cases/new")}
+        style={{
+          marginTop: 20,
+          height: 48,
+          padding: "0 22px",
+          borderRadius: 999,
+          border: "none",
+          background: color.primary,
+          color: "#fff",
+          fontSize: 15,
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        + 새 케이스 만들기
+      </button>
+    </div>
+  );
+}
+
 /** 법령 원문 보기 — 백엔드가 국가법령정보센터에서 실시간으로 가져온 현행 조문 */
 export function LawOriginal({ lawKey }) {
   const { apiOn } = useApp();

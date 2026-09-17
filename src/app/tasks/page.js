@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { CheckIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, ddInfo, balanceWord, resolveTaskDue, phaseAnchor, taskProgress } from "@/lib/derive";
-import { TypeBadge } from "@/components/ui";
+import { TypeBadge, NoCase } from "@/components/ui";
 import { Collapse } from "@/components/fields";
 import { Button, Card } from "@/design-system";
 
 export default function Tasks() {
   const router = useRouter();
-  const { caseId, tasks, toggleTask, toggleRemind } = useApp();
+  const { caseId, tasks, toggleTask, toggleRemind, currentCase } = useApp();
 
-  const cur = D.CASES.find((c) => c.id === caseId);
-  const typ = D.TYPES[cur.type];
+  const cur = currentCase;
+  const typ = D.TYPES[cur?.type ?? "jeonse"];
   const caseTasks = tasks[caseId] || [];
   const doneCount = caseTasks.filter((t) => t.done).length;
   const pct = Math.round((doneCount / Math.max(1, caseTasks.length)) * 100);
@@ -43,6 +43,8 @@ export default function Tasks() {
       }
     });
   }, [caseTasks, typ.phases]);
+
+  if (!cur) return <NoCase />;
 
   return (
     <>

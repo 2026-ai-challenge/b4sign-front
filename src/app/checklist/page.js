@@ -7,6 +7,7 @@ import { useApp } from "@/lib/store";
 import { api } from "@/lib/api";
 import { D } from "@/lib/derive";
 import { Card } from "@/design-system";
+import { NoCase } from "@/components/ui";
 
 const CLST = {
   present: { ...D.ST.safe, label: "있음" },
@@ -16,11 +17,11 @@ const CLST = {
 
 export default function Checklist() {
   const router = useRouter();
-  const { caseId, toast, apiOn } = useApp();
+  const { caseId, toast, apiOn, currentCase } = useApp();
   const [filter, setFilter] = useState("all"); // all | missing | present
 
-  const cur = D.CASES.find((c) => c.id === caseId);
-  const typ = D.TYPES[cur.type];
+  const cur = currentCase;
+  const typ = D.TYPES[cur?.type ?? "jeonse"];
 
   // 백엔드 특약 목록 — 계약서 실판정이 있으면 source:"live"로 present/missing/weak가 실제 판정값
   const [serverList, setServerList] = useState(null);
@@ -41,7 +42,8 @@ export default function Checklist() {
     };
   }, [apiOn, caseId]);
 
-  const list = serverList ?? D.CLAUSES[cur.type] ?? [];
+  const list = serverList ?? D.CLAUSES[cur?.type] ?? [];
+  if (!cur) return <NoCase />;
   const filtered = list.filter(
     (c) =>
       filter === "all" || (filter === "missing" ? c.st !== "present" : c.st === "present")

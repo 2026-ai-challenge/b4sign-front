@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
-import { api } from "@/lib/api";
 import { D } from "@/lib/derive";
 import { AddressField, DateField } from "@/components/fields";
 import { Button, Card } from "@/design-system";
@@ -22,7 +21,8 @@ const inputStyle = {
 
 export default function NewCase() {
   const router = useRouter();
-  const { setCaseId, toast } = useApp();
+  const { addCase, toast } = useApp();
+  const [busy, setBusy] = useState(false);
   const [nc, setNc] = useState({
     type: "jeonse",
     housing: "아파트",
@@ -196,30 +196,31 @@ export default function NewCase() {
         </div>
 
         <Button
-          onClick={() => {
-            // 서버에 실제 케이스 생성 (법정동코드는 서버가 주소로 자동 보완).
-            // 화면 전환은 아직 데모 케이스 기준 — 전 화면 동적화(docs/ISSUES.md #6) 전까지.
-            if (nc.addrBase) {
-              api("/cases", {
-                method: "POST",
-                body: {
-                  type: nc.type,
-                  housing: nc.housing,
-                  addr: [nc.addrBase, nc.addrDetail].filter(Boolean).join(", "),
-                  amount: nc.amount || undefined,
-                  contractDate: nc.contract || undefined,
-                  balanceDate: nc.balance || undefined,
-                },
-              }).catch(() => {});
+          onClick={async () => {
+            if (!nc.addrBase) return toast("주소를 검색해서 선택해 주세요");
+            setBusy(true);
+            try {
+              // 서버에 실제 케이스 생성 (법정동코드는 서버가 주소로 자동 보완) → 그 케이스로 전환
+              await addCase({
+                type: nc.type,
+                housing: nc.housing,
+                addr: [nc.addrBase, nc.addrDetail].filter(Boolean).join(", "),
+                amount: nc.amount || undefined,
+                contractDate: nc.contract || undefined,
+                balanceDate: nc.balance || undefined,
+              });
+              toast("케이스를 만들었어요. 서류를 올려주세요");
+              router.push("/documents");
+            } catch (e) {
+              toast(e.message || "케이스를 만들지 못했어요");
+            } finally {
+              setBusy(false);
             }
-            const target = D.CASES.find((c) => c.type === nc.type).id;
-            setCaseId(target);
-            toast(`케이스를 만들었어요 (데모: ${typ.label} 샘플로 이동)`);
-            router.push("/documents");
           }}
+          disabled={busy}
           style={{ marginTop: 20, fontSize: 16 }}
         >
-          케이스 만들고 서류 올리기
+          {busy ? "만드는 중…" : "케이스 만들고 서류 올리기"}
         </Button>
       </div>
     </>

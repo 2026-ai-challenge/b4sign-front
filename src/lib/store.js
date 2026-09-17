@@ -58,7 +58,24 @@ function initChat() {
 export function AppProvider({ children }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [consented, setConsented] = useState(false);
-  const [caseId, setCaseId] = useState("c1");
+  // 선택 케이스는 새로고침에도 유지 (localStorage) — 서버 목록에 없으면 첫 케이스로 보정
+  // SSR과 첫 렌더를 일치시키기 위해 초기값은 고정(c1), 저장된 선택은 마운트 후 복원 (hydration 오류 방지)
+  const [caseId, setCaseIdRaw] = useState("c1");
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("zipsalpi_case");
+      if (saved) setCaseIdRaw(saved);
+    } catch {}
+  }, []);
+  const setCaseId = (v) => {
+    setCaseIdRaw((prev) => {
+      const next = typeof v === "function" ? v(prev) : v;
+      try {
+        localStorage.setItem("zipsalpi_case", next);
+      } catch {}
+      return next;
+    });
+  };
   const [me, setMe] = useState({
     name: "김민지",
     email: "dlminji@gmail.com",
@@ -86,6 +103,8 @@ export function AppProvider({ children }) {
   apiOnRef.current = apiOn;
   const tasksRef = useRef(null);
   tasksRef.current = tasks;
+  const casesRef = useRef(null);
+  casesRef.current = cases;
 
   // 백엔드 부트스트랩 — API 미설정(배포 데모)이거나 실패하면 로컬 목 데이터 그대로 사용
   useEffect(() => {
@@ -97,10 +116,18 @@ export function AppProvider({ children }) {
         setMe(b.me);
         setDocs(b.docs);
         setTasksState(b.tasks);
-        // 서버 케이스 중 화면이 렌더할 수 있는 것(데모 콘텐츠 보유)만 목록에 반영 — 보관된 케이스는 빠진다
+        // 서버 케이스 목록이 진실 — 데모 3건이든 사용자가 만든 것이든 그대로 렌더 (보관된 건 서버가 제외)
         if (Array.isArray(b.cases)) {
-          const known = b.cases.filter((c) => D.CASES.some((d) => d.id === c.id));
-          if (known.length) setCases(known.map((c) => ({ ...D.CASES.find((d) => d.id === c.id), ...c })));
+          const list = b.cases.map((c) => ({ ...(D.CASES.find((d) => d.id === c.id) || {}), ...c }));
+          setCases(list);
+          // 저장된 선택 케이스가 목록에 없으면(삭제·다른 계정) 첫 케이스로
+          setCaseIdRaw((cur) => {
+            const ok = list.some((c) => c.id === cur) ? cur : list[0]?.id ?? cur;
+            try {
+              localStorage.setItem("zipsalpi_case", ok);
+            } catch {}
+            return ok;
+          });
         }
         setChat((s) => ({ ...s, sessions: b.chat.sessions, active: b.chat.active }));
         setApiOn(true);
@@ -226,6 +253,42 @@ export function AppProvider({ children }) {
         setLoggedIn(false);
         setConsented(false);
       },
+      // 케이스 생성 — 서버에 만들고 목록·서류·할 일 상태를 채운 뒤 선택. API 미기동이면 로컬 목록에만 추가.
+      addCase: async (payload) => {
+        let created = null;
+        if (apiOnRef.current) {
+          created = await api("/cases", { method: "POST", body: payload }); // 실패는 호출부에서 처리
+          try {
+            const [d, t] = await Promise.all([
+              api(`/cases/${created.id}/documents`),
+              api(`/cases/${created.id}/tasks`),
+            ]);
+            setDocs((s) => ({ ...s, [created.id]: d }));
+            setTasksState((s) => ({ ...s, [created.id]: t }));
+          } catch {}
+        } else {
+          const id = "local-" + Date.now();
+          created = {
+            id,
+            ...payload,
+            short: payload.short || String(payload.addr).split(" ").slice(-2).join(" "),
+            phase: 0,
+            overall: "unknown",
+            counts: { safe: 0, warn: 0, danger: 0, unknown: 0 },
+          };
+          const typ = D.TYPES[payload.type];
+          setDocs((s) => ({ ...s, [id]: Object.fromEntries(typ.docs.map(([k]) => [k, { status: "missing" }])) }));
+          setTasksState((s) => ({ ...s, [id]: D.DEFAULT_TASKS[payload.type].map((t) => ({ ...t, source: "default" })) }));
+        }
+        setChat((s) => ({
+          ...s,
+          sessions: { ...s.sessions, [created.id]: s.sessions[created.id] || [] },
+          active: { ...s.active, [created.id]: s.active[created.id] ?? null },
+        }));
+        setCases((list) => (list.some((c) => c.id === created.id) ? list : [...list, created]));
+        setCaseId(created.id);
+        return created;
+      },
       // 케이스 보관/삭제 — 서버 반영 후 목록에서 제거, 현재 케이스면 남은 것으로 전환
       removeCase: async (cid, hard) => {
         if (apiOnRef.current) {
@@ -278,7 +341,7 @@ export function AppProvider({ children }) {
 
         // 로컬 폴백 시뮬레이션 (API 미기동 시)
         const runLocalSim = () => {
-          const cur = D.CASES.find((c) => c.id === cid);
+          const cur = casesRef.current.find((c) => c.id === cid) || D.CASES[0];
           const out = /시세|오를|내릴|소송|고소|승소|판결/.test(text);
           const r = out ? D.REPLIES.refuse : D.REPLIES[cur.type];
           const full = r.text;
@@ -414,6 +477,8 @@ export function AppProvider({ children }) {
     caseId,
     setCaseId,
     cases,
+    // 현재 케이스 객체 — 목록에 없으면 null (화면은 빈 상태/케이스 생성 안내로 처리)
+    currentCase: cases.find((c) => c.id === caseId) ?? null,
     me,
     apiOn,
     docs,

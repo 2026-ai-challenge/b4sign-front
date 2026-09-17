@@ -37,7 +37,7 @@ export async function dismissDueNotification(n) {
 const PRE_AUTH_ROUTES = ["/", "/login", "/signup", "/signup/consent", "/find-id", "/find-password"];
 
 export function useDueNotifications() {
-  const { tasks, apiOn, me } = useApp();
+  const { tasks, apiOn, me, cases } = useApp();
   const pathname = usePathname();
   const preAuth = PRE_AUTH_ROUTES.includes(pathname);
   const [items, setItems] = useState([]);
@@ -47,7 +47,7 @@ export function useDueNotifications() {
   // 로컬 계산 폴백 (SSE와 동일 규칙)
   const computeLocal = () => {
     const out = [];
-    for (const c of D.CASES) {
+    for (const c of cases) {
       for (const t of tasks[c.id] || []) {
         if (t.done) continue;
         const r = resolveTaskDue(t, c);

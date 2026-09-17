@@ -123,8 +123,11 @@ export function phaseAnchor(type, phaseIndex, cur) {
 }
 
 // 유형별 서류 목록 + 현재 업로드 상태/하이라이트 개수
-export function buildDocList(caseId, docs) {
-  const cur = D.CASES.find((c) => c.id === caseId);
+// cur: 케이스 객체 (store.currentCase). 하위 호환으로 id 문자열도 받는다 (데모 케이스만).
+export function buildDocList(cur, docs) {
+  if (typeof cur === "string") cur = D.CASES.find((c) => c.id === cur);
+  if (!cur) return [];
+  const caseId = cur.id;
   const typ = D.TYPES[cur.type];
   const items = D.ANALYSIS[caseId] || [];
   return typ.docs.map(([key, req]) => {

@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, buildDocList, lawShort } from "@/lib/derive";
-import { TypeBadge, LawButton } from "@/components/ui";
+import { TypeBadge, LawButton, NoCase } from "@/components/ui";
 import { Collapse } from "@/components/fields";
 import { Button, Card } from "@/design-system";
 
@@ -30,6 +30,7 @@ export default function Chat() {
     chatDeleteSession,
     addTaskRaw,
     cases,
+    currentCase,
   } = useApp();
   const [input, setInput] = useState("");
   const [drawer, setDrawer] = useState(false);
@@ -39,9 +40,9 @@ export default function Chat() {
   const [editText, setEditText] = useState("");
   const scrollRef = useRef(null);
 
-  const cur = D.CASES.find((c) => c.id === caseId);
-  const typ = D.TYPES[cur.type];
-  const docList = buildDocList(caseId, docs[caseId]);
+  const cur = currentCase;
+  const typ = D.TYPES[cur?.type ?? "jeonse"];
+  const docList = buildDocList(cur, docs[caseId]);
   const scope = docList.filter((d) => d.has).map((d) => d.name).join("·") || "서류 없음";
   const sessions = chat.sessions[caseId] || [];
   const sess = sessions.find((x) => x.id === chat.active[caseId]) || { id: null, msgs: [] };
@@ -52,6 +53,8 @@ export default function Chat() {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [sess.msgs.length, sess.msgs[sess.msgs.length - 1]?.text]);
+
+  if (!cur) return <NoCase title="상담할 케이스가 없어요" />;
 
   const send = (text) => {
     if (busy || !text.trim()) return;

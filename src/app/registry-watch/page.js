@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D, kstTodayStr, dday } from "@/lib/derive";
-import { TypeBadge } from "@/components/ui";
+import { TypeBadge, NoCase } from "@/components/ui";
 import { Button, Card } from "@/design-system";
 
 /** YYYY-MM-DD + n개월 */
@@ -22,14 +22,16 @@ function addMonths(dateStr, n) {
  */
 export default function RegistryWatch() {
   const router = useRouter();
-  const { caseId, docs, me, patchMe, toast } = useApp();
+  const { caseId, docs, me, patchMe, toast, currentCase } = useApp();
   const watchOn = !!(me.notif?.master && me.notif?.stale);
-  const cur = D.CASES.find((c) => c.id === caseId);
+  const cur = currentCase;
   const reg = (docs[caseId] || {}).registry || { status: "missing" };
   const lastChecked = reg.issued || null;
   const nextCheck = lastChecked ? addMonths(lastChecked, 3) : null;
   const nextDd = nextCheck ? dday(nextCheck) : null;
   const overdue = nextDd !== null && nextDd <= 0;
+
+  if (!cur) return <NoCase />;
 
   return (
     <>

@@ -195,3 +195,10 @@
   risk lawdCd 자동해석, 데모계정(dlminji) 탈퇴 보호
 - 라이브 검증: 계약서 업로드→파싱→실판정 8건→자동발급 시도(가상주소 '성산로 12'라 검색 0건 → 안전 스킵 확인)
 - law.go.kr에 EC2 IP 등록됨(사용자) — EC2에서 법령 원문 조회 가능해짐
+
+## 2026-09-18 — 케이스 동적화 (15차, ISSUES #6 해결)
+
+- `store.cases` = bootstrap cases 전체(비데모 id 포함), `currentCase`/`addCase`/`removeCase`, 전 화면 `D.CASES.find` 제거 → `currentCase` + `NoCase` 빈 상태
+- `cases/new`가 실제 POST /cases 후 /documents 이동. caseId 초깃값 "c1" + useEffect로 localStorage 복원(하이드레이션 안전)
+- 미해결: 전 페이지(/login 포함) 하이드레이션 경고 React #418 — 이번 변경 이전부터 존재, 원인 미확인
+- 다음: 데모 데이터 비우기(사용자 제안) — 동적화로 가능해짐

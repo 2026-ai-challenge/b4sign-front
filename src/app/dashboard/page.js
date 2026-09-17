@@ -18,13 +18,13 @@ import {
   parseKoreanAmount,
   fmtKrw,
 } from "@/lib/derive";
-import { TypeBadge, StatusChip } from "@/components/ui";
+import { TypeBadge, StatusChip, NoCase } from "@/components/ui";
 import { Collapse } from "@/components/fields";
 import { Button, Card, color } from "@/design-system";
 
 export default function Dashboard() {
   const router = useRouter();
-  const { caseId, setCaseId, docs, tasks, toggleTask, toast, apiOn, cases } = useApp();
+  const { caseId, setCaseId, docs, tasks, toggleTask, toast, apiOn, cases, currentCase } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
 
   // 실데이터: 깡통 위험률(실거래 시세 기반) + 실판정 카운트 — 실패 시 조용히 로컬 유지
@@ -46,14 +46,14 @@ export default function Dashboard() {
     };
   }, [apiOn, caseId]);
 
-  const cur = D.CASES.find((c) => c.id === caseId);
-  const typ = D.TYPES[cur.type];
+  const cur = currentCase;
+  const typ = D.TYPES[cur?.type ?? "jeonse"];
   // 중개보수 계산기 (케이스 금액으로 프리필)
   const [feeOpen, setFeeOpen] = useState(false);
-  const amountParts = (cur.amount || "").split("월");
+  const amountParts = (cur?.amount || "").split("월");
   const [feeAmount, setFeeAmount] = useState(() => parseKoreanAmount(amountParts[0]));
   const [feeMonthly, setFeeMonthly] = useState(() =>
-    cur.type === "wolse" ? parseKoreanAmount(amountParts[1] || "") : 0
+    cur?.type === "wolse" ? parseKoreanAmount(amountParts[1] || "") : 0
   );
   const localCounts = caseCounts(caseId);
   const counts = liveCounts ?? localCounts.counts;
@@ -65,7 +65,7 @@ export default function Dashboard() {
         : D.ST.safe
     : localCounts.overall;
   const caseDocs = docs[caseId] || {};
-  const docList = buildDocList(caseId, caseDocs);
+  const docList = buildDocList(cur, caseDocs);
   const caseTasks = tasks[caseId] || [];
   const hasAnyDoc = Object.values(caseDocs).some((d) => d.status !== "missing");
 
@@ -75,6 +75,8 @@ export default function Dashboard() {
     caseTasks.filter((t) => !t.done && t.phase === progress.current)[0] ||
     caseTasks.filter((t) => !t.done)[0];
   const nextDd = next && next.due ? ddInfo(next.due) : null;
+
+  if (!cur) return <NoCase />;
 
   return (
     <>

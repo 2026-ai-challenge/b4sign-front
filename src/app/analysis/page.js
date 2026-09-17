@@ -13,7 +13,7 @@ import {
 import { useApp } from "@/lib/store";
 import { api } from "@/lib/api";
 import { D, caseCounts, ddInfo } from "@/lib/derive";
-import { TypeBadge, LawRow, TermButton } from "@/components/ui";
+import { TypeBadge, LawRow, TermButton, NoCase } from "@/components/ui";
 import { Button, Card } from "@/design-system";
 
 const STATUS_ICON = {
@@ -42,10 +42,10 @@ function Analysis() {
   const router = useRouter();
   const params = useSearchParams();
   const st = params.get("st"); // danger | warn | safe | unknown | null
-  const { caseId, tasks, addTaskFromItem, showDiff, setShowDiff, apiOn } = useApp();
+  const { caseId, tasks, addTaskFromItem, showDiff, setShowDiff, apiOn, currentCase } = useApp();
 
-  const cur = D.CASES.find((c) => c.id === caseId);
-  const typ = D.TYPES[cur.type];
+  const cur = currentCase;
+  const typ = D.TYPES[cur?.type ?? "jeonse"];
 
   // 실판정(백엔드 source:"live") — 실서류 업로드 후엔 목 대신 실제 분석 결과를 렌더
   const [live, setLive] = useState(null);
@@ -66,7 +66,7 @@ function Analysis() {
     ? { counts: live.counts, overall: D.ST[live.overall] ?? D.ST.unknown }
     : caseCounts(caseId);
   const summaryText = live?.summary ?? D.SUMMARY[caseId];
-  const analyzedLabel = live?.analyzedAt ?? cur.analysisDate;
+  const analyzedLabel = live?.analyzedAt ?? cur?.analysisDate ?? "—";
   const caseTasks = tasks[caseId] || [];
 
   const [openSec, setOpenSec] = useState(() =>
@@ -77,7 +77,7 @@ function Analysis() {
     .map((key) => {
       const meta = {
         ...D.SECTION_META[key],
-        ...((D.SECTION_OVERRIDE[cur.type] || {})[key] || {}),
+        ...((D.SECTION_OVERRIDE[cur?.type] || {})[key] || {}),
       };
       // st 필터가 있으면 해당 판정만, 기한 항목은 전체 보기에서만
       const its = items.filter(
@@ -97,6 +97,8 @@ function Analysis() {
     })
     .filter((s) => s.items.length);
   const filteredCount = sections.reduce((n, s) => n + s.items.length, 0);
+
+  if (!cur) return <NoCase />;
 
   const isAdded = (id) => caseTasks.some((t) => t.id === "a" + id);
   // live 모드면 뷰어가 API에서 실문서(하이라이트 포함)를 가져오므로 항상 진입 가능
