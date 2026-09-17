@@ -179,3 +179,11 @@
   남의 리소스 404, 신규 가입자는 빈 상태·알림 0건, 무토큰=데모(김민지) 폴백 (심사 데모 유지)
 - **알림 SSE는 `?token=` 쿼리** — 프론트 NotificationHost 한 줄 수정 필요 (api-spec §11)
 - 라이브 검증 4종 통과. e2e 49/49. EC2는 수동 배포본(스코핑 포함) — CI 런(ac87e68) 상태 확인 대기
+
+## 2026-09-17 — "데모 변경이 유지 안 됨" 원인 2건
+
+1. **Vercel 프론트에 NEXT_PUBLIC_API_URL 미설정 (주원인)** — 배포 프론트가 로컬 목 모드로 동작
+   → 저장 안 되고 알림 재계산. **해결 = Vercel env 추가 + Redeploy (사용자 액션 대기)**
+2. **알림 dismiss 미영속** → `POST /notifications/dismiss` 구현 (같은 할일+기한 재알림 방지,
+   NotificationDismiss 테이블). 프론트 NotificationHost 수정 2가지(api-spec §11): X클릭 시 dismiss 호출, ?token= 부착.
+   e2e 50/50, EC2 수동 배포 반영
