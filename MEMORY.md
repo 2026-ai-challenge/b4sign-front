@@ -187,3 +187,11 @@
 2. **알림 dismiss 미영속** → `POST /notifications/dismiss` 구현 (같은 할일+기한 재알림 방지,
    NotificationDismiss 테이블). 프론트 NotificationHost 수정 2가지(api-spec §11): X클릭 시 dismiss 호출, ?token= 부착.
    e2e 50/50, EC2 수동 배포 반영
+
+## 2026-09-17 — B 전건 연결 + 자동 등기부 파이프라인 (14차)
+
+- 프론트 B 6건 연결(분석·뷰어 live, 특약, 법령원문 보기, 탈퇴, counts, POST /cases) + 대시보드 깡통위험률 카드 + 샘플서류 받기
+- 백엔드: 계약서 분석 후 **자동 등기부 발급 파이프라인** (주소 1건 매칭 시만, AUTO_REGISTRY=off 가능),
+  risk lawdCd 자동해석, 데모계정(dlminji) 탈퇴 보호
+- 라이브 검증: 계약서 업로드→파싱→실판정 8건→자동발급 시도(가상주소 '성산로 12'라 검색 0건 → 안전 스킵 확인)
+- law.go.kr에 EC2 IP 등록됨(사용자) — EC2에서 법령 원문 조회 가능해짐
