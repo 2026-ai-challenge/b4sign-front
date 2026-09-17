@@ -303,6 +303,13 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
 - 실판정 metrics(선순위 합계·공동소유·압류 여부·소유자명)는 등기부 분석 시 Claude가 추출해 케이스에 저장
 - 월별 실거래 응답은 서버에서 6시간 캐시 (일 10,000건 트래픽 보호)
 
+추가 (법령·주소):
+
+| Method | Path | 설명 |
+|---|---|---|
+| GET | `/laws/{key}/original` | **법령 원문 조문** (국가법령정보센터 실시간, 24h 캐시) — `{lawName, article, title, text, efYd, link}`. key는 기존 `/laws/{key}`와 동일. 법 근거 모달 "원문 보기"에 사용 |
+| GET | `/geo/resolve?addr=` | 주소 → `{refined, lawdCd, point, dong}` (V-World). 케이스 생성 시 lawdCd 없으면 서버가 자동 보완 |
+
 ### 멱등성 (Idempotency-Key)
 
 변경 요청(POST/PATCH/DELETE)에 `Idempotency-Key: <임의 고유값>` 헤더를 붙이면:
