@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
+import { api } from "@/lib/api";
 import { D } from "@/lib/derive";
 import { Card } from "@/design-system";
 
@@ -15,12 +16,27 @@ const CLST = {
 
 export default function Checklist() {
   const router = useRouter();
-  const { caseId, toast } = useApp();
+  const { caseId, toast, apiOn } = useApp();
   const [filter, setFilter] = useState("all"); // all | missing | present
 
   const cur = D.CASES.find((c) => c.id === caseId);
   const typ = D.TYPES[cur.type];
-  const list = D.CLAUSES[cur.type] || [];
+
+  // 백엔드 특약 판정 (계약서 재업로드 시 재판정 반영) — 실패 시 로컬 목
+  const [serverList, setServerList] = useState(null);
+  useEffect(() => {
+    setServerList(null);
+    if (!apiOn) return;
+    let off = false;
+    api(`/cases/${caseId}/clauses`)
+      .then((d) => !off && Array.isArray(d?.clauses) && setServerList(d.clauses))
+      .catch(() => {});
+    return () => {
+      off = true;
+    };
+  }, [apiOn, caseId]);
+
+  const list = serverList ?? D.CLAUSES[cur.type] ?? [];
   const filtered = list.filter(
     (c) =>
       filter === "all" || (filter === "missing" ? c.st !== "present" : c.st === "present")

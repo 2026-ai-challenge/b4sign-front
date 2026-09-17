@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ChevronLeftIcon,
@@ -11,6 +11,7 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
+import { api } from "@/lib/api";
 import { D, caseCounts, ddInfo } from "@/lib/derive";
 import { TypeBadge, LawRow, TermButton } from "@/components/ui";
 import { Button, Card } from "@/design-system";
@@ -41,12 +42,31 @@ function Analysis() {
   const router = useRouter();
   const params = useSearchParams();
   const st = params.get("st"); // danger | warn | safe | unknown | null
-  const { caseId, tasks, addTaskFromItem, showDiff, setShowDiff } = useApp();
+  const { caseId, tasks, addTaskFromItem, showDiff, setShowDiff, apiOn } = useApp();
 
   const cur = D.CASES.find((c) => c.id === caseId);
   const typ = D.TYPES[cur.type];
-  const items = D.ANALYSIS[caseId] || [];
-  const { counts, overall } = caseCounts(caseId);
+
+  // 실판정(백엔드 source:"live") — 실서류 업로드 후엔 목 대신 실제 분석 결과를 렌더
+  const [live, setLive] = useState(null);
+  useEffect(() => {
+    setLive(null);
+    if (!apiOn) return;
+    let off = false;
+    api(`/cases/${caseId}/analysis`)
+      .then((d) => !off && d?.source === "live" && setLive(d))
+      .catch(() => {});
+    return () => {
+      off = true;
+    };
+  }, [apiOn, caseId]);
+
+  const items = live ? live.sections.flatMap((s) => s.items) : D.ANALYSIS[caseId] || [];
+  const { counts, overall } = live
+    ? { counts: live.counts, overall: D.ST[live.overall] ?? D.ST.unknown }
+    : caseCounts(caseId);
+  const summaryText = live?.summary ?? D.SUMMARY[caseId];
+  const analyzedLabel = live?.analyzedAt ?? cur.analysisDate;
   const caseTasks = tasks[caseId] || [];
 
   const [openSec, setOpenSec] = useState(() =>
@@ -79,7 +99,9 @@ function Analysis() {
   const filteredCount = sections.reduce((n, s) => n + s.items.length, 0);
 
   const isAdded = (id) => caseTasks.some((t) => t.id === "a" + id);
-  const hasDocText = (docKey) => docKey && D.DOCTEXT[caseId] && D.DOCTEXT[caseId][docKey];
+  // live 모드면 뷰어가 API에서 실문서(하이라이트 포함)를 가져오므로 항상 진입 가능
+  const hasDocText = (docKey) =>
+    docKey && (live || (D.DOCTEXT[caseId] && D.DOCTEXT[caseId][docKey]));
 
   return (
     <>
@@ -108,7 +130,21 @@ function Analysis() {
         <span
           style={{ marginLeft: "auto", fontSize: 12, color: "#6E827A", paddingRight: 8 }}
         >
-          {cur.analysisDate} 분석
+          {live && (
+            <span
+              style={{
+                marginRight: 6,
+                padding: "2px 7px",
+                borderRadius: 6,
+                background: "#E3F3E9",
+                color: "#14613F",
+                fontWeight: 700,
+              }}
+            >
+              실서류 분석
+            </span>
+          )}
+          {analyzedLabel} 분석
         </span>
       </div>
 
@@ -134,7 +170,7 @@ function Analysis() {
             <span style={{ fontSize: 12, color: "#6E827A" }}>{cur.short}</span>
           </div>
           <p style={{ margin: "12px 0 0", fontSize: 15, lineHeight: 1.55, fontWeight: 600 }}>
-            {D.SUMMARY[caseId]}
+            {summaryText}
           </p>
           <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
             {Object.entries(ST_LABEL).map(([k, [label, bg, fg]]) => {

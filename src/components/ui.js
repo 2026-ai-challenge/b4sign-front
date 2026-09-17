@@ -17,7 +17,9 @@ import {
   ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconSolid,
   UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
+import { useState } from "react";
 import { useApp } from "@/lib/store";
+import { api } from "@/lib/api";
 import { D } from "@/lib/derive";
 import { Logo } from "@/components/logo";
 import { NotificationHost, useDueNotifications } from "@/components/notifications";
@@ -315,9 +317,9 @@ function GlobalSheets() {
             >
               {D.LAWS[law].text}
             </p>
+            <LawOriginal lawKey={law} />
             <div style={{ marginTop: 12, fontSize: 13, color: "#6E827A", lineHeight: 1.6 }}>
-              {D.LAWS[law].note} · 조문 원문은 법제처 국가법령정보센터(law.go.kr)에서 확인하세요.
-              B4SIGN의 요약은 법률 자문이 아니에요.
+              {D.LAWS[law].note} · B4SIGN의 요약은 법률 자문이 아니에요.
             </div>
             <button
               onClick={() => setLaw(null)}
@@ -523,5 +525,77 @@ export function LawRow({ lawKey }) {
       </span>
       <span style={{ flex: "none", fontSize: 15, color: "#5A6660" }}>›</span>
     </button>
+  );
+}
+
+/** 법령 원문 보기 — 백엔드가 국가법령정보센터에서 실시간으로 가져온 현행 조문 */
+export function LawOriginal({ lawKey }) {
+  const { apiOn } = useApp();
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState(null);
+  const [err, setErr] = useState(false);
+  if (!apiOn) return null;
+
+  const load = () => {
+    setOpen(true);
+    if (data || err) return;
+    api(`/laws/${lawKey}/original`)
+      .then(setData)
+      .catch(() => setErr(true));
+  };
+
+  return (
+    <div style={{ marginTop: 12 }}>
+      {!open ? (
+        <button
+          onClick={load}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "8px 14px",
+            borderRadius: 999,
+            border: `1px solid ${color.borderSoft}`,
+            background: "#fff",
+            fontSize: 13,
+            fontWeight: 700,
+            color: color.ink,
+            cursor: "pointer",
+          }}
+        >
+          <ScaleIcon style={{ width: 14, height: 14 }} /> 조문 원문 보기
+        </button>
+      ) : !data && !err ? (
+        <div style={{ fontSize: 13, color: color.textSecondary }}>원문을 불러오는 중…</div>
+      ) : err ? (
+        <div style={{ fontSize: 13, color: color.textSecondary }}>
+          원문을 불러오지 못했어요 — 법제처(law.go.kr)에서 확인해 주세요.
+        </div>
+      ) : (
+        <div
+          style={{
+            padding: "14px 16px",
+            borderRadius: 14,
+            border: `1px solid ${color.borderSoft}`,
+            background: "#fff",
+            fontSize: 13,
+            lineHeight: 1.75,
+            color: "#2E463C",
+            maxHeight: 260,
+            overflow: "auto",
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          <div style={{ fontWeight: 800, marginBottom: 6 }}>
+            {data.lawName} {data.article}
+            {data.title ? `(${data.title})` : ""}{" "}
+            <span style={{ fontWeight: 500, fontSize: 11, color: color.textSecondary }}>
+              현행 · 국가법령정보센터
+            </span>
+          </div>
+          {data.text}
+        </div>
+      )}
+    </div>
   );
 }

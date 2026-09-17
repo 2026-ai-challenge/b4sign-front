@@ -2,6 +2,7 @@
 // API가 꺼져 있으면 각 호출부가 로컬 목 동작으로 폴백한다 (데모 안전장치).
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+export const API_BASE = BASE; // 파일 다운로드 등 직접 링크용
 
 /**
  * API 사용 가능 여부. NEXT_PUBLIC_API_URL이 없으면 localhost 개발 환경에서만

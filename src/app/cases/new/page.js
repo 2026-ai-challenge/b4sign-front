@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
+import { api } from "@/lib/api";
 import { D } from "@/lib/derive";
 import { AddressField, DateField } from "@/components/fields";
 import { Button, Card } from "@/design-system";
@@ -196,6 +197,21 @@ export default function NewCase() {
 
         <Button
           onClick={() => {
+            // 서버에 실제 케이스 생성 (법정동코드는 서버가 주소로 자동 보완).
+            // 화면 전환은 아직 데모 케이스 기준 — 전 화면 동적화(docs/ISSUES.md #6) 전까지.
+            if (nc.addrBase) {
+              api("/cases", {
+                method: "POST",
+                body: {
+                  type: nc.type,
+                  housing: nc.housing,
+                  addr: [nc.addrBase, nc.addrDetail].filter(Boolean).join(", "),
+                  amount: nc.amount || undefined,
+                  contractDate: nc.contract || undefined,
+                  balanceDate: nc.balance || undefined,
+                },
+              }).catch(() => {});
+            }
             const target = D.CASES.find((c) => c.type === nc.type).id;
             setCaseId(target);
             toast(`케이스를 만들었어요 (데모: ${typ.label} 샘플로 이동)`);

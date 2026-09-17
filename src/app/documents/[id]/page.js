@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, use, useState } from "react";
+import { Suspense, use, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   XMarkIcon,
@@ -10,6 +10,7 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
+import { api } from "@/lib/api";
 import { D, lawShort } from "@/lib/derive";
 import { LawButton, TermButton } from "@/components/ui";
 import { Button } from "@/design-system";
@@ -33,20 +34,59 @@ export default function ViewerPage({ params }) {
 function Viewer({ docKey }) {
   const router = useRouter();
   const search = useSearchParams();
-  const { caseId, docs, addTaskFromItem, tasks } = useApp();
+  const { caseId, docs, addTaskFromItem, tasks, apiOn } = useApp();
 
-  const initialPin = search.get("pin") ? Number(search.get("pin")) : null;
+  const initialPin = search.get("pin") || null;
   const [pin, setPin] = useState(initialPin);
   const [filter, setFilter] = useState("all");
 
   const doc = D.DOCS[docKey];
-  const text = D.DOCTEXT[caseId] && D.DOCTEXT[caseId][docKey];
+
+  // 실서류 모드: 백엔드가 파싱 원문 + 판정 하이라이트(mark, itemId=실판정 id)를 준다.
+  // 로컬 D 형식({h}/{pre,mark,post,item})으로 변환해 기존 렌더를 그대로 재사용한다.
+  const [liveText, setLiveText] = useState(null);
+  const [liveItems, setLiveItems] = useState(null);
+  useEffect(() => {
+    setLiveText(null);
+    setLiveItems(null);
+    if (!apiOn) return;
+    let off = false;
+    Promise.all([
+      api(`/cases/${caseId}/documents/${docKey}`).catch(() => null),
+      api(`/cases/${caseId}/analysis`).catch(() => null),
+    ]).then(([d, a]) => {
+      if (off || d?.source !== "live") return;
+      setLiveText(
+        d.lines.map((l) =>
+          l.kind === "heading"
+            ? { h: l.text }
+            : l.kind === "mark"
+              ? { pre: l.pre, mark: l.mark, post: l.post, item: l.itemId }
+              : l.text
+        )
+      );
+      if (a?.source === "live") setLiveItems(a.sections.flatMap((s) => s.items));
+    });
+    return () => {
+      off = true;
+    };
+  }, [apiOn, caseId, docKey]);
+
+  const text = liveText ?? (D.DOCTEXT[caseId] && D.DOCTEXT[caseId][docKey]);
   // 필터 칩 개수는 이 서류의 판정만, 줄 하이라이트는 케이스 전체 판정에서 찾는다
   // (면적 불일치처럼 두 서류에 걸친 항목이 있어서)
-  const allItems = D.ANALYSIS[caseId] || [];
+  const allItems = liveItems ?? D.ANALYSIS[caseId] ?? [];
   const items = allItems.filter((i) => i.doc === docKey);
   const caseTasks = tasks[caseId] || [];
 
+  if (doc && !text && apiOn) {
+    // 실서류 본문 로딩 중 (API 응답 대기)
+    return (
+      <div style={{ padding: 60, textAlign: "center", fontSize: 14, color: "#6E827A" }}>
+        문서를 불러오는 중…
+      </div>
+    );
+  }
   if (!doc || !text) {
     return (
       <div style={{ padding: 40, textAlign: "center" }}>
@@ -80,7 +120,7 @@ function Viewer({ docKey }) {
       .map((k) => [k, D.ST[k].label, D.ST[k].glyph, vCounts[k]]),
   ];
 
-  const pinItem = allItems.find((i) => i.id === pin);
+  const pinItem = allItems.find((i) => String(i.id) === String(pin));
   const added = pinItem && caseTasks.some((t) => t.id === "a" + pinItem.id);
 
   return (
@@ -207,11 +247,11 @@ function Viewer({ docKey }) {
                   {l.h}
                 </div>
               );
-            const it = allItems.find((i) => i.id === l.item);
+            const it = allItems.find((i) => String(i.id) === String(l.item));
             const st = it ? D.ST[it.st] : D.ST.unknown;
             const LineIcon = STATUS_ICON[it ? it.st : "unknown"];
             const dim = filter !== "all" && it && it.st !== filter;
-            const active = pin === l.item;
+            const active = String(pin) === String(l.item);
             const open = () => setPin(active ? null : l.item);
             return (
               <div
@@ -277,7 +317,9 @@ function Viewer({ docKey }) {
             lineHeight: 1.5,
           }}
         >
-          가상 샘플 문서입니다 · 하이라이트나 오른쪽 버튼을 누르면 설명이 열려요
+          {liveText
+            ? "업로드한 실제 서류의 분석 원문입니다 · 하이라이트를 누르면 설명이 열려요"
+            : "가상 샘플 문서입니다 · 하이라이트나 오른쪽 버튼을 누르면 설명이 열려요"}
         </div>
       </div>
 

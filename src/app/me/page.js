@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/store";
+import { api, getToken, setToken } from "@/lib/api";
 import { D, balanceWord } from "@/lib/derive";
 import { TypeBadge } from "@/components/ui";
 
@@ -562,8 +563,18 @@ export default function Me() {
                 취소
               </button>
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (delText !== "탈퇴합니다") return;
+                  // 실제 탈퇴 — 서버의 계정·케이스·서류·상담이 cascade 삭제된다.
+                  // 단, 토큰이 있는 실가입 사용자만 — 무토큰(공유 데모 계정)은 서버를 건드리지 않는다.
+                  if (getToken()) {
+                    try {
+                      await api("/me", { method: "DELETE", body: { confirmText: "탈퇴합니다" } });
+                    } catch {
+                      /* API 미기동이어도 화면 흐름은 진행 */
+                    }
+                  }
+                  setToken(null);
                   closeModals();
                   setLoggedIn(false);
                   setConsented(false);

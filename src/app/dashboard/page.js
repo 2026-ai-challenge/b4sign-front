@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDownIcon, CalculatorIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
+import { api } from "@/lib/api";
 import {
   D,
   maskAddr,
@@ -23,8 +24,27 @@ import { Button, Card, color } from "@/design-system";
 
 export default function Dashboard() {
   const router = useRouter();
-  const { caseId, setCaseId, docs, tasks, toggleTask, toast } = useApp();
+  const { caseId, setCaseId, docs, tasks, toggleTask, toast, apiOn } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // 실데이터: 깡통 위험률(실거래 시세 기반) + 실판정 카운트 — 실패 시 조용히 로컬 유지
+  const [risk, setRisk] = useState(null);
+  const [liveCounts, setLiveCounts] = useState(null);
+  useEffect(() => {
+    setRisk(null);
+    setLiveCounts(null);
+    if (!apiOn) return;
+    let off = false;
+    api(`/cases/${caseId}/risk`)
+      .then((d) => !off && d?.ratio != null && setRisk(d))
+      .catch(() => {});
+    api(`/cases/${caseId}/analysis`)
+      .then((d) => !off && d?.source === "live" && setLiveCounts(d.counts))
+      .catch(() => {});
+    return () => {
+      off = true;
+    };
+  }, [apiOn, caseId]);
 
   const cur = D.CASES.find((c) => c.id === caseId);
   const typ = D.TYPES[cur.type];
@@ -35,7 +55,15 @@ export default function Dashboard() {
   const [feeMonthly, setFeeMonthly] = useState(() =>
     cur.type === "wolse" ? parseKoreanAmount(amountParts[1] || "") : 0
   );
-  const { counts, overall } = caseCounts(caseId);
+  const localCounts = caseCounts(caseId);
+  const counts = liveCounts ?? localCounts.counts;
+  const overall = liveCounts
+    ? liveCounts.danger
+      ? D.ST.danger
+      : liveCounts.warn
+        ? D.ST.warn
+        : D.ST.safe
+    : localCounts.overall;
   const caseDocs = docs[caseId] || {};
   const docList = buildDocList(caseId, caseDocs);
   const caseTasks = tasks[caseId] || [];
@@ -547,6 +575,52 @@ export default function Dashboard() {
               분석 결과 전체 보기 →
             </Button>
           </div>
+
+          {/* 깡통 위험률 — 실거래 시세 기반 실계산 (백엔드 /risk, 실패 시 카드 미노출) */}
+          {risk && (
+            <Card radius={16} style={{ padding: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: color.textSecondary }}>
+                  깡통 위험률 <span style={{ fontWeight: 500 }}>· 실거래 시세 기준</span>
+                </span>
+                <span
+                  style={{
+                    padding: "3px 9px",
+                    borderRadius: 999,
+                    background: D.ST[risk.grade]?.bg ?? D.ST.unknown.bg,
+                    color: D.ST[risk.grade]?.fg ?? D.ST.unknown.fg,
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  {risk.grade === "danger" ? "위험" : risk.grade === "warn" ? "주의" : "양호"}
+                </span>
+              </div>
+              <div style={{ marginTop: 8, display: "flex", alignItems: "baseline", gap: 8 }}>
+                <span
+                  style={{
+                    fontSize: 34,
+                    fontWeight: 800,
+                    color: D.ST[risk.grade]?.fg ?? color.ink,
+                    lineHeight: 1,
+                  }}
+                >
+                  {risk.ratio}%
+                </span>
+                <span style={{ fontSize: 12, color: color.textSecondary }}>
+                  {/* risk 금액은 만원 단위 → 원으로 환산해 표기 */}
+                  (보증금 {fmtKrw(risk.deposit * 1e4)} + 선순위 {fmtKrw(risk.seniorLien * 1e4)}) ÷ 시세{" "}
+                  {fmtKrw(risk.marketValue * 1e4)}
+                </span>
+              </div>
+              <div style={{ marginTop: 8, fontSize: 12, color: color.textSecondary, lineHeight: 1.5 }}>
+                {risk.valueSource === "gongsi"
+                  ? "실거래가 없어 공시가격 ×140% 근사 시세를 사용했어요."
+                  : `최근 12개월 실거래 ${risk.sampleCount}건 기반 추정 시세예요.`}{" "}
+                70% 이상이면 주의, 90% 이상이면 위험으로 봐요.
+              </div>
+            </Card>
+          )}
 
           {/* 서류 */}
           <div>
