@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CameraIcon, CheckIcon, MinusIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { CameraIcon, CheckIcon, MinusIcon } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
 import { Logo } from "@/components/logo";
@@ -10,11 +10,10 @@ import { Button, Card } from "@/design-system";
 
 // B4SIGN의 4 Checks — 사인하기 전 반드시 확인할 4가지
 const CHECKS = [
-  { n: "①", en: "WHO", q: "계약 상대가 맞는가", desc: "등기부 소유자 ↔ 계약서 임대인 확인" },
-  { n: "②", en: "DEBT", q: "먼저 가져갈 돈이 있는가", desc: "근저당·가압류·선순위 권리 확인" },
-  { n: "③", en: "HOME", q: "계약하려는 집이 맞는가", desc: "주소·면적·용도·위반건축물 대조" },
+  { en: "WHO", q: "계약 상대가 맞는가", desc: "등기부 소유자 ↔ 계약서 임대인 확인" },
+  { en: "DEBT", q: "먼저 가져갈 돈이 있는가", desc: "근저당·가압류·선순위 권리 확인" },
+  { en: "HOME", q: "계약하려는 집이 맞는가", desc: "주소·면적·용도·위반건축물 대조" },
   {
-    n: "④",
     en: "CONTRACT",
     q: "계약 내용이 안전한가",
     desc: "불리한 조항·필수 특약·보증금 보호 조건 확인",
@@ -45,7 +44,7 @@ export default function Landing() {
               color: "#16A36A",
             }}
           >
-            비포사인 · 전세 · 월세 · 매매
+            전세 · 월세 · 매매
           </div>
         </Reveal>
         <Reveal delay={90}>
@@ -71,8 +70,51 @@ export default function Landing() {
             등기부등본·계약서·건축물대장을 올리면 3분 안에 위험한 줄을 문서 위에 표시해 드려요.
           </p>
         </Reveal>
-        <Reveal delay={260}>
-          <Button onClick={start} style={{ marginTop: 24, fontSize: 16 }}>
+        <Reveal delay={220}>
+          <div style={{ ...mock.frame, marginTop: 20 }}>
+            <div style={{ fontSize: 11, color: "#5A6660" }}>
+              계약서를 올리면 실제로 이렇게 표시돼요
+            </div>
+            <div
+              style={{
+                marginTop: 6,
+                fontSize: 12,
+                color: "#555",
+                lineHeight: 1.7,
+                fontFamily: "'Noto Serif KR',serif",
+              }}
+            >
+              ② 임대인은{" "}
+              <span
+                style={{
+                  background: "rgba(240,110,95,.32)",
+                  padding: "1px 3px",
+                  borderRadius: 3,
+                  color: "#111",
+                }}
+              >
+                사전 통보 없이 계약을 즉시 해지할 수 있다
+              </span>
+            </div>
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                marginTop: 8,
+                padding: "2px 7px",
+                borderRadius: 999,
+                background: "#FDE8E4",
+                color: "#B4231A",
+                fontSize: 11,
+                fontWeight: 800,
+              }}
+            >
+              위험 · 임차인 보호 조항 없음
+            </span>
+          </div>
+        </Reveal>
+        <Reveal delay={300}>
+          <Button onClick={start} style={{ marginTop: 16, fontSize: 16 }}>
             무료로 4가지 체크 시작하기
           </Button>
         </Reveal>
@@ -130,9 +172,7 @@ export default function Landing() {
                   {c.en}
                 </span>
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: 15, fontWeight: 700 }}>
-                    {c.n} {c.q}
-                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 700 }}>{c.q}</div>
                   <div style={{ marginTop: 4, fontSize: 13, lineHeight: 1.5, color: "#4B6157" }}>
                     {c.desc}
                   </div>
@@ -208,23 +248,7 @@ export default function Landing() {
                 >
                   퇴거 시 도배·장판을 전액 부담하여
                 </span>{" "}
-                반환한다{" "}
-                <span
-                  style={{
-                    display: "inline-flex",
-                    width: 18,
-                    height: 18,
-                    borderRadius: "50%",
-                    border: "2px solid #B4231A",
-                    background: "#FDE8E4",
-                    color: "#B4231A",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    verticalAlign: "middle",
-                  }}
-                >
-                  <ExclamationCircleIcon style={{ width: 11, height: 11 }} />
-                </span>
+                반환한다
               </div>
               <div
                 style={{
@@ -241,7 +265,6 @@ export default function Landing() {
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      gap: 3,
                       padding: "2px 7px",
                       borderRadius: 999,
                       background: "#FDE8E4",
@@ -251,7 +274,6 @@ export default function Landing() {
                       fontFamily: "Pretendard, sans-serif",
                     }}
                   >
-                    <ExclamationCircleIcon style={{ width: 10, height: 10 }} />
                     위험
                   </span>
                   <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "Pretendard, sans-serif" }}>
@@ -362,8 +384,9 @@ export default function Landing() {
       </div>
 
       {/* 검증 범위 */}
+      <div style={{ padding: "28px 20px 0" }}>
       <Reveal>
-        <Card style={{ margin: "28px 20px 0", padding: 16 }}>
+        <Card style={{ padding: 16 }}>
           <div style={{ fontSize: 14, fontWeight: 700 }}>무엇을 어떻게 검증하나요</div>
           <div
             style={{
@@ -376,9 +399,9 @@ export default function Landing() {
             }}
           >
             {[
-              [CheckIcon, "#E3F3E9", "#14613F", <span key="1"><b>등기부등본</b> — 소유자·근저당·가압류·면적 등 등기 항목을 검증하고 계약서와 대조</span>],
-              [CheckIcon, "#E3F3E9", "#14613F", <span key="2"><b>건축물대장</b> — 국토부 API로 위반건축물·용도 교차 검증</span>],
-              [CheckIcon, "#E3F3E9", "#14613F", <span key="3"><b>계약서</b> — 필수 특약 누락·불리한 조항을 줄 단위로 표시</span>],
+              [CheckIcon, "#E3F3E9", "#14613F", <span key="1"><b>등기부등본</b>: 소유자·근저당·가압류·면적 등 등기 항목을 검증하고 계약서와 대조</span>],
+              [CheckIcon, "#E3F3E9", "#14613F", <span key="2"><b>건축물대장</b>: 국토부 API로 위반건축물·용도 교차 검증</span>],
+              [CheckIcon, "#E3F3E9", "#14613F", <span key="3"><b>계약서</b>: 필수 특약 누락·불리한 조항을 줄 단위로 표시</span>],
               [MinusIcon, "#ECEEEC", "#5A6660", <span key="4" style={{ color: "#4B6157" }}>문서 원본의 <b style={{ color: "#17211E" }}>위·변조 여부</b>는 확인하지 않아요. 계약 당일 인터넷등기소에서 직접 재열람하세요</span>],
             ].map(([GlyphIcon, bg, fg, content], i) => (
               <div key={i} style={{ display: "flex", gap: 8 }}>
@@ -397,12 +420,13 @@ export default function Landing() {
                 >
                   <GlyphIcon style={{ width: 11, height: 11 }} />
                 </span>
-                {content}
+                <div style={{ flex: 1, minWidth: 0 }}>{content}</div>
               </div>
             ))}
           </div>
         </Card>
       </Reveal>
+      </div>
 
       {/* 마지막 CTA */}
       <Reveal>
@@ -429,8 +453,18 @@ export default function Landing() {
             <span style={{ fontWeight: 700 }}>비포사인</span>
           </div>
           <div style={{ display: "flex", gap: 14, marginTop: 8 }}>
-            <span>개인정보처리방침</span>
-            <span>이용약관</span>
+            <button
+              onClick={() => router.push("/privacy")}
+              style={{ background: "none", border: "none", padding: 0, font: "inherit", color: "inherit", cursor: "pointer" }}
+            >
+              개인정보처리방침
+            </button>
+            <button
+              onClick={() => router.push("/terms")}
+              style={{ background: "none", border: "none", padding: 0, font: "inherit", color: "inherit", cursor: "pointer" }}
+            >
+              이용약관
+            </button>
           </div>
           <div style={{ marginTop: 6 }}>
             B4SIGN(비포사인)은 법률 자문이 아닙니다. 최종 판단은 법무사·변호사 등 전문가와
