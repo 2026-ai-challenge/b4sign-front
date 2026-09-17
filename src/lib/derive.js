@@ -154,6 +154,7 @@ export function buildDocList(caseId, docs) {
         .filter((k) => byst[k])
         .map((k) => ({
           key: k,
+          label: D.ST[k].label,
           glyph: D.ST[k].glyph,
           n: byst[k],
           bg: D.ST[k].bg,

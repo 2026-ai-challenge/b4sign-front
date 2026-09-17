@@ -9,8 +9,6 @@ import {
   ArrowUpTrayIcon,
   CameraIcon,
   ExclamationCircleIcon,
-  CheckCircleIcon,
-  QuestionMarkCircleIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
@@ -21,12 +19,6 @@ import { api, apiUpload } from "@/lib/api";
 
 const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif";
 const MAX_SIZE = 20 * 1024 * 1024;
-const STATUS_ICON = {
-  safe: CheckCircleIcon,
-  unknown: QuestionMarkCircleIcon,
-  warn: ExclamationTriangleIcon,
-  danger: ExclamationCircleIcon,
-};
 
 const fmtSize = (b) =>
   b >= 1024 * 1024 ? (b / 1024 / 1024).toFixed(1) + "MB" : Math.ceil(b / 1024) + "KB";
@@ -234,6 +226,7 @@ function Documents() {
                 gap: 8,
                 padding: 14,
                 border: `1px solid ${d.border}`,
+                boxShadow: "none",
                 minHeight: 150,
               }}
             >
@@ -266,27 +259,24 @@ function Documents() {
               </div>
               {d.marks > 0 && (
                 <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                  {d.markChips.map((m) => {
-                    const MarkIcon = STATUS_ICON[m.key];
-                    return (
+                  {d.markChips.map((m) => (
                     <span
                       key={m.key}
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
-                        gap: 3,
                         padding: "2px 7px",
                         borderRadius: 5,
                         background: m.bg,
                         color: m.fg,
                         fontSize: 11,
                         fontWeight: 700,
+                        whiteSpace: "nowrap",
                       }}
                     >
-                      <MarkIcon style={{ width: 11, height: 11 }} />
-                      {m.n}
+                      {m.label} {m.n}
                     </span>
-                  );})}
+                  ))}
                 </div>
               )}
               {d.stale && (
@@ -301,7 +291,7 @@ function Documents() {
                   }}
                 >
                   <ExclamationTriangleIcon style={{ width: 13, height: 13, flex: "none" }} />
-                  발급 {d.days}일 경과 — 재발급 권장
+                  발급 {d.days}일 경과: 재발급 권장
                 </div>
               )}
               <div style={{ display: "flex", gap: 6 }}>
@@ -476,7 +466,7 @@ function Documents() {
                     눌러서 파일 선택
                   </span>
                   <span style={{ fontSize: 12, color: "#6E827A" }}>
-                    PDF · 사진(JPG·PNG·HEIC) · 최대 20MB · 스캔본 가능
+                    PDF·JPG·PNG·HEIC · 최대 20MB (스캔본 가능)
                   </span>
                 </button>
                 <Button
@@ -532,10 +522,12 @@ function Documents() {
                   <div
                     style={{
                       height: "100%",
-                      width: `${Math.round(upload.pct || 0)}%`,
+                      width: "100%",
                       background: "#16A36A",
                       borderRadius: 4,
-                      transition: "width .15s",
+                      transform: `scaleX(${Math.round(upload.pct || 0) / 100})`,
+                      transformOrigin: "left",
+                      transition: "transform .15s",
                     }}
                   />
                 </div>
