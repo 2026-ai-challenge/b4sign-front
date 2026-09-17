@@ -4,10 +4,27 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BellIcon } from "@heroicons/react/24/solid";
 import { useApp } from "@/lib/store";
-import { apiAvailable } from "@/lib/api";
+import { api, apiAvailable, getToken } from "@/lib/api";
 import { D, resolveTaskDue, dday } from "@/lib/derive";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+
+// 지운 알림 (할일id|기한) — 모든 훅 인스턴스(배지·배너·알림함)가 공유.
+// 서버에도 영속(POST /notifications/dismiss)해서 새로고침·재접속에도 다시 안 뜬다.
+const dismissedLocal = new Set();
+const dismissListeners = new Set();
+const emitDismiss = () => dismissListeners.forEach((fn) => fn());
+
+export async function dismissDueNotification(n) {
+  dismissedLocal.add(`${n.id}|${n.due}`);
+  emitDismiss();
+  try {
+    if (apiAvailable())
+      await api("/notifications/dismiss", { method: "POST", body: { id: n.id, due: n.due } });
+  } catch {
+    /* 서버 미기동/실패 — 로컬 세션에서는 이미 숨김 */
+  }
+}
 
 /**
  * 기한 임박 알림 목록 — 서버 SSE(/notifications/stream)를 구독해 "임대인 미납
@@ -18,6 +35,7 @@ const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
 export function useDueNotifications() {
   const { tasks, apiOn, me } = useApp();
   const [items, setItems] = useState([]);
+  const [dismissVer, setDismissVer] = useState(0); // 지우기 발생 시 리렌더
 
   // 로컬 계산 폴백 (SSE와 동일 규칙)
   const computeLocal = () => {
@@ -43,13 +61,23 @@ export function useDueNotifications() {
   };
 
   useEffect(() => {
+    const fn = () => setDismissVer((v) => v + 1);
+    dismissListeners.add(fn);
+    return () => dismissListeners.delete(fn);
+  }, []);
+
+  useEffect(() => {
     if (!me.notif?.master || !me.notif?.due) {
       setItems([]);
       return;
     }
 
     if (apiOn && apiAvailable()) {
-      const es = new EventSource(BASE + "/notifications/stream");
+      // EventSource는 헤더를 못 보내므로 토큰을 쿼리로 (사용자별 알림 스코핑)
+      const tok = getToken();
+      const es = new EventSource(
+        BASE + "/notifications/stream" + (tok ? "?token=" + encodeURIComponent(tok) : "")
+      );
       es.addEventListener("due", (e) => {
         try {
           setItems(JSON.parse(e.data));
@@ -65,7 +93,8 @@ export function useDueNotifications() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiOn, me.notif?.master, me.notif?.due]);
 
-  return items;
+  void dismissVer; // 지우기 시 필터 재평가 트리거
+  return items.filter((n) => !dismissedLocal.has(`${n.id}|${n.due}`));
 }
 
 // 여러 건이 한꺼번에 발생해도 배너 하나로 요약 — 개별 토스트를 쌓으면 "긴급 알림"이

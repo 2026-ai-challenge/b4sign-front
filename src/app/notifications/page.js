@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { BellIcon } from "@heroicons/react/24/solid";
-import { useDueNotifications } from "@/components/notifications";
+import { useDueNotifications, dismissDueNotification } from "@/components/notifications";
 import { Card } from "@/design-system";
 import { color } from "@/design-system/tokens";
 
@@ -94,7 +94,23 @@ export default function Notifications() {
                   {n.label} · {n.due} · {n.caseShort}
                 </span>
               </span>
-              <span style={{ flex: "none", fontSize: 15, color: color.textSecondary }}>›</span>
+              <span
+                role="button"
+                aria-label="알림 지우기"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dismissDueNotification(n); // 서버 영속 — 같은 기한은 다시 안 뜸
+                }}
+                style={{
+                  flex: "none",
+                  padding: "6px 8px",
+                  fontSize: 14,
+                  color: color.textSecondary,
+                  cursor: "pointer",
+                }}
+              >
+                ✕
+              </span>
             </button>
           ))
         )}

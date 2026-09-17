@@ -31,7 +31,7 @@ export function setToken(token) {
   } catch {}
 }
 
-export async function api(path, { method = "GET", body } = {}) {
+export async function api(path, { method = "GET", body } = {}, _retried = false) {
   const headers = { "Content-Type": "application/json" };
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -40,6 +40,11 @@ export async function api(path, { method = "GET", body } = {}) {
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
+  // 만료/무효 토큰(401): 지우고 무토큰(데모)으로 1회 재시도 — 앱이 멈추지 않게
+  if (res.status === 401 && token && !_retried) {
+    setToken(null);
+    return api(path, { method, body }, true);
+  }
   const data = await res.json().catch(() => null);
   if (!res.ok) {
     const err = new Error(data?.error?.message || `API ${res.status}`);
