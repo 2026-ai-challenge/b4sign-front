@@ -150,6 +150,7 @@
 - 배포 완료 상태: 컨테이너 b4sign 가동, health ok, **시드 + 공시가 253,730건 적재 완료**, bootstrap·gongsi 검증
 - env: EC2 `~/b4sign.env` (로컬 `zipsalpi-api/deploy/b4sign.env` 사본, git 제외)
 - 이후 main 푸시 = 자동 배포 (secrets EC2_HOST/USER/SSH_KEY 설정됨)
+- **S3 연결 완료(2026-09-17)**: 버킷 b4sign-uploads-dlckdgh(서울, 비공개) — EC2 env STORAGE_DRIVER=s3, 실업로드 검증(s3 put 로그). 키는 EC2 env에만·심사 후 로테이션 권장
 - **HTTPS 가동**: Caddy + Let's Encrypt, 공개 API = **`https://43-201-119-217.sslip.io/api/v1`**
   (Swagger: `/api/docs`). sslip.io는 IP 매핑 무료 도메인 — 실도메인 사면 Caddyfile 한 줄 교체
 - CORS: vercel.app + localhost:3000 허용됨 (팀원 로컬 개발 가능)
