@@ -309,6 +309,9 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
 |---|---|---|
 | GET | `/laws/{key}/original` | **법령 원문 조문** (국가법령정보센터 실시간, 24h 캐시) — `{lawName, article, title, text, efYd, link}`. key는 기존 `/laws/{key}`와 동일. 법 근거 모달 "원문 보기"에 사용 |
 | GET | `/geo/resolve?addr=` | 주소 → `{refined, lawdCd, point, dong}` (V-World). 케이스 생성 시 lawdCd 없으면 서버가 자동 보완 |
+| GET | `/gongsi/search?lawdCd=&q=` | **주택 공시가격 (호별)** + `hugMaxDepositManwon`(HUG 보증보험 한도 = 공시가 126%). 국토부 파일데이터 적재분 (현재 마포·은평 25.4만호) |
+
+- `/cases/{id}/risk`의 시세: 실거래 없으면 **공시가격 × 140% 근사**로 폴백 (`valueSource: "trade" | "gongsi"`)
 
 ### 멱등성 (Idempotency-Key)
 
