@@ -288,6 +288,21 @@ data: { "canAdd": true, "taskTitle": "원상복구 범위 특약 추가 요청 (
 - `GET /cases/{id}/documents/{docKey}` → 파싱 원문 기반 `lines` (판정 인용구가 `kind:"mark"` 빨간 하이라이트, `itemId`는 AnalysisItem id), `source: "live"`
 - 판정 멱등: 같은 파싱 텍스트(sha256)면 Claude 재판정·재과금하지 않음
 
+### 시세·깡통 위험률 (2026-09-17 — 국토부 실거래가 실데이터)
+
+| Method | Path | 설명 |
+|---|---|---|
+| GET | `/market/rents?housing=&lawdCd=&months=&umdNm=` | 주변 전월세 실거래 (전세 우선 정렬) — 보증금 비교 |
+| GET | `/market/estimate?housing=&lawdCd=&area=&months=` | 매매 실거래 기반 시세 추정 (중위가·㎡단가·유사면적) |
+| GET | `/building/title?sigunguCd=&bjdongCd=&bun=&ji=` | 건축HUB 건축물대장 표제부 — 용도·구조·면적 교차검증 |
+| GET | `/cases/{id}/risk?area=&housing=&umdNm=` | **깡통 위험률** = (보증금 + 등기부 실판정 선순위 채권최고액) ÷ 실거래 시세. `grade`: 90%↑ danger / 70%↑ warn |
+| POST | `/cases/{id}/reanalyze` | 저장된 파싱 텍스트로 등기부 재판정 (프롬프트 개선 반영, Upstage 재호출 없음) |
+
+- `lawdCd` = 법정동코드 앞 5자리 — **카카오(다음) 주소검색 결과의 `bcode` 앞 5자리 그대로**.
+  케이스 생성/수정 시 `lawdCd`(+`bjdongCd`·`bun`·`ji`)를 저장하면 risk가 자동으로 사용
+- 실판정 metrics(선순위 합계·공동소유·압류 여부·소유자명)는 등기부 분석 시 Claude가 추출해 케이스에 저장
+- 월별 실거래 응답은 서버에서 6시간 캐시 (일 10,000건 트래픽 보호)
+
 ### 멱등성 (Idempotency-Key)
 
 변경 요청(POST/PATCH/DELETE)에 `Idempotency-Key: <임의 고유값>` 헤더를 붙이면:

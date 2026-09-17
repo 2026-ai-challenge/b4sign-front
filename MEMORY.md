@@ -93,6 +93,22 @@
 - ⚠️ Nest 함정: 컨트롤러 주입 프로퍼티명이 라우트 메서드명과 겹치면(analysis) 핸들러가 덮여 500
 - e2e 41/41
 
+## 데이터 확보 (2026-09-17)
+
+- **실거래가 8종** (아파트·빌라·단독·오피스텔 × 매매·전월세) ✅ 승인·실호출 검증 (DATA_GO_KR_KEY)
+- **건축HUB 건축물대장** ✅ 승인·검증 (성산동 80-2 표제부 = 등기부와 교차검증 성공)
+- 공동주택 공시가격(data.go.kr 15124003) ⏳ 신청 대기 / 법령 OC(open.law.go.kr, 아이디 dlckdgh135) ⏳ 승인 대기
+
+## 백엔드 (2026-09-17 7차 — 시세·깡통 위험률 실계산)
+
+- **MolitService**: 실거래 전월세/매매 조회(월별 6h 캐시), 시세 추정(중위가·㎡단가·유사면적 ±25%), 건축물대장 표제부
+- **GET /cases/:id/risk**: (보증금 + Claude 추출 선순위 채권최고액) ÷ 실거래 시세 → ratio%·grade(90↑danger/70↑warn)
+- 실측: c1(성산동 80-2) = 2억+4.4억 vs 마포 단독 29건 시세 13.98억 → **46% safe**
+- analyzeRegistry에 **metrics**(seniorLienTotal·coOwnership·hasSeizure·ownerName) 추가 → Case.metricsJson
+- POST /cases/:id/reanalyze (저장된 파싱 텍스트 재판정 — Upstage 비용 없음)
+- Case에 lawdCd/bjdongCd/bun/ji 컬럼 — **프론트: 카카오 주소검색 bcode 앞 5자리를 lawdCd로 저장** (api-spec §11)
+- e2e 43/43
+
 ## 마지막 갱신
 
-2026-09-17 — 6차: 실판정 파이프라인(파싱→Claude 판정→하이라이트) + 비용원장·판정멱등. AWS 배포는 사용자와 나중에 함께
+2026-09-17 — 7차: 실거래 시세 + 깡통 위험률 실계산 가동. 남은 신청: 공시가격·법령 OC
