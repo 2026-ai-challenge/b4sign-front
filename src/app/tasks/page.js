@@ -106,10 +106,12 @@ export default function Tasks() {
           <div
             style={{
               height: "100%",
-              width: `${pct}%`,
+              width: "100%",
               background: "#16A36A",
               borderRadius: 3,
-              transition: "width .3s",
+              transform: `scaleX(${pct / 100})`,
+              transformOrigin: "left",
+              transition: "transform .3s",
             }}
           />
         </div>
@@ -517,13 +519,14 @@ export default function Tasks() {
                     style={{
                       position: "absolute",
                       top: 3,
-                      left: detail.remind ? 23 : 3,
+                      left: 3,
                       width: 24,
                       height: 24,
                       borderRadius: "50%",
                       background: "#fff",
                       boxShadow: "0 1px 3px rgba(0,0,0,.2)",
-                      transition: "left .2s",
+                      transform: `translateX(${detail.remind ? 20 : 0}px)`,
+                      transition: "transform .2s",
                     }}
                   />
                 </button>

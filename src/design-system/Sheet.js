@@ -36,7 +36,7 @@ export function Sheet({ open, onClose, zIndex, style, children }) {
             height: 4,
             borderRadius: 2,
             background: color.border,
-            margin: "0 auto 14px",
+            margin: "0 auto 16px",
           }}
         />
         {children}

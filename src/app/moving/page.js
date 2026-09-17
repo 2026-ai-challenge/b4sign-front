@@ -132,9 +132,9 @@ export default function Moving() {
         </Card>
 
         {/* 집주인 권리가 아닌 것 */}
-        <Card radius={18} style={{ background: "#EEF6F1", border: "1px solid #CFE3D8", padding: 16 }}>
+        <Card radius={18} style={{ background: "#EEF6F1", border: "1px solid #CFE3D8", boxShadow: "none", padding: 16 }}>
           <div style={{ fontSize: 15, fontWeight: 800, color: "#14613F" }}>
-            알아두세요 — 이런 건 집주인의 권리가 아니에요
+            알아두세요: 이런 건 집주인의 권리가 아니에요
           </div>
           <ul
             style={{
@@ -147,7 +147,7 @@ export default function Moving() {
           >
             <li>
               <b>통상적인 마모</b>(벽지 변색, 가구 눌린 자국, 소량의 못 자국)는 원상복구 대상이
-              아니에요 — 판례는 자연스러운 사용에 따른 손모를 임대인 부담으로 봐요
+              아니에요. 판례는 자연스러운 사용에 따른 손모를 임대인 부담으로 봐요
             </li>
             <li>2년 살았다고 도배·장판을 새로 해줄 의무는 없어요 (특약으로 강요하면 불리 조항)</li>
             <li>
@@ -164,13 +164,12 @@ export default function Moving() {
         <Card radius={18} style={{ padding: 16 }}>
           <div style={{ fontSize: 15, fontWeight: 800 }}>퇴거할 때 꼭 지키세요</div>
           <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10 }}>
-            {MOVE_OUT.map((m) => (
+            {MOVE_OUT.map((m, i) => (
               <div
                 key={m.title}
                 style={{
-                  padding: "12px 14px",
-                  borderRadius: 12,
-                  background: "#F4F6F4",
+                  paddingTop: i === 0 ? 0 : 12,
+                  borderTop: i === 0 ? "none" : "1px solid #EEF1EE",
                 }}
               >
                 <div style={{ fontSize: 14, fontWeight: 700 }}>{m.title}</div>

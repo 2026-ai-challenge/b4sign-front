@@ -8,6 +8,7 @@ import {
   ChatBubbleLeftRightIcon,
   UserCircleIcon,
   ScaleIcon,
+  BellIcon,
 } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
@@ -19,18 +20,21 @@ import {
 import { useApp } from "@/lib/store";
 import { D } from "@/lib/derive";
 import { Logo } from "@/components/logo";
-import { NotificationHost } from "@/components/notifications";
+import { NotificationHost, useDueNotifications } from "@/components/notifications";
 import { color } from "@/design-system/tokens";
 
 // 탭바 없이 풀스크린으로 쓰는 라우트: 문서 뷰어 + 인증 플로우
 const NO_TAB_ROUTES = ["/", "/login", "/signup", "/signup/consent", "/find-id", "/find-password"];
 
 // 모든 화면 상단에 항상 떠 있는 브랜드 밴드 — 로고 + 숨 쉴 여백
+// 프로필은 하단 탭(MY)에 있으므로, 헤더 우측은 알림함 진입 버튼(종 아이콘)이 맡는다.
 function BrandBar() {
   const pathname = usePathname();
   const router = useRouter();
   const { loggedIn } = useApp();
   const isLanding = pathname === "/";
+  const notifications = useDueNotifications();
+  const hasUnread = notifications.length > 0;
   return (
     <div
       style={{
@@ -48,7 +52,7 @@ function BrandBar() {
       >
         <Logo size="sm" />
       </button>
-      {isLanding && (
+      {isLanding ? (
         <button
           onClick={() => router.push(loggedIn ? "/dashboard" : "/login")}
           style={{
@@ -61,6 +65,40 @@ function BrandBar() {
         >
           {loggedIn ? "대시보드로" : "로그인"}
         </button>
+      ) : (
+        loggedIn && (
+          <button
+            onClick={() => router.push("/notifications")}
+            aria-label={hasUnread ? `알림함, 새 알림 ${notifications.length}건` : "알림함"}
+            style={{
+              position: "relative",
+              background: "none",
+              border: "none",
+              padding: 6,
+              margin: -6,
+              cursor: "pointer",
+              display: "flex",
+              color: color.ink,
+            }}
+          >
+            <BellIcon style={{ width: 22, height: 22 }} />
+            {hasUnread && (
+              <span
+                aria-hidden="true"
+                style={{
+                  position: "absolute",
+                  top: 5,
+                  right: 5,
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: color.dangerFg,
+                  border: `1.5px solid ${color.white}`,
+                }}
+              />
+            )}
+          </button>
+        )
       )}
     </div>
   );
@@ -109,7 +147,8 @@ export function Shell({ children }) {
             overscrollBehaviorX: "none",
           }}
         >
-          {!isViewer && <NotificationHost />}
+          {/* 알림함 화면 자체는 이미 전체 목록을 보여주므로 배너는 여기서 생략 */}
+          {!isViewer && pathname !== "/notifications" && <NotificationHost />}
           {children}
         </div>
         {!hideTabs && <TabBar />}

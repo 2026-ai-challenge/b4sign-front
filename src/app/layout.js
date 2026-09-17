@@ -11,7 +11,7 @@ export const viewport = {
 };
 
 export const metadata = {
-  title: "B4SIGN(비포사인) — 4 checks before you sign",
+  title: "B4SIGN(비포사인), 4 checks before you sign",
   description:
     "사인하기 전, 놓치면 안 되는 계약 위험을 확인하세요. 등기부등본·계약서·건축물대장을 올리면 위험한 줄을 문서 위에 표시해 드려요.",
 };

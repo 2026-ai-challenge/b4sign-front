@@ -84,7 +84,7 @@ export default function NewCase() {
               >
                 <span style={{ fontSize: 17, fontWeight: 800, color: t.color }}>{t.label}</span>
                 <span style={{ fontSize: 12, lineHeight: 1.45, color: "#4B6157" }}>
-                  {t.risk.split(" — ")[0]}
+                  {t.risk.split(": ")[0]}
                 </span>
               </button>
             );

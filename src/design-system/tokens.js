@@ -10,6 +10,7 @@ export const color = {
   textTertiary: "#5A6660",
   border: "#DDE3DF",
   borderSoft: "#E3E8E3",
+  borderFaint: "#E8ECE9", // 상하 28~32px 여백이 이미 구분해주는 큰 컨테이너용 — 선을 거의 안 보이게
   bgMuted: "#F4F6F4",
   bgShell: "#E9EAE4",
   white: "#FFFFFF",

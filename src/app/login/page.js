@@ -41,7 +41,7 @@ const inputStyle = (borderColor = "#DDE3DF") => ({
 
 export default function Login() {
   const router = useRouter();
-  const { loggedIn, setLoggedIn, consented } = useApp();
+  const { loggedIn, setLoggedIn, consented, setConsented } = useApp();
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [err, setErr] = useState(null);
@@ -52,6 +52,12 @@ export default function Login() {
     if (tokens?.accessToken) setToken(tokens.accessToken);
     setLoggedIn(true);
     afterAuth();
+  };
+  // 데모/심사용: 실제 인증 없이 바로 둘러보기 (동의 절차도 건너뜀)
+  const demoLogin = () => {
+    setConsented(true);
+    setLoggedIn(true);
+    router.push("/dashboard");
   };
   // 로컬 데모 규칙 (API 미기동 시 폴백)
   const localRules = () => {
@@ -110,15 +116,12 @@ export default function Login() {
               fontWeight: 700,
             }}
           >
-            <span
-              style={{
-                width: 18,
-                height: 16,
-                background: "#191919",
-                borderRadius: "50% 50% 50% 50%/60% 60% 40% 40%",
-                display: "inline-block",
-              }}
-            />
+            <svg width="18" height="17" viewBox="0 0 99.61801 92.147011" aria-hidden="true">
+              <path
+                fill="#191919"
+                d="M49.80801,1c-26.953,0,-48.80801,17.256,-48.80801,38.555,0,13.68101,9.05201,25.69301,22.64601,32.54901l-4.599,17.167c-0.176,0.527,-0.03,1.085,0.352,1.465,0.263,0.265,0.614,0.411,0.995,0.411,0.294,0,0.586,-0.117,0.85,-0.322l19.775,-13.36c2.872,0.41,5.802,0.644,8.789,0.644,26.953,0,48.81,-17.255,48.81,-38.55401,0,-21.299,-21.857,-38.555,-48.81,-38.555z"
+              />
+            </svg>
             카카오로 계속하기
           </button>
           <button
@@ -137,25 +140,12 @@ export default function Login() {
               fontWeight: 600,
             }}
           >
-            <span
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: "50%",
-                background: "conic-gradient(#EA4335 0 25%,#FBBC05 0 50%,#34A853 0 75%,#4285F4 0)",
-                display: "inline-block",
-                position: "relative",
-              }}
-            >
-              <span
-                style={{
-                  position: "absolute",
-                  inset: 5,
-                  background: "#fff",
-                  borderRadius: "50%",
-                }}
-              />
-            </span>
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+              <path fill="#4285F4" d="M17.64 9.2045c0-.6381-.0573-1.2518-.1636-1.8409H9v3.4814h4.8436c-.2086 1.125-.8427 2.0782-1.7959 2.7164v2.2581h2.9087c1.7018-1.5668 2.6836-3.874 2.6836-6.615z" />
+              <path fill="#34A853" d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.5399-1.8368.8577-3.0477.8577-2.3436 0-4.3282-1.5831-5.0359-3.7104H.9573v2.3318C2.4382 15.9832 5.4818 18 9 18z" />
+              <path fill="#FBBC05" d="M3.9641 10.71c-.18-.5399-.2822-1.1168-.2822-1.71s.1023-1.1701.2822-1.71V4.9582H.9573C.3477 6.1732 0 7.5477 0 9s.3477 2.8268.9573 4.0418L3.9641 10.71z" />
+              <path fill="#EA4335" d="M9 3.5799c1.3214 0 2.5077.4541 3.4405 1.346l2.5813-2.5814C13.4632.8918 11.4259 0 9 0 5.4818 0 2.4382 2.0168.9573 4.9582L3.9641 7.29C4.6718 5.163 6.6564 3.5799 9 3.5799z" />
+            </svg>
             Google로 계속하기
           </button>
         </div>
@@ -214,6 +204,9 @@ export default function Login() {
         )}
         <Button variant="dark" onClick={emailLogin} style={{ marginTop: 14, fontSize: 16 }}>
           로그인
+        </Button>
+        <Button variant="secondary" onClick={demoLogin} style={{ marginTop: 8, fontSize: 14 }}>
+          데모로 둘러보기
         </Button>
         <div
           style={{
