@@ -10,11 +10,11 @@ import { Button, Card } from "@/design-system";
 
 // B4SIGN의 4 Checks — 사인하기 전 반드시 확인할 4가지
 const CHECKS = [
-  { en: "WHO", q: "계약 상대가 맞는가", desc: "등기부 소유자 ↔ 계약서 임대인 확인" },
-  { en: "DEBT", q: "먼저 가져갈 돈이 있는가", desc: "근저당·가압류·선순위 권리 확인" },
-  { en: "HOME", q: "계약하려는 집이 맞는가", desc: "주소·면적·용도·위반건축물 대조" },
+  { n: 1, q: "계약 상대가 맞는가", desc: "등기부 소유자 ↔ 계약서 임대인 확인" },
+  { n: 2, q: "먼저 가져갈 돈이 있는가", desc: "근저당·가압류·선순위 권리 확인" },
+  { n: 3, q: "계약하려는 집이 맞는가", desc: "주소·면적·용도·위반건축물 대조" },
   {
-    en: "CONTRACT",
+    n: 4,
     q: "계약 내용이 안전한가",
     desc: "불리한 조항·필수 특약·보증금 보호 조건 확인",
   },
@@ -149,27 +149,26 @@ export default function Landing() {
         </Reveal>
         <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
           {CHECKS.map((c, i) => (
-            <Reveal key={c.en} delay={i * 80}>
+            <Reveal key={c.n} delay={i * 80}>
               <Card style={{ display: "flex", gap: 12, padding: 14, alignItems: "flex-start" }}>
+                {/* 번호 배지 — 폭 고정이라 카드마다 제목 시작 위치가 같다 (4 Checks의 '4'와 연결) */}
                 <span
+                  aria-hidden="true"
                   style={{
                     flex: "none",
-                    minWidth: 44,
+                    width: 44,
                     height: 44,
-                    padding: "0 9px",
                     borderRadius: 12,
                     background: "#EEF6F1",
-                    color: "#16A36A",
-                    fontSize: 11,
-                    fontWeight: 900,
+                    color: "#14613F",
+                    fontSize: 20,
+                    fontWeight: 800,
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    letterSpacing: "-.01em",
-                    whiteSpace: "nowrap",
                   }}
                 >
-                  {c.en}
+                  {c.n}
                 </span>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontSize: 15, fontWeight: 700 }}>{c.q}</div>
