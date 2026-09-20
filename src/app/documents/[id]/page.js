@@ -2,25 +2,54 @@
 
 import { Suspense, use, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { XMarkIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import {
-  XMarkIcon,
-  CheckCircleIcon,
-  QuestionMarkCircleIcon,
-  ExclamationTriangleIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/outline";
+  CheckCircleIcon as CheckCircleSolid,
+  QuestionMarkCircleIcon as QuestionMarkCircleSolid,
+  ExclamationTriangleIcon as ExclamationTriangleSolid,
+  ExclamationCircleIcon as ExclamationCircleSolid,
+} from "@heroicons/react/20/solid";
 import { useApp } from "@/lib/store";
 import { api } from "@/lib/api";
 import { D, lawShort } from "@/lib/derive";
 import { LawButton, TermButton } from "@/components/ui";
 import { Button } from "@/design-system";
 
+// 줄 끝 상태 아이콘 — 채움(solid) 한 겹으로 통일해 모양(원·삼각형)만으로도 구분되게 한다
 const STATUS_ICON = {
-  safe: CheckCircleIcon,
-  unknown: QuestionMarkCircleIcon,
-  warn: ExclamationTriangleIcon,
-  danger: ExclamationCircleIcon,
+  safe: CheckCircleSolid,
+  unknown: QuestionMarkCircleSolid,
+  warn: ExclamationTriangleSolid,
+  danger: ExclamationCircleSolid,
 };
+
+// 백엔드 문서 조각이 날짜 첫 글자에서 잘려 오는 경우("… — 2" + "021.8.2 말소")를 이어 붙인다.
+// 다음 줄이 "021.8.2"처럼 3자리 숫자 + 점으로 시작하고, 앞 줄이 공백 뒤 숫자 한 글자로 끝날 때만 적용.
+function healSplitDates(lines) {
+  const out = [];
+  for (const l of lines) {
+    const prev = out[out.length - 1];
+    if (typeof l === "string" && prev && /^\d{3}\.\d{1,2}\.\d{1,2}/.test(l)) {
+      if (typeof prev === "string" && /\s\d$/.test(prev)) {
+        out[out.length - 1] = prev + l;
+        continue;
+      }
+      if (typeof prev === "object" && !prev.h) {
+        if (/\s\d$/.test(prev.post || "")) {
+          out[out.length - 1] = { ...prev, post: prev.post + l };
+          continue;
+        }
+        // 하이라이트가 날짜 첫 글자에서 끝나면 그 글자를 뒤로 넘겨 날짜가 한 덩어리로 보이게
+        if (!prev.post && /\s\d$/.test(prev.mark || "")) {
+          out[out.length - 1] = { ...prev, mark: prev.mark.slice(0, -1), post: prev.mark.slice(-1) + l };
+          continue;
+        }
+      }
+    }
+    out.push(l);
+  }
+  return out;
+}
 
 export default function ViewerPage({ params }) {
   const { id } = use(params);
@@ -225,13 +254,16 @@ function Viewer({ docKey }) {
             display: "flex",
             flexDirection: "column",
             gap: 6,
+            // 한글은 단어 단위로 줄바꿈(말/소, 등기/국처럼 음절 중간에서 끊기지 않게)
+            wordBreak: "keep-all",
+            overflowWrap: "break-word",
             fontFamily: "'Noto Serif KR','Apple SD Gothic Neo',serif",
           }}
         >
-          {text.map((l, idx) => {
+          {healSplitDates(text).map((l, idx) => {
             if (typeof l === "string")
               return (
-                <div key={idx} style={{ color: "#333", paddingRight: 34 }}>
+                <div key={idx} style={{ color: "#333", paddingRight: 32 }}>
                   {l}
                 </div>
               );
@@ -269,44 +301,53 @@ function Viewer({ docKey }) {
               >
                 <div style={{ flex: 1, minWidth: 0, color: "#333" }}>
                   {l.pre}
-                  <button
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={active}
                     onClick={open}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        open();
+                      }
+                    }}
                     style={{
                       background: dim ? "transparent" : st.mark,
-                      border: "none",
-                      padding: "2px 4px",
-                      margin: 0,
-                      font: "inherit",
+                      padding: "0 4px",
                       color: "#111",
-                      borderRadius: 3,
+                      borderRadius: 4,
                       boxShadow: active ? `0 0 0 2px ${st.fg}` : "none",
-                      textAlign: "left",
-                      lineHeight: "inherit",
                       cursor: "pointer",
+                      // 여러 줄로 이어져도 줄마다 배경과 모서리를 유지
+                      WebkitBoxDecorationBreak: "clone",
+                      boxDecorationBreak: "clone",
                     }}
                   >
                     {l.mark}
-                  </button>
+                  </span>
                   {l.post}
                 </div>
                 <button
                   onClick={open}
+                  aria-label={`${st.label} 설명 보기`}
                   style={{
                     flex: "none",
-                    width: 26,
-                    height: 26,
+                    width: 24,
+                    height: 24,
+                    marginTop: -2,
                     borderRadius: "50%",
-                    border: `2px solid ${st.fg}`,
-                    background: active ? st.fg : st.bg,
-                    color: active ? "#fff" : st.fg,
+                    border: "none",
+                    background: "transparent",
+                    color: st.fg,
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
                     padding: 0,
-                    marginTop: 2,
+                    boxShadow: active ? `0 0 0 2px #fff, 0 0 0 4px ${st.fg}` : "none",
                   }}
                 >
-                  <LineIcon style={{ width: 13, height: 13 }} />
+                  <LineIcon style={{ width: 22, height: 22 }} aria-hidden="true" />
                 </button>
               </div>
             );
