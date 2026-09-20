@@ -15,9 +15,10 @@ const VARIANT = {
 };
 
 const SIZE = {
-  lg: { height: 52, fontSize: font.size.md, borderRadius: radius.pill },
-  md: { height: 44, fontSize: font.size.body, borderRadius: radius.pill },
-  sm: { height: 34, fontSize: font.size.caption, borderRadius: radius.pill },
+  // 반경은 입력창·소셜 로그인 버튼(12)과 맞춘다 — 알약형(pill)은 칩·배지 전용
+  lg: { height: 52, fontSize: font.size.md, borderRadius: radius.md },
+  md: { height: 44, fontSize: font.size.body, borderRadius: radius.md },
+  sm: { height: 34, fontSize: font.size.caption, borderRadius: radius.sm },
 };
 
 export function Button({ variant = "primary", size = "lg", disabled, style, children, ...rest }) {

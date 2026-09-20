@@ -151,21 +151,19 @@ export default function Landing() {
           {CHECKS.map((c, i) => (
             <Reveal key={c.n} delay={i * 80}>
               <Card style={{ display: "flex", gap: 12, padding: 14, alignItems: "flex-start" }}>
-                {/* 번호 배지 — 폭 고정이라 카드마다 제목 시작 위치가 같다 (4 Checks의 '4'와 연결) */}
+                {/* 번호 — 폭 고정이라 카드마다 제목 시작 위치가 같다 (4 Checks의 '4'와 연결) */}
                 <span
                   aria-hidden="true"
                   style={{
                     flex: "none",
-                    width: 44,
+                    width: 24,
                     height: 44,
-                    borderRadius: 12,
-                    background: "#EEF6F1",
                     color: "#14613F",
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: 800,
                     display: "inline-flex",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "flex-start",
                   }}
                 >
                   {c.n}

@@ -333,7 +333,7 @@ function GlobalSheets() {
                 background: "#17211E",
                 color: "#fff",
                 border: "none",
-                borderRadius: 999,
+                borderRadius: 12,
                 fontWeight: 700,
                 fontSize: 15,
               }}
@@ -543,7 +543,7 @@ export function NoCase({ title = "아직 케이스가 없어요" }) {
           marginTop: 20,
           height: 48,
           padding: "0 22px",
-          borderRadius: 999,
+          borderRadius: 12,
           border: "none",
           background: color.primary,
           color: "#fff",

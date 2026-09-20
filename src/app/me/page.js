@@ -336,7 +336,7 @@ export default function Me() {
               marginTop: 12,
               height: 42,
               width: "100%",
-              borderRadius: 999,
+              borderRadius: 12,
               border: "1px solid #DDE3DF",
               background: "#fff",
               fontSize: 14,
@@ -362,7 +362,7 @@ export default function Me() {
                 marginTop: 12,
                 height: 42,
                 width: "100%",
-                borderRadius: 999,
+                borderRadius: 12,
                 border: "1px solid #B4231A",
                 background: "#fff",
                 fontSize: 14,
@@ -383,7 +383,7 @@ export default function Me() {
           }}
           style={{
             height: 48,
-            borderRadius: 999,
+            borderRadius: 12,
             border: "1px solid #DDE3DF",
             background: "#fff",
             fontSize: 14,
@@ -443,7 +443,7 @@ export default function Me() {
                 style={{
                   flex: 1,
                   height: 46,
-                  borderRadius: 999,
+                  borderRadius: 12,
                   border: "1px solid #DDE3DF",
                   background: "#fff",
                   fontSize: 14,
@@ -461,7 +461,7 @@ export default function Me() {
                 style={{
                   flex: 1,
                   height: 46,
-                  borderRadius: 999,
+                  borderRadius: 12,
                   border: "none",
                   background: "#B4231A",
                   color: "#fff",
@@ -535,7 +535,7 @@ export default function Me() {
                 style={{
                   flex: 1,
                   height: 46,
-                  borderRadius: 999,
+                  borderRadius: 12,
                   border: "1px solid #DDE3DF",
                   background: "#fff",
                   fontSize: 14,
@@ -549,7 +549,7 @@ export default function Me() {
                 style={{
                   flex: 1,
                   height: 46,
-                  borderRadius: 999,
+                  borderRadius: 12,
                   border: "none",
                   background: "#17211E",
                   color: "#fff",
@@ -616,7 +616,7 @@ export default function Me() {
                 style={{
                   flex: 1,
                   height: 46,
-                  borderRadius: 999,
+                  borderRadius: 12,
                   border: "1px solid #DDE3DF",
                   background: "#fff",
                   fontSize: 14,
@@ -648,7 +648,7 @@ export default function Me() {
                 style={{
                   flex: 1,
                   height: 46,
-                  borderRadius: 999,
+                  borderRadius: 12,
                   border: "none",
                   background: delText === "탈퇴합니다" ? "#B4231A" : "#B9C2BC",
                   color: "#fff",

@@ -574,7 +574,7 @@ export default function Dashboard() {
               variant="secondary"
               size="md"
               onClick={() => router.push("/analysis")}
-              style={{ marginTop: 8, borderRadius: 14, fontSize: 14 }}
+              style={{ marginTop: 8, fontSize: 14 }}
             >
               분석 결과 전체 보기 →
             </Button>
