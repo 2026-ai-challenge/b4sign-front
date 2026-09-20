@@ -140,6 +140,7 @@ export default function Tasks() {
                   }}
                 >
                   <span
+                    data-slop-allow="redundant-border"
                     style={{
                       width: 24,
                       height: 24,
@@ -242,6 +243,7 @@ export default function Tasks() {
                             style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "12px 14px" }}
                           >
                             <button
+                              data-slop-allow="redundant-border"
                               onClick={() => toggleTask(caseId, t.id)}
                               style={{
                                 flex: "none",

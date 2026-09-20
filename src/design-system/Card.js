@@ -16,6 +16,8 @@ export function Card({ interactive, radius: r = "lg", style, children, as: As = 
         cursor: interactive ? "pointer" : "default",
         ...style,
       }}
+      // 흰 카드가 #FAFAF7 배경 위에 놓여 테두리가 유일한 경계다 — anti-slop redundant-border 예외(의도)
+      data-slop-allow="redundant-border"
       {...rest}
     >
       {children}

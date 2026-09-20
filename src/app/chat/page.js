@@ -174,6 +174,7 @@ export default function Chat() {
           style={{
             margin: "0 20px 10px",
             padding: 6,
+            border: "none",
             boxShadow: "0 8px 24px rgba(15,42,32,.12)",
             opacity: caseMenu ? 1 : 0,
             transform: caseMenu ? "none" : "translateY(-6px)",

@@ -75,7 +75,7 @@ export default function Consent() {
           }
           style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 24, padding: 14 }}
         >
-          <span style={checkbox(all)}>{all && <CheckIcon style={{ width: 14, height: 14 }} />}</span>
+          <span data-slop-allow="redundant-border" style={checkbox(all)}>{all && <CheckIcon style={{ width: 14, height: 14 }} />}</span>
           <span style={{ fontSize: 15, fontWeight: 700 }}>전체 동의</span>
         </Card>
 
@@ -93,6 +93,7 @@ export default function Consent() {
             >
               <button
                 onClick={() => setChecks((s) => ({ ...s, [c.key]: !s[c.key] }))}
+                data-slop-allow="redundant-border"
                 style={checkbox(checks[c.key])}
               >
                 {checks[c.key] && <CheckIcon style={{ width: 14, height: 14 }} />}

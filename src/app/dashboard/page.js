@@ -133,7 +133,6 @@ export default function Dashboard() {
             padding: 6,
             borderRadius: 14,
             background: "#fff",
-            border: "1px solid #E3E8E3",
             boxShadow: "0 8px 24px rgba(15,42,32,.12)",
             opacity: menuOpen ? 1 : 0,
             transform: menuOpen ? "none" : "translateY(-6px)",
