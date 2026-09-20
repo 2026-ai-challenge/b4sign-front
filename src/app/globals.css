@@ -98,7 +98,7 @@ textarea {
   outline-offset: 2px;
 }
 
-/* 텍스트 링크: hover 배경·터치 영역은 ::before로 그려 글자 위치·레이아웃을 건드리지 않는다 */
+/* 텍스트 링크: 배경 없이 글자만 변한다(색·크기·→). ::before는 눌리는 영역만 넓힌다 */
 .ds-link {
   position: relative;
   isolation: isolate;
@@ -109,9 +109,7 @@ textarea {
   position: absolute;
   inset: -4px -8px;
   border-radius: 8px;
-  background: transparent;
   z-index: -1;
-  transition: background-color 0.15s ease;
 }
 
 /* → 화살표: 마우스에서는 hover·포커스 때만 슬라이드 인(글자는 부드럽게 재정렬), 터치에서는 항상 보임 */
@@ -152,9 +150,7 @@ textarea {
   .ds-btn[data-variant="inverse"]:hover:not(:disabled) { background: #f4f6f4 !important; }
   .ds-btn[data-variant="inverseGhost"]:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1) !important; }
   .ds-link:hover { color: #0e7a4a !important; transform: scale(1.03); }
-  .ds-link:hover::before { background: #e8f4f0; }
   .ds-link[data-tone="muted"]:hover { color: #17211e !important; }
-  .ds-link[data-tone="muted"]:hover::before { background: #f1f3f1; }
 }
 
 /* pressed — 색 + 살짝 눌리는 크기 변화 */
@@ -168,14 +164,11 @@ textarea {
 .ds-btn[data-variant="inverse"]:active:not(:disabled) { background: #e8ece9 !important; }
 .ds-btn[data-variant="inverseGhost"]:active:not(:disabled) { background: rgba(255, 255, 255, 0.18) !important; }
 .ds-link:active { color: #0b6b41 !important; transform: scale(0.96); }
-.ds-link:active::before { background: #d5ebe1; }
 .ds-link[data-tone="muted"]:active { color: #17211e !important; }
-.ds-link[data-tone="muted"]:active::before { background: #e5e9e6; }
 
 @media (prefers-reduced-motion: reduce) {
   .ds-btn,
   .ds-link,
-  .ds-link::before,
   .ds-arrow { transition: none !important; }
   .ds-btn:active:not(:disabled),
   .ds-link:hover,

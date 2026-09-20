@@ -570,7 +570,7 @@ export default function Dashboard() {
                 </button>
               ))}
             </Card>
-            <Button variant="tint"
+            <Button variant="primary"
               size="md"
               onClick={() => router.push("/analysis")}
               style={{ marginTop: 8, fontSize: 14 }}
