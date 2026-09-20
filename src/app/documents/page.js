@@ -12,7 +12,7 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import { useApp } from "@/lib/store";
-import { D, buildDocList } from "@/lib/derive";
+import { D, buildDocList, applyLiveMarks } from "@/lib/derive";
 import { TypeBadge, NoCase } from "@/components/ui";
 import { Button, Card } from "@/design-system";
 import { api, apiUpload, API_BASE } from "@/lib/api";
@@ -55,7 +55,20 @@ function Documents() {
   const params = useSearchParams();
   const { caseId, docs, completeUpload, refreshDocs, apiOn, toast, currentCase } = useApp();
   const cur = currentCase;
-  const docList = buildDocList(cur, docs[caseId]);
+  // 실판정이 있으면 카드 칩도 분석·뷰어와 같은 항목 기준으로 센다 (없으면 로컬 시드 그대로)
+  const [liveItems, setLiveItems] = useState(null);
+  useEffect(() => {
+    setLiveItems(null);
+    if (!apiOn || !caseId) return;
+    let off = false;
+    api(`/cases/${caseId}/analysis`)
+      .then((d) => !off && d?.source === "live" && setLiveItems(d.sections.flatMap((s) => s.items)))
+      .catch(() => {});
+    return () => {
+      off = true;
+    };
+  }, [apiOn, caseId, docs]);
+  const docList = applyLiveMarks(buildDocList(cur, docs[caseId]), liveItems);
 
   // 업로드 모달 상태: { docKey, stage: 'pick'|'progress'|'analyzing'|'fail', pct, eta, fail, demoFail, fileName, fileSize }
   const [upload, setUpload] = useState(null);

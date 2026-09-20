@@ -124,6 +124,34 @@ export function phaseAnchor(type, phaseIndex, cur) {
 
 // 유형별 서류 목록 + 현재 업로드 상태/하이라이트 개수
 // cur: 케이스 객체 (store.currentCase). 하위 호환으로 id 문자열도 받는다 (데모 케이스만).
+/**
+ * 서류 카드의 판정 칩을 실판정(백엔드 source:"live") 항목 기준으로 덮어쓴다.
+ * buildDocList는 로컬 시드(D.ANALYSIS)로 칩을 만들기 때문에, 실분석 결과를 쓰는 분석·뷰어 화면과
+ * 숫자가 어긋난다. 뷰어는 `items.filter(i => i.doc === docKey)`로 세므로 여기서도 같은 기준을 쓴다.
+ */
+export function applyLiveMarks(docList, items) {
+  if (!items) return docList;
+  return docList.map((d) => {
+    if (!d.has) return d;
+    // 실판정 항목이 없는 서류(예: 확정일자·전입)는 뷰어도 로컬 시드로 폴백하므로 카드도 그대로 둔다
+    const mine = items.filter((i) => i.doc === d.key);
+    if (!mine.length) return d;
+    const byst = {};
+    mine.forEach((i) => (byst[i.st] = (byst[i.st] || 0) + 1));
+    const markChips = ["danger", "warn", "safe", "unknown"]
+      .filter((k) => byst[k])
+      .map((k) => ({
+        key: k,
+        label: D.ST[k].label,
+        glyph: D.ST[k].glyph,
+        n: byst[k],
+        bg: D.ST[k].bg,
+        fg: D.ST[k].fg,
+      }));
+    return { ...d, marks: markChips.reduce((n, m) => n + m.n, 0), markChips };
+  });
+}
+
 export function buildDocList(cur, docs) {
   if (typeof cur === "string") cur = D.CASES.find((c) => c.id === cur);
   if (!cur) return [];
