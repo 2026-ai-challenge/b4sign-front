@@ -741,7 +741,7 @@ function SampleDocs({ caseType, onUpload }) {
                       flex: "none",
                       height: 30,
                       padding: "0 12px",
-                      borderRadius: 999,
+                      borderRadius: 8,
                       border: "none",
                       background: "#16A36A",
                       color: "#fff",

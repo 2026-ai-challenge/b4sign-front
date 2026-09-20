@@ -289,7 +289,7 @@ export default function Me() {
                   style={{
                     height: 32,
                     padding: "0 10px",
-                    borderRadius: 999,
+                    borderRadius: 8,
                     border: "1px solid #DDE3DF",
                     background: "#fff",
                     fontSize: 12,
@@ -308,7 +308,7 @@ export default function Me() {
                   style={{
                     height: 32,
                     padding: "0 10px",
-                    borderRadius: 999,
+                    borderRadius: 8,
                     border: "1px solid #F5C8C1",
                     background: "#fff",
                     fontSize: 12,

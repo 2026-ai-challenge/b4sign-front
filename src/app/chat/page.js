@@ -591,7 +591,7 @@ export default function Chat() {
                           style={{
                             height: 34,
                             padding: "0 10px",
-                            borderRadius: 999,
+                            borderRadius: 8,
                             border: "none",
                             background: "#16A36A",
                             color: "#fff",
@@ -606,7 +606,7 @@ export default function Chat() {
                           style={{
                             height: 34,
                             padding: "0 8px",
-                            borderRadius: 999,
+                            borderRadius: 8,
                             border: "1px solid #DDE3DF",
                             background: "#fff",
                             fontSize: 12,
@@ -645,7 +645,7 @@ export default function Chat() {
                             style={{
                               height: 32,
                               padding: "0 12px",
-                              borderRadius: 999,
+                              borderRadius: 8,
                               border: "none",
                               background: "#B4231A",
                               color: "#fff",
@@ -660,7 +660,7 @@ export default function Chat() {
                             style={{
                               height: 32,
                               padding: "0 10px",
-                              borderRadius: 999,
+                              borderRadius: 8,
                               border: "1px solid #DDE3DF",
                               background: "#fff",
                               fontSize: 12,
