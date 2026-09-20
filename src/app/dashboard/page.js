@@ -24,7 +24,10 @@ import { Button, Card, color } from "@/design-system";
 
 export default function Dashboard() {
   const router = useRouter();
-  const { caseId, setCaseId, docs, tasks, toggleTask, toast, apiOn, cases, currentCase } = useApp();
+  const { caseId, setCaseId, docs, tasks, toggleTask, toast, apiOn, cases, currentCase, me } = useApp();
+  // 공유 데모 계정의 시드 케이스(c1~c3)는 가상 계약이라 실거래 시세와 금액이 맞지 않는다 — 위험 등급 대신 중립 표기.
+  // 데모 계정에서 새로 만든 실제 케이스는 해당하지 않는다.
+  const isDemoRisk = !!me?.isDemo && D.CASES.some((c) => c.id === caseId);
   const [menuOpen, setMenuOpen] = useState(false);
 
   // 실데이터: 깡통 위험률(실거래 시세 기반) + 실판정 카운트 — 실패 시 조용히 로컬 유지
@@ -589,13 +592,15 @@ export default function Dashboard() {
                   style={{
                     padding: "3px 9px",
                     borderRadius: 999,
-                    background: risk.metricsAvailable ? (D.ST[risk.grade]?.bg ?? D.ST.unknown.bg) : D.ST.unknown.bg,
-                    color: risk.metricsAvailable ? (D.ST[risk.grade]?.fg ?? D.ST.unknown.fg) : D.ST.unknown.fg,
+                    background: risk.metricsAvailable && !isDemoRisk ? (D.ST[risk.grade]?.bg ?? D.ST.unknown.bg) : D.ST.unknown.bg,
+                    color: risk.metricsAvailable && !isDemoRisk ? (D.ST[risk.grade]?.fg ?? D.ST.unknown.fg) : D.ST.unknown.fg,
                     fontSize: 12,
                     fontWeight: 700,
                   }}
                 >
-                  {!risk.metricsAvailable
+                  {isDemoRisk
+                    ? "샘플 참고치"
+                    : !risk.metricsAvailable
                     ? "참고치"
                     : risk.grade === "danger"
                       ? "위험"
@@ -609,7 +614,7 @@ export default function Dashboard() {
                   style={{
                     fontSize: 34,
                     fontWeight: 800,
-                    color: D.ST[risk.grade]?.fg ?? color.ink,
+                    color: isDemoRisk ? color.ink : (D.ST[risk.grade]?.fg ?? color.ink),
                     lineHeight: 1,
                   }}
                 >
@@ -622,7 +627,12 @@ export default function Dashboard() {
                 </span>
               </div>
               <div style={{ marginTop: 8, fontSize: 12, color: color.textSecondary, lineHeight: 1.5 }}>
-                {!risk.metricsAvailable && (
+                {isDemoRisk && (
+                  <b style={{ color: "#7A4E00" }}>
+                    샘플 계약이라 시세가 실제 매물과 맞지 않아요. 실제 서류를 올리면 그 주소의 실거래 시세로 계산돼요.{" "}
+                  </b>
+                )}
+                {!isDemoRisk && !risk.metricsAvailable && (
                   <b style={{ color: "#7A4E00" }}>
                     등기부가 아직 분석되지 않아 선순위 근저당이 반영되지 않았어요 — 등기부를 올리면 정확해져요.{" "}
                   </b>

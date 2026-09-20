@@ -57,6 +57,12 @@ export default function Me() {
   const [delDocs, setDelDocs] = useState(false);
   const [resetting, setResetting] = useState(false);
 
+  // 공유 데모 계정은 방문자 전원이 같은 데이터를 본다 — 한 명이 삭제·초기화하면 다른 방문자 화면이
+  // 비어 버리므로 배포 빌드에서는 잠근다. 시연 리셋이 필요할 땐 NEXT_PUBLIC_DEMO_RESET=1 로 빌드.
+  const demoLocked = !!me?.isDemo && process.env.NEXT_PUBLIC_DEMO_RESET !== "1";
+  const lockToast = () =>
+    toast("체험 계정에서는 삭제·보관할 수 없어요. 모든 방문자가 같은 데이터를 함께 봐요");
+
   // 데모 초기화 — 데모 계정(me.isDemo)에서만 노출. 서버가 케이스·서류·할 일·상담을 전부 지우고,
   // 새로고침으로 부트스트랩을 다시 받아 빈 상태(첫 케이스 만들기)에서 시연을 시작한다.
   const resetDemo = async () => {
@@ -279,7 +285,7 @@ export default function Me() {
               </div>
               <div style={{ display: "flex", gap: 6, flex: "none" }}>
                 <button
-                  onClick={() => removeCase(c.id, false)}
+                  onClick={() => (demoLocked ? lockToast() : removeCase(c.id, false))}
                   style={{
                     height: 32,
                     padding: "0 10px",
@@ -295,6 +301,7 @@ export default function Me() {
                 </button>
                 <button
                   onClick={() => {
+                    if (demoLocked) return lockToast();
                     if (window.confirm(`"${c.short}" 케이스를 삭제할까요?\n서류·할 일·상담 기록이 함께 지워져요.`))
                       removeCase(c.id, true);
                   }}
@@ -324,7 +331,7 @@ export default function Me() {
             유지돼요.
           </p>
           <button
-            onClick={() => setDelDocs(true)}
+            onClick={() => (demoLocked ? lockToast() : setDelDocs(true))}
             style={{
               marginTop: 12,
               height: 42,
@@ -341,7 +348,7 @@ export default function Me() {
           </button>
         </div>
 
-        {me?.isDemo && (
+        {me?.isDemo && !demoLocked && (
           <div style={{ ...card, padding: "14px 16px", border: "1px dashed #B9C2BC" }}>
             <div style={{ fontSize: 15, fontWeight: 700 }}>데모 초기화</div>
             <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
@@ -387,7 +394,7 @@ export default function Me() {
           로그아웃
         </button>
         <button
-          onClick={() => setDelStep(1)}
+          onClick={() => (demoLocked ? lockToast() : setDelStep(1))}
           style={{
             background: "none",
             border: "none",
