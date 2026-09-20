@@ -83,20 +83,62 @@ textarea {
   }
 }
 
-/* ─── 버튼 상태 (hover · pressed · focus) ───
-   Button/LinkButton의 기본 색은 인라인 스타일이라, 상태 색은 !important로 덮는다.
-   hover는 마우스 환경에서만(터치에서 눌렀다 뗀 뒤 색이 남는 문제 방지), pressed는 어디서나. */
-.ds-btn,
-.ds-link {
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+/* ─── 버튼·링크 상태 (hover · pressed · focus) + 움직임 ───
+   기본 색은 인라인 스타일이라 상태 색은 !important로 덮는다.
+   hover는 마우스 환경에서만((hover: hover)) — 터치에서 눌렀다 뗀 뒤 상태가 남는 문제를 막는다. pressed는 어디서나. */
+.ds-btn {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.ds-btn:disabled {
+  transition: none;
 }
 .ds-btn:focus-visible,
 .ds-link:focus-visible {
   outline: 2px solid #16a36a;
   outline-offset: 2px;
 }
-.ds-btn:disabled {
-  transition: none;
+
+/* 텍스트 링크: hover 배경·터치 영역은 ::before로 그려 글자 위치·레이아웃을 건드리지 않는다 */
+.ds-link {
+  position: relative;
+  isolation: isolate;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.ds-link::before {
+  content: "";
+  position: absolute;
+  inset: -4px -8px;
+  border-radius: 8px;
+  background: transparent;
+  z-index: -1;
+  transition: background-color 0.15s ease;
+}
+
+/* → 화살표: 마우스에서는 hover·포커스 때만 슬라이드 인(글자는 부드럽게 재정렬), 터치에서는 항상 보임 */
+.ds-arrow {
+  display: inline-block;
+  margin-left: 4px;
+  vertical-align: top;
+}
+@media (hover: hover) {
+  .ds-arrow {
+    max-width: 0;
+    margin-left: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transform: translateX(-4px);
+    transition: max-width 0.2s ease, margin-left 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+  }
+  .ds-btn:hover .ds-arrow,
+  .ds-btn:focus-visible .ds-arrow,
+  .ds-link:hover .ds-arrow,
+  .ds-link:focus-visible .ds-arrow {
+    max-width: 24px;
+    margin-left: 4px;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* hover */
@@ -109,10 +151,14 @@ textarea {
   .ds-btn[data-variant="ghost"]:hover:not(:disabled) { background: #f4f6f4 !important; color: #17211e !important; }
   .ds-btn[data-variant="inverse"]:hover:not(:disabled) { background: #f4f6f4 !important; }
   .ds-btn[data-variant="inverseGhost"]:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1) !important; }
-  .ds-link:hover { background: #e8f4f0 !important; color: #0e7a4a !important; }
+  .ds-link:hover { color: #0e7a4a !important; transform: scale(1.03); }
+  .ds-link:hover::before { background: #e8f4f0; }
+  .ds-link[data-tone="muted"]:hover { color: #17211e !important; }
+  .ds-link[data-tone="muted"]:hover::before { background: #f1f3f1; }
 }
 
-/* pressed */
+/* pressed — 색 + 살짝 눌리는 크기 변화 */
+.ds-btn:active:not(:disabled) { transform: scale(0.98); }
 .ds-btn[data-variant="primary"]:active:not(:disabled) { background: #0e7a4a !important; }
 .ds-btn[data-variant="secondary"]:active:not(:disabled) { background: #d5ebe1 !important; border-color: #7fc9ab !important; color: #0b6b41 !important; }
 .ds-btn[data-variant="tint"]:active:not(:disabled) { background: #cde6da !important; }
@@ -121,9 +167,17 @@ textarea {
 .ds-btn[data-variant="ghost"]:active:not(:disabled) { background: #e8ece9 !important; color: #17211e !important; }
 .ds-btn[data-variant="inverse"]:active:not(:disabled) { background: #e8ece9 !important; }
 .ds-btn[data-variant="inverseGhost"]:active:not(:disabled) { background: rgba(255, 255, 255, 0.18) !important; }
-.ds-link:active { background: #d5ebe1 !important; color: #0b6b41 !important; }
+.ds-link:active { color: #0b6b41 !important; transform: scale(0.96); }
+.ds-link:active::before { background: #d5ebe1; }
+.ds-link[data-tone="muted"]:active { color: #17211e !important; }
+.ds-link[data-tone="muted"]:active::before { background: #e5e9e6; }
 
 @media (prefers-reduced-motion: reduce) {
   .ds-btn,
-  .ds-link { transition: none; }
+  .ds-link,
+  .ds-link::before,
+  .ds-arrow { transition: none !important; }
+  .ds-btn:active:not(:disabled),
+  .ds-link:hover,
+  .ds-link:active { transform: none !important; }
 }

@@ -690,7 +690,7 @@ function SampleDocs({ caseType, onUpload }) {
 
   return (
     <div style={{ marginTop: 10 }}>
-      <button
+      <button className="ds-link" data-tone="muted"
         onClick={load}
         style={{
           background: "none",

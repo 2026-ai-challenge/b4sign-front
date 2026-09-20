@@ -52,28 +52,32 @@ export function Button({ variant = "primary", size = "lg", disabled, style, clas
 }
 
 /**
- * 텍스트 링크형 버튼("전체 보기 →" 등). 글자 위치는 그대로 두고(padding + 음수 margin 상쇄)
- * 눌리는 영역만 넓혀 hover/pressed 배경을 줄 수 있게 한다. 상태 스타일은 globals.css의 .ds-link.
+ * 텍스트 링크형 버튼("전체 보기 →" 등). hover 배경·터치 영역은 globals.css의 .ds-link::before가 그려서
+ * 글자 위치는 그대로다. tone="muted"는 회색 링크(hover 때 초록 대신 진한 회색), arrow는 → 슬라이드 인.
  */
-export function LinkButton({ style, className, children, ...rest }) {
+export function LinkButton({ tone = "primary", arrow, style, className, children, ...rest }) {
   return (
     <button
       className={["ds-link", className].filter(Boolean).join(" ")}
+      data-tone={tone}
       style={{
         background: "none",
         border: "none",
-        padding: "4px 8px",
-        margin: "-4px -8px",
-        borderRadius: 8,
+        padding: 0,
         fontSize: font.size.sm,
         fontWeight: 600,
-        color: color.primary,
+        color: tone === "muted" ? color.textSecondary : color.primary,
         cursor: "pointer",
         ...style,
       }}
       {...rest}
     >
       {children}
+      {arrow && (
+        <span className="ds-arrow" aria-hidden="true">
+          →
+        </span>
+      )}
     </button>
   );
 }

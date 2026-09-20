@@ -118,7 +118,7 @@ export default function Consent() {
                     </span>{" "}
                     {c.label}
                   </span>
-                  <button
+                  <button className="ds-link" data-tone="muted"
                     onClick={() => setModal(c.key)}
                     style={{
                       background: "none",

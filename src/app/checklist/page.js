@@ -186,7 +186,7 @@ export default function Checklist() {
                   }}
                 >
                   <span style={{ fontSize: 11, fontWeight: 700, color: "#6E827A" }}>조항 예시</span>
-                  <button
+                  <button className="ds-link"
                     onClick={() => copy(c.example, "조항 문구를 복사했어요")}
                     style={{
                       background: "none",
@@ -222,7 +222,7 @@ export default function Checklist() {
                     <span style={{ fontSize: 11, fontWeight: 700, color: "#14613F" }}>
                       중개인·상대방에게 요청하기
                     </span>
-                    <button
+                    <button className="ds-link"
                       onClick={() => copy(c.request, "요청 문구를 복사했어요")}
                       style={{
                         background: "none",

@@ -517,7 +517,7 @@ function Analysis() {
                           }}
                         >
                           {hasDocText(it.doc) && (
-                            <button
+                            <button className="ds-link" data-tone="muted"
                               onClick={() =>
                                 router.push(`/documents/${it.doc}?pin=${it.id}`)
                               }
@@ -530,7 +530,7 @@ function Analysis() {
                                 color: "#4B6157",
                               }}
                             >
-                              서류에서 보기 →
+                              서류에서 보기<span className="ds-arrow" aria-hidden="true">→</span>
                             </button>
                           )}
                         </div>

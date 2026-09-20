@@ -228,7 +228,7 @@ export default function Signup() {
             >
               확인
             </Button>
-            <button
+            <button className="ds-link" data-tone="muted"
               onClick={resendCode}
               style={{
                 display: "block",

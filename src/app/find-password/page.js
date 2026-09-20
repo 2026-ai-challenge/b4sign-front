@@ -166,7 +166,7 @@ export default function FindPassword() {
             <Button variant="dark" onClick={confirm} disabled={busy} style={{ marginTop: 20, fontSize: 16 }}>
               {busy ? "변경 중…" : "비밀번호 변경"}
             </Button>
-            <button
+            <button className="ds-link" data-tone="muted"
               onClick={request}
               disabled={busy}
               style={{

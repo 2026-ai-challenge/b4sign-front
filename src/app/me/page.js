@@ -123,7 +123,7 @@ export default function Me() {
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 16, fontWeight: 800 }}>{me.name}</span>
-              <button
+              <button className="ds-link"
                 onClick={() => {
                   const next = window.prompt("표시할 이름을 입력하세요", me.name || "");
                   if (next === null) return;
@@ -231,7 +231,7 @@ export default function Me() {
             }}
           >
             <span style={{ fontSize: 15, fontWeight: 700 }}>케이스 관리</span>
-            <button
+            <button className="ds-link"
               onClick={() => router.push("/cases/new")}
               style={{
                 background: "none",
@@ -393,7 +393,7 @@ export default function Me() {
         >
           로그아웃
         </button>
-        <button
+        <button className="ds-link" data-tone="muted"
           onClick={() => (demoLocked ? lockToast() : setDelStep(1))}
           style={{
             background: "none",
@@ -401,6 +401,7 @@ export default function Me() {
             fontSize: 13,
             color: "#6E827A",
             padding: 4,
+            alignSelf: "center", // 글자 폭만큼만 — 전체 폭으로 늘어나면 hover 배경이 띠처럼 보인다
           }}
         >
           회원 탈퇴

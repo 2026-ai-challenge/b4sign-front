@@ -221,21 +221,21 @@ export default function Login() {
             color: "#4B6157",
           }}
         >
-          <button
+          <button className="ds-link"
             onClick={() => router.push("/signup")}
             style={{ background: "none", border: "none", color: "#16A36A", fontWeight: 700, fontSize: 13, padding: 0 }}
           >
             회원가입
           </button>
           <span style={{ color: "#CFD6D2" }}>|</span>
-          <button
+          <button className="ds-link" data-tone="muted"
             onClick={() => router.push("/find-id")}
             style={{ background: "none", border: "none", color: "#4B6157", fontSize: 13, padding: 0 }}
           >
             아이디 찾기
           </button>
           <span style={{ color: "#CFD6D2" }}>|</span>
-          <button
+          <button className="ds-link" data-tone="muted"
             onClick={() => router.push("/find-password")}
             style={{ background: "none", border: "none", color: "#4B6157", fontSize: 13, padding: 0 }}
           >

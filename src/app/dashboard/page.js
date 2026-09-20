@@ -570,13 +570,15 @@ export default function Dashboard() {
                 </button>
               ))}
             </Card>
-            <Button
-              variant="secondary"
+            <Button variant="tint"
               size="md"
               onClick={() => router.push("/analysis")}
               style={{ marginTop: 8, fontSize: 14 }}
             >
-              분석 결과 전체 보기 →
+              <span>
+                분석 결과 전체 보기
+                <span className="ds-arrow" aria-hidden="true">→</span>
+              </span>
             </Button>
           </div>
 
@@ -654,8 +656,8 @@ export default function Dashboard() {
               }}
             >
               <span style={{ fontSize: 13, fontWeight: 700, color: "#6E827A" }}>서류</span>
-              <LinkButton onClick={() => router.push("/documents")}>
-                전체 보기 →
+              <LinkButton arrow onClick={() => router.push("/documents")}>
+                전체 보기
               </LinkButton>
             </div>
             <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>

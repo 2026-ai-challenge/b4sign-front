@@ -443,7 +443,7 @@ export default function Tasks() {
               {detail.doc && D.DOCS[detail.doc] && (
                 <>
                   <span style={{ color: "#6E827A", fontWeight: 600 }}>관련 서류</span>
-                  <button
+                  <button className="ds-link"
                     onClick={() => router.push(`/documents/${detail.doc}`)}
                     style={{
                       background: "none",
@@ -455,7 +455,7 @@ export default function Tasks() {
                       fontWeight: 700,
                     }}
                   >
-                    {D.DOCS[detail.doc].name} 보기 →
+                    {D.DOCS[detail.doc].name} 보기<span className="ds-arrow" aria-hidden="true">→</span>
                   </button>
                 </>
               )}

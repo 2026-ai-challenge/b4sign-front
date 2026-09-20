@@ -450,13 +450,13 @@ export default function Landing() {
             <span style={{ fontWeight: 700 }}>비포사인</span>
           </div>
           <div style={{ display: "flex", gap: 14, marginTop: 8 }}>
-            <button
+            <button className="ds-link" data-tone="muted"
               onClick={() => router.push("/privacy")}
               style={{ background: "none", border: "none", padding: 0, font: "inherit", color: "inherit", cursor: "pointer" }}
             >
               개인정보처리방침
             </button>
-            <button
+            <button className="ds-link" data-tone="muted"
               onClick={() => router.push("/terms")}
               style={{ background: "none", border: "none", padding: 0, font: "inherit", color: "inherit", cursor: "pointer" }}
             >
