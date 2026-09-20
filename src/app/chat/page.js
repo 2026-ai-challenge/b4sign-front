@@ -15,6 +15,31 @@ import { TypeBadge, LawButton, NoCase } from "@/components/ui";
 import { Collapse } from "@/components/fields";
 import { Button, Card } from "@/design-system";
 
+/** **굵게** → <strong> (완결된 쌍만 변환, 스트리밍 중 미완결 ** 는 그대로 둔다) */
+function inlineBold(line) {
+  return line.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    /^\*\*[^*]+\*\*$/.test(part) ? <strong key={i}>{part.slice(2, -2)}</strong> : part
+  );
+}
+
+/** AI 답변 표시용 — 줄 단위로 굵게(**)·인용(> ) 만 처리하는 경량 마크다운 */
+function AiText({ text }) {
+  return text.split("\n").map((line, i) => {
+    if (!line.trim()) return <div key={i} style={{ height: "0.6em" }} />;
+    if (/^>\s?/.test(line)) {
+      return (
+        <div
+          key={i}
+          style={{ margin: "4px 0", padding: "2px 0 2px 10px", borderLeft: "3px solid #CFE6DA", color: "#3C4A44" }}
+        >
+          {inlineBold(line.replace(/^>\s?/, ""))}
+        </div>
+      );
+    }
+    return <div key={i}>{inlineBold(line)}</div>;
+  });
+}
+
 export default function Chat() {
   const {
     caseId,
@@ -264,10 +289,9 @@ export default function Chat() {
                     fontSize: 14,
                     lineHeight: 1.6,
                     color: "#17211E",
-                    whiteSpace: "pre-line",
                   }}
                 >
-                  {m.text}
+                  <AiText text={m.text ?? ""} />
                   {m.streaming && (
                     <span
                       style={{
