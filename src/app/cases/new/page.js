@@ -84,14 +84,14 @@ export default function NewCase() {
                 }}
               >
                 <span style={{ fontSize: 17, fontWeight: 800, color: t.color }}>{t.label}</span>
-                <span style={{ fontSize: 12, lineHeight: 1.45, color: "#4B6157" }}>
+                <span style={{ fontSize: 12, lineHeight: "18px", color: "#4B6157" }}>
                   {t.risk.split(": ")[0]}
                 </span>
               </button>
             );
           })}
         </div>
-        <Card radius={14} style={{ marginTop: 14, padding: 14, fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
+        <Card radius={14} style={{ marginTop: 14, padding: 14, fontSize: 13, lineHeight: "20px", color: "#4B6157" }}>
           <b style={{ color: "#17211E" }}>{typ.label}</b>에서 집중해서 보는 것 ·{" "}
           {typ.focus.join(" · ")}
         </Card>
@@ -173,7 +173,7 @@ export default function NewCase() {
             <Card
               key={k}
               radius={12}
-              style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px" }}
+              style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px" }}
             >
               <div>
                 <div style={{ fontSize: 14, fontWeight: 600 }}>{D.DOCS[k].name}</div>
@@ -181,7 +181,7 @@ export default function NewCase() {
               </div>
               <span
                 style={{
-                  padding: "3px 8px",
+                  padding: "4px 8px",
                   borderRadius: 6,
                   background: req === "필수" ? "#EEF6F1" : "#F1F3F1",
                   color: req === "필수" ? "#14613F" : "#5A6660",

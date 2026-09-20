@@ -197,7 +197,7 @@ function Viewer({ docKey }) {
                 display: "inline-flex",
                 alignItems: "center",
                 height: 30,
-                padding: "0 11px",
+                padding: "0 12px",
                 borderRadius: 999,
                 border: `1px solid ${on ? "transparent" : "rgba(255,255,255,.2)"}`,
                 background: on ? (st ? st.fg : "#fff") : "rgba(255,255,255,.08)",
@@ -221,7 +221,7 @@ function Viewer({ docKey }) {
             color: "#111",
             padding: "22px 16px 28px",
             fontSize: 12,
-            lineHeight: 1.7,
+            lineHeight: "20px",
             display: "flex",
             flexDirection: "column",
             gap: 6,
@@ -245,7 +245,7 @@ function Viewer({ docKey }) {
                     fontWeight: 800,
                     color: "#222",
                     borderBottom: "1px solid #DDD",
-                    paddingBottom: 3,
+                    paddingBottom: 4,
                   }}
                 >
                   {l.h}
@@ -274,7 +274,7 @@ function Viewer({ docKey }) {
                     style={{
                       background: dim ? "transparent" : st.mark,
                       border: "none",
-                      padding: "1px 3px",
+                      padding: "2px 4px",
                       margin: 0,
                       font: "inherit",
                       color: "#111",
@@ -303,7 +303,7 @@ function Viewer({ docKey }) {
                     alignItems: "center",
                     justifyContent: "center",
                     padding: 0,
-                    marginTop: 1,
+                    marginTop: 2,
                   }}
                 >
                   <LineIcon style={{ width: 13, height: 13 }} />
@@ -352,7 +352,7 @@ function Viewer({ docKey }) {
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  padding: "4px 9px",
+                  padding: "4px 8px",
                   borderRadius: 999,
                   background: D.ST[pinItem.st].bg,
                   color: D.ST[pinItem.st].fg,
@@ -382,10 +382,10 @@ function Viewer({ docKey }) {
               <XMarkIcon style={{ width: 14, height: 14 }} />
             </button>
           </div>
-          <div style={{ marginTop: 8, fontSize: 15, fontWeight: 700, lineHeight: 1.35 }}>
+          <div style={{ marginTop: 8, fontSize: 15, fontWeight: 700, lineHeight: "20px" }}>
             {pinItem.title}
           </div>
-          <p style={{ margin: "6px 0 0", fontSize: 14, lineHeight: 1.55, color: "#2E463C" }}>
+          <p style={{ margin: "6px 0 0", fontSize: 14, lineHeight: "22px", color: "#2E463C" }}>
             {pinItem.why}
             {pinItem.term && (
               <>

@@ -151,8 +151,8 @@ export default function Me() {
               flex: "none",
               display: "inline-flex",
               alignItems: "center",
-              gap: 5,
-              padding: "4px 9px",
+              gap: 4,
+              padding: "4px 8px",
               borderRadius: 999,
               background: "#FEE500",
               color: "#191919",
@@ -326,7 +326,7 @@ export default function Me() {
         {/* 데이터 */}
         <div style={{ ...card, padding: "14px 16px" }}>
           <div style={{ fontSize: 15, fontWeight: 700 }}>데이터</div>
-          <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
+          <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: "20px", color: "#4B6157" }}>
             업로드한 PDF는 마스킹 후 저장되며 계정 삭제 없이도 지울 수 있어요. 분석 결과는
             유지돼요.
           </p>
@@ -351,7 +351,7 @@ export default function Me() {
         {me?.isDemo && !demoLocked && (
           <div style={{ ...card, padding: "14px 16px", border: "1px dashed #B9C2BC" }}>
             <div style={{ fontSize: 15, fontWeight: 700 }}>데모 초기화</div>
-            <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
+            <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: "20px", color: "#4B6157" }}>
               공유 데모 계정의 케이스·서류·할 일·상담을 전부 지우고 빈 상태로 되돌려요. 새 케이스를
               만들고 서류 탭의 샘플 PDF를 올리면 파싱→AI 판정→자동 등기부까지 처음부터 볼 수 있어요.
             </p>
@@ -433,7 +433,7 @@ export default function Me() {
             <div style={{ fontSize: 17, fontWeight: 800 }}>
               이 케이스의 서류를 모두 삭제할까요?
             </div>
-            <p style={{ margin: "10px 0 0", fontSize: 14, lineHeight: 1.6, color: "#4B6157" }}>
+            <p style={{ margin: "10px 0 0", fontSize: 14, lineHeight: "22px", color: "#4B6157" }}>
               원본 PDF와 페이지 이미지가 삭제돼요. 분석 결과와 할 일은 남아 있고, 서류를 다시
               올리면 재분석돼요.
             </p>
@@ -510,7 +510,7 @@ export default function Me() {
                 flexDirection: "column",
                 gap: 8,
                 fontSize: 14,
-                lineHeight: 1.5,
+                lineHeight: "22px",
                 color: "#2E463C",
               }}
             >
@@ -525,7 +525,7 @@ export default function Me() {
                 </div>
               ))}
             </div>
-            <p style={{ margin: "14px 0 0", fontSize: 13, lineHeight: 1.55, color: "#6E827A" }}>
+            <p style={{ margin: "14px 0 0", fontSize: 13, lineHeight: "20px", color: "#6E827A" }}>
               삭제 후 복구할 수 없어요. 서류만 지우고 싶다면 &lsquo;업로드한 서류 전부
               삭제&rsquo;를 이용하세요.
             </p>

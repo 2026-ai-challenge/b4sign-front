@@ -82,7 +82,7 @@ export default function Moving() {
         {/* 입주 당일 하자 체크 */}
         <Card radius={18} style={{ padding: 16 }}>
           <div style={{ fontSize: 15, fontWeight: 800 }}>입주 당일 하자 체크</div>
-          <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
+          <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: "20px", color: "#4B6157" }}>
             계약서(시설 상태·옵션·특약)를 기준으로 대조하고, 전부{" "}
             <b>날짜가 남는 사진·영상</b>으로 기록하세요. 퇴거 시 원상복구 분쟁의 증거가 돼요.
           </p>
@@ -119,7 +119,7 @@ export default function Moving() {
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginTop: 1,
+                    marginTop: 2,
                   }}
                 >
                   {checked[i] && <CheckIcon style={{ width: 12, height: 12 }} />}
@@ -153,7 +153,7 @@ export default function Moving() {
               margin: "10px 0 0",
               paddingLeft: 18,
               fontSize: 13,
-              lineHeight: 1.7,
+              lineHeight: "22px",
               color: "#2E463C",
             }}
           >
@@ -186,7 +186,7 @@ export default function Moving() {
               >
                 <div style={{ fontSize: 14, fontWeight: 700 }}>{m.title}</div>
                 <div
-                  style={{ marginTop: 4, fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}
+                  style={{ marginTop: 4, fontSize: 13, lineHeight: "20px", color: "#4B6157" }}
                 >
                   {m.desc}
                 </div>

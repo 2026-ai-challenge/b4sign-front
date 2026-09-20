@@ -274,7 +274,7 @@ function Documents() {
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    padding: "4px 9px",
+                    padding: "4px 8px",
                     borderRadius: 999,
                     background: d.st.bg,
                     color: d.st.fg,
@@ -286,7 +286,7 @@ function Documents() {
                 </span>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#5A6660" }}>{d.req}</span>
               </div>
-              <div style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.3 }}>{d.name}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, lineHeight: "20px" }}>{d.name}</div>
               <div style={{ fontSize: 12, color: "#6E827A", lineHeight: 1.5, flex: 1 }}>
                 {d.meta}
               </div>
@@ -298,7 +298,7 @@ function Documents() {
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
-                        padding: "2px 7px",
+                        padding: "2px 6px",
                         borderRadius: 5,
                         background: m.bg,
                         color: m.fg,
@@ -317,10 +317,10 @@ function Documents() {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 5,
+                    gap: 4,
                     fontSize: 12,
                     color: "#7A4E00",
-                    lineHeight: 1.45,
+                    lineHeight: "18px",
                   }}
                 >
                   <ExclamationTriangleIcon style={{ width: 13, height: 13, flex: "none" }} />
@@ -384,7 +384,7 @@ function Documents() {
           <ChevronRightIcon style={{ width: 14, height: 14, color: "rgba(255,255,255,.6)", flex: "none" }} />
         </button>
         <SampleDocs caseType={cur?.type} onUpload={uploadSample} />
-        <p style={{ margin: "16px 0 0", fontSize: 12, lineHeight: 1.6, color: "#6E827A" }}>
+        <p style={{ margin: "16px 0 0", fontSize: 12, lineHeight: "20px", color: "#6E827A" }}>
           업로드 시 주민등록번호 뒷자리는 자동 마스킹 후 저장돼요. 원본은 보관하지 않으며, 케이스
           삭제 시 함께 지워집니다.
         </p>
@@ -490,7 +490,7 @@ function Documents() {
                     height: 140,
                     marginTop: 18,
                     borderRadius: 16,
-                    border: "1.5px dashed #9BD3B9",
+                    border: "2px dashed #9BD3B9",
                     background: "#F4FAF6",
                     color: "#14613F",
                   }}
@@ -512,7 +512,7 @@ function Documents() {
                   <CameraIcon style={{ width: 17, height: 17 }} />
                   카메라로 촬영하기
                 </Button>
-                <p style={{ margin: "12px 0 0", fontSize: 12, lineHeight: 1.55, color: "#6E827A" }}>
+                <p style={{ margin: "12px 0 0", fontSize: 12, lineHeight: "18px", color: "#6E827A" }}>
                   업로드 즉시 주민등록번호 뒷자리를 마스킹하고, 원본은 저장하지 않아요. 사진은
                   문서 전체가 나오게, 최대한 정면에서 찍어주세요.
                 </p>
@@ -579,7 +579,7 @@ function Documents() {
                       width: 18,
                       height: 18,
                       borderRadius: "50%",
-                      border: "2.5px solid #CFE3D8",
+                      border: "2px solid #CFE3D8",
                       borderTopColor: "#16A36A",
                       animation: "spin .9s linear infinite",
                       display: "inline-block",
@@ -603,7 +603,7 @@ function Documents() {
                     />
                   ))}
                 </div>
-                <p style={{ margin: "14px 0 0", fontSize: 13, lineHeight: 1.55, color: "#6E827A" }}>
+                <p style={{ margin: "14px 0 0", fontSize: 13, lineHeight: "20px", color: "#6E827A" }}>
                   텍스트 추출 → 항목 판정(룰) → 설명 생성(AI) 순서로 진행돼요. 완료되면 문서
                   뷰어로 이동합니다.
                 </p>
@@ -638,7 +638,7 @@ function Documents() {
                     style={{
                       margin: "8px 0 0",
                       fontSize: 14,
-                      lineHeight: 1.6,
+                      lineHeight: "22px",
                       color: "#7A2A22",
                     }}
                   >
@@ -756,7 +756,7 @@ function SampleDocs({ caseType, onUpload }) {
               </div>
             ))
           )}
-          <div style={{ padding: "8px 0", fontSize: 11.5, color: "#6E827A", lineHeight: 1.5 }}>
+          <div style={{ padding: "8px 0", fontSize: 12, color: "#6E827A", lineHeight: 1.5 }}>
             [바로 올리기]를 누르면 샘플 PDF가 이 케이스에 업로드되어 파싱→AI 판정→(계약서면) 자동
             등기부 발급까지 실제 흐름이 돌아가요. 직접 올려보려면 [PDF 받기] 후 위의 [올리기]를 쓰세요.
           </div>

@@ -146,13 +146,13 @@ export default function Checklist() {
                   gap: 10,
                 }}
               >
-                <div style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.35 }}>{c.title}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, lineHeight: "20px" }}>{c.title}</div>
                 <span
                   style={{
                     flex: "none",
                     display: "inline-flex",
                     alignItems: "center",
-                    padding: "4px 9px",
+                    padding: "4px 8px",
                     borderRadius: 999,
                     background: st.bg,
                     color: st.fg,
@@ -163,11 +163,11 @@ export default function Checklist() {
                   {st.label}
                 </span>
               </div>
-              <p style={{ margin: "8px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
+              <p style={{ margin: "8px 0 0", fontSize: 13, lineHeight: "20px", color: "#4B6157" }}>
                 {c.why}
               </p>
               {c.note && (
-                <div style={{ marginTop: 8, fontSize: 13, color: "#7A4E00", lineHeight: 1.5 }}>
+                <div style={{ marginTop: 8, fontSize: 13, color: "#7A4E00", lineHeight: "20px" }}>
                   {c.note}
                 </div>
               )}
@@ -200,7 +200,7 @@ export default function Checklist() {
                     복사
                   </button>
                 </div>
-                <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.6, color: "#17211E" }}>
+                <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: "20px", color: "#17211E" }}>
                   {c.example}
                 </p>
               </div>
@@ -236,7 +236,7 @@ export default function Checklist() {
                       복사
                     </button>
                   </div>
-                  <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.6, color: "#17211E" }}>
+                  <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: "20px", color: "#17211E" }}>
                     {c.request}
                   </p>
                 </div>

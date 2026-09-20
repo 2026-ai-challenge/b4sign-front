@@ -223,7 +223,7 @@ export default function Dashboard() {
             <div style={{ marginTop: 14, fontSize: 20, fontWeight: 800, lineHeight: 1.3 }}>
               첫 서류를 올려주세요
             </div>
-            <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: 1.6, color: "#4B6157" }}>
+            <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "22px", color: "#4B6157" }}>
               등기부등본부터 올리면 소유자·담보 위험을 먼저 볼 수 있어요.
             </p>
             <Button onClick={() => router.push("/documents?upload=registry")} style={{ marginTop: 18 }}>
@@ -285,7 +285,7 @@ export default function Dashboard() {
               }}
             >
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.35 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, lineHeight: "20px" }}>
                   {maskAddr(cur.addr)}
                 </div>
                 <div style={{ marginTop: 4, fontSize: 13, color: "#4B6157" }}>
@@ -297,7 +297,7 @@ export default function Dashboard() {
                   flex: "none",
                   display: "inline-flex",
                   alignItems: "center",
-                  padding: "5px 10px",
+                  padding: "4px 10px",
                   borderRadius: 999,
                   background: overall.bg,
                   color: overall.fg,
@@ -371,14 +371,14 @@ export default function Dashboard() {
               <span style={{ fontSize: 12, fontWeight: 700, color: color.primary }}>
                 모든 할 일 완료
               </span>
-              <div style={{ marginTop: 10, fontSize: 20, fontWeight: 800, lineHeight: 1.35, color: color.ink }}>
+              <div style={{ marginTop: 10, fontSize: 20, fontWeight: 800, lineHeight: "28px", color: color.ink }}>
                 축하드려요, 전부 마쳤어요! 🎉
               </div>
               <div
                 style={{
                   marginTop: 8,
                   fontSize: 13,
-                  lineHeight: 1.6,
+                  lineHeight: "20px",
                   color: color.textSecondary,
                 }}
               >
@@ -420,14 +420,14 @@ export default function Dashboard() {
                     : ""}
                 </span>
               </div>
-              <div style={{ marginTop: 10, fontSize: 20, fontWeight: 800, lineHeight: 1.35, color: color.ink }}>
+              <div style={{ marginTop: 10, fontSize: 20, fontWeight: 800, lineHeight: "28px", color: color.ink }}>
                 {next ? next.title : "이 단계 할 일을 모두 마쳤어요"}
               </div>
               <div
                 style={{
                   marginTop: 8,
                   fontSize: 13,
-                  lineHeight: 1.55,
+                  lineHeight: "20px",
                   color: color.textSecondary,
                 }}
               >
@@ -473,7 +473,7 @@ export default function Dashboard() {
                                 width: 15,
                                 height: 15,
                                 borderRadius: 5,
-                                border: `1.5px solid ${t.done ? color.primary : color.border}`,
+                                border: `2px solid ${t.done ? color.primary : color.border}`,
                                 background: t.done ? color.primary : "transparent",
                                 color: "#fff",
                                 fontSize: 11,
@@ -490,7 +490,7 @@ export default function Dashboard() {
                                 flex: 1,
                                 minWidth: 0,
                                 fontSize: 13,
-                                lineHeight: 1.4,
+                                lineHeight: "18px",
                                 color: t.done ? color.textTertiary : color.ink,
                                 textDecoration: t.done ? "line-through" : "none",
                                 overflow: "hidden",
@@ -590,7 +590,7 @@ export default function Dashboard() {
                 </span>
                 <span
                   style={{
-                    padding: "3px 9px",
+                    padding: "4px 8px",
                     borderRadius: 999,
                     background: risk.metricsAvailable && !isDemoRisk ? (D.ST[risk.grade]?.bg ?? D.ST.unknown.bg) : D.ST.unknown.bg,
                     color: risk.metricsAvailable && !isDemoRisk ? (D.ST[risk.grade]?.fg ?? D.ST.unknown.fg) : D.ST.unknown.fg,
@@ -874,7 +874,7 @@ export default function Dashboard() {
                   </div>
                 );
               })()}
-            <p style={{ margin: "12px 0 0", fontSize: 12, lineHeight: 1.6, color: "#6E827A" }}>
+            <p style={{ margin: "12px 0 0", fontSize: 12, lineHeight: "20px", color: "#6E827A" }}>
               법정 <b>상한</b>이에요 (부가세 별도). 실제 보수는 이 범위 안에서 중개인과{" "}
               <b>협의</b>해서 정합니다. 상한 요율은 지자체 조례에 따라 다를 수 있어요 (서울 기준표).
             </p>

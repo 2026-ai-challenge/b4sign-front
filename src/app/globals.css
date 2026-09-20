@@ -25,6 +25,9 @@ a:hover {
 
 button {
   font-family: inherit;
+  /* 브라우저 기본값(글자 13.3333px, 패딩 1px 6px)이 소수점·홀수라 정수·짝수로 고정 */
+  font-size: 14px;
+  padding: 2px 6px;
   cursor: pointer;
 }
 input,

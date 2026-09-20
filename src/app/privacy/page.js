@@ -9,7 +9,7 @@ function Section({ title, children }) {
   return (
     <div style={{ marginTop: 24 }}>
       <div style={{ fontSize: 15, fontWeight: 700 }}>{title}</div>
-      <div style={{ marginTop: 8, fontSize: 13, lineHeight: 1.7, color: "#4B6157" }}>
+      <div style={{ marginTop: 8, fontSize: 13, lineHeight: "22px", color: "#4B6157" }}>
         {children}
       </div>
     </div>

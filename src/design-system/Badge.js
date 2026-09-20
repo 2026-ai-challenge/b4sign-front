@@ -17,7 +17,7 @@ const TYPE_STYLE = {
 // 기존 TypeBadge — 계약 유형(전세/월세/매매) 표시
 export function TypeBadge({ type, size = "md" }) {
   const t = TYPE_STYLE[type];
-  const pad = size === "sm" ? "1px 6px" : "3px 8px";
+  const pad = size === "sm" ? "2px 6px" : "4px 8px";
   const fs = size === "sm" ? 11 : 12;
   return (
     <span
@@ -58,7 +58,7 @@ export function StatusBadge({ status, children, showIcon = false, label }) {
         borderRadius: radius.pill,
         background: s.bg,
         color: s.fg,
-        fontSize: 11.5,
+        fontSize: 12,
         fontWeight: 700,
         flex: "none",
       }}

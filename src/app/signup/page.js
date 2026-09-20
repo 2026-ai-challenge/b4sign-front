@@ -122,7 +122,7 @@ export default function Signup() {
                       display: "inline-flex",
                       alignItems: "center",
                       gap: 4,
-                      padding: "4px 9px",
+                      padding: "4px 8px",
                       borderRadius: 999,
                       fontSize: 12,
                       fontWeight: 600,
@@ -159,7 +159,7 @@ export default function Signup() {
           </>
         ) : (
           <>
-            <p style={{ margin: "8px 0 0", fontSize: 14, color: "#4B6157", lineHeight: 1.55 }}>
+            <p style={{ margin: "8px 0 0", fontSize: 14, color: "#4B6157", lineHeight: "22px" }}>
               <b style={{ color: "#17211E" }}>{su.email}</b>로 6자리 코드를 보냈어요. 10분 안에
               입력해 주세요.
             </p>
@@ -171,7 +171,7 @@ export default function Signup() {
                   borderRadius: 10,
                   background: "#F1F3F1",
                   fontSize: 13,
-                  lineHeight: 1.55,
+                  lineHeight: "20px",
                   color: "#6E827A",
                 }}
               >

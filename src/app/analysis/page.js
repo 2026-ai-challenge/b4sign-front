@@ -136,7 +136,7 @@ function Analysis() {
             <span
               style={{
                 marginRight: 6,
-                padding: "2px 7px",
+                padding: "2px 6px",
                 borderRadius: 6,
                 background: "#E3F3E9",
                 color: "#14613F",
@@ -171,7 +171,7 @@ function Analysis() {
             <TypeBadge type={cur.type} />
             <span style={{ fontSize: 12, color: "#6E827A" }}>{cur.short}</span>
           </div>
-          <p style={{ margin: "12px 0 0", fontSize: 15, lineHeight: 1.55, fontWeight: 600 }}>
+          <p style={{ margin: "12px 0 0", fontSize: 15, lineHeight: "24px", fontWeight: 600 }}>
             {summaryText}
           </p>
           <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
@@ -184,13 +184,13 @@ function Analysis() {
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    padding: "5px 10px",
+                    padding: "4px 10px",
                     borderRadius: 999,
                     background: bg,
                     color: fg,
                     fontSize: 12,
                     fontWeight: 700,
-                    border: on ? `1.5px solid ${fg}` : "1.5px solid transparent",
+                    border: on ? `2px solid ${fg}` : "2px solid transparent",
                     opacity: st && !on ? 0.45 : 1,
                     cursor: "pointer",
                   }}
@@ -210,7 +210,7 @@ function Analysis() {
               justifyContent: "space-between",
               alignItems: "center",
               marginTop: 10,
-              padding: "11px 14px",
+              padding: "12px 14px",
               borderRadius: 14,
               background: ST_LABEL[st][1],
             }}
@@ -270,7 +270,7 @@ function Analysis() {
                   flexDirection: "column",
                   gap: 10,
                   fontSize: 13,
-                  lineHeight: 1.5,
+                  lineHeight: "20px",
                 }}
               >
                 <div style={{ display: "flex", gap: 10 }}>
@@ -346,7 +346,7 @@ function Analysis() {
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    padding: "4px 9px",
+                    padding: "4px 8px",
                     borderRadius: 999,
                     background: sec.worst.bg,
                     color: sec.worst.fg,
@@ -391,7 +391,7 @@ function Analysis() {
                             {dd.label}
                           </span>
                           <div style={{ minWidth: 0 }}>
-                            <div style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.35 }}>
+                            <div style={{ fontSize: 15, fontWeight: 700, lineHeight: "20px" }}>
                               {it.title}
                             </div>
                             <div style={{ fontSize: 12, color: "#6E827A", marginTop: 2 }}>
@@ -428,7 +428,7 @@ function Analysis() {
                                 style={{
                                   fontSize: 16,
                                   fontWeight: 700,
-                                  lineHeight: 1.35,
+                                  lineHeight: "22px",
                                   color: "#17211E",
                                 }}
                               >
@@ -443,7 +443,7 @@ function Analysis() {
                               flexDirection: "column",
                               gap: 6,
                               fontSize: 13,
-                              lineHeight: 1.5,
+                              lineHeight: "20px",
                               color: "#4B6157",
                             }}
                           >
@@ -465,7 +465,7 @@ function Analysis() {
                             style={{
                               margin: "12px 0 0",
                               fontSize: 14,
-                              lineHeight: 1.6,
+                              lineHeight: "22px",
                               color: "#2E463C",
                             }}
                           >
@@ -488,7 +488,7 @@ function Analysis() {
                                 borderRadius: 10,
                                 background: "#F4F6F4",
                                 fontSize: 13,
-                                lineHeight: 1.5,
+                                lineHeight: "20px",
                                 color: "#2E463C",
                               }}
                             >

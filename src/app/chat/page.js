@@ -30,7 +30,7 @@ function AiText({ text }) {
       return (
         <div
           key={i}
-          style={{ margin: "4px 0", padding: "2px 0 2px 10px", borderLeft: "3px solid #CFE6DA", color: "#3C4A44" }}
+          style={{ margin: "4px 0", padding: "2px 0 2px 10px", borderLeft: "4px solid #CFE6DA", color: "#3C4A44" }}
         >
           {inlineBold(line.replace(/^>\s?/, ""))}
         </div>
@@ -121,7 +121,7 @@ export default function Chat() {
                 key={y}
                 d={`M1 ${y}H19`}
                 stroke="#17211E"
-                strokeWidth="2.2"
+                strokeWidth="2"
                 strokeLinecap="round"
               />
             ))}
@@ -229,12 +229,12 @@ export default function Chat() {
               style={{
                 alignSelf: "flex-end",
                 maxWidth: "82%",
-                padding: "11px 14px",
+                padding: "12px 14px",
                 borderRadius: "18px 18px 4px 18px",
                 background: "#16A36A",
                 color: "#fff",
                 fontSize: 14,
-                lineHeight: 1.55,
+                lineHeight: "22px",
               }}
             >
               {m.text}
@@ -256,7 +256,7 @@ export default function Chat() {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 9,
+                    gap: 8,
                     padding: "12px 14px",
                     borderRadius: "18px 18px 18px 4px",
                     background: "#fff",
@@ -270,7 +270,7 @@ export default function Chat() {
                       width: 15,
                       height: 15,
                       borderRadius: "50%",
-                      border: "2.5px solid #CFE3D8",
+                      border: "2px solid #CFE3D8",
                       borderTopColor: "#16A36A",
                       animation: "spin .9s linear infinite",
                       display: "inline-block",
@@ -287,7 +287,7 @@ export default function Chat() {
                     background: m.error ? "#FFF1D6" : m.refused ? "#F4F6F4" : "#fff",
                     border: `1px solid ${m.error ? "#F1D9A8" : m.refused ? "#DDE3DF" : "#E3E8E3"}`,
                     fontSize: 14,
-                    lineHeight: 1.6,
+                    lineHeight: "22px",
                     color: "#17211E",
                   }}
                 >
@@ -314,7 +314,7 @@ export default function Chat() {
                       <span
                         key={s}
                         style={{
-                          padding: "4px 9px",
+                          padding: "4px 8px",
                           borderRadius: 6,
                           background: "#EEF6F1",
                           color: "#16A36A",
@@ -410,7 +410,7 @@ export default function Chat() {
                   background: "#fff",
                   border: "1px solid #E3E8E3",
                   fontSize: 14,
-                  lineHeight: 1.65,
+                  lineHeight: "24px",
                   color: "#17211E",
                 }}
               >
@@ -426,7 +426,7 @@ export default function Chat() {
                     borderRadius: 10,
                     background: "#F4F6F4",
                     fontSize: 13,
-                    lineHeight: 1.55,
+                    lineHeight: "20px",
                     color: "#4B6157",
                   }}
                 >
@@ -694,7 +694,7 @@ export default function Chat() {
                           minWidth: 0,
                           display: "flex",
                           flexDirection: "column",
-                          gap: 3,
+                          gap: 4,
                           textAlign: "left",
                           padding: 12,
                           border: "none",

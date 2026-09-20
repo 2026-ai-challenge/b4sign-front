@@ -62,7 +62,7 @@ export default function RegistryWatch() {
           style={{
             marginLeft: "auto",
             marginRight: 8,
-            padding: "3px 9px",
+            padding: "4px 8px",
             borderRadius: 999,
             border: "none",
             background: watchOn ? "#E3F3E9" : "#ECEEEC",
@@ -90,7 +90,7 @@ export default function RegistryWatch() {
               gridTemplateColumns: "auto 1fr",
               gap: "8px 14px",
               fontSize: 14,
-              lineHeight: 1.5,
+              lineHeight: "22px",
             }}
           >
             <span style={{ color: "#6E827A", fontWeight: 600 }}>마지막 확인</span>
@@ -124,7 +124,7 @@ export default function RegistryWatch() {
         <Card radius={18} style={{ padding: 16 }}>
           <div style={{ fontSize: 14, fontWeight: 800 }}>최근 변동 내역</div>
           {cur.diff ? (
-            <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8, fontSize: 13, lineHeight: 1.5 }}>
+            <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8, fontSize: 13, lineHeight: "20px" }}>
               <div style={{ display: "flex", gap: 10 }}>
                 <span
                   style={{
@@ -163,7 +163,7 @@ export default function RegistryWatch() {
               </div>
             </div>
           ) : (
-            <p style={{ margin: "8px 0 0", fontSize: 13, color: "#4B6157", lineHeight: 1.55 }}>
+            <p style={{ margin: "8px 0 0", fontSize: 13, color: "#4B6157", lineHeight: "20px" }}>
               아직 비교할 변동이 없어요. 등기부를 다시 올리면 이전 분석과 자동으로 비교해
               새 근저당·가압류·소유자 변경을 짚어드려요.
             </p>
@@ -177,7 +177,7 @@ export default function RegistryWatch() {
             borderRadius: 14,
             background: "#F4F6F4",
             fontSize: 13,
-            lineHeight: 1.6,
+            lineHeight: "20px",
             color: "#4B6157",
           }}
         >

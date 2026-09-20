@@ -107,7 +107,7 @@ export function AddressField({ base, detail, onBase, onDetail }) {
               cursor: "pointer",
             }}
           >
-            <span style={{ fontSize: 15, lineHeight: 1.4, color: "#17211E" }}>{base}</span>
+            <span style={{ fontSize: 15, lineHeight: "22px", color: "#17211E" }}>{base}</span>
             <span style={{ flex: "none", fontSize: 12, color: "#16A36A", fontWeight: 700 }}>
               재검색
             </span>
@@ -170,7 +170,7 @@ export function AddressField({ base, detail, onBase, onDetail }) {
                 <div style={{ fontSize: 14, fontWeight: 700 }}>
                   주소 검색을 불러오지 못했어요
                 </div>
-                <p style={{ margin: "6px 0 0", fontSize: 13, color: "#4B6157", lineHeight: 1.55 }}>
+                <p style={{ margin: "6px 0 0", fontSize: 13, color: "#4B6157", lineHeight: "20px" }}>
                   네트워크 상태를 확인해 주세요. 아래에 주소를 직접 입력할 수도 있어요.
                 </p>
                 <input
@@ -381,7 +381,7 @@ function CalendarSheet({ title, value, marks, onClose, onSelect }) {
                       : mk
                         ? `2px solid ${mk.color}`
                         : isToday(d)
-                          ? "1.5px dashed #9BD3B9"
+                          ? "2px dashed #9BD3B9"
                           : "none",
                     position: "relative",
                   }}
@@ -409,26 +409,26 @@ function CalendarSheet({ title, value, marks, onClose, onSelect }) {
             }}
           >
             {marks.map((mk) => (
-              <span key={mk.date} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+              <span key={mk.date} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                 <span
                   style={{
                     width: 10,
                     height: 10,
                     borderRadius: "50%",
-                    border: `2.5px solid ${mk.color}`,
+                    border: `2px solid ${mk.color}`,
                     display: "inline-block",
                   }}
                 />
                 {mk.label} {mk.date}
               </span>
             ))}
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
               <span
                 style={{
                   width: 10,
                   height: 10,
                   borderRadius: "50%",
-                  border: "1.5px dashed #9BD3B9",
+                  border: "2px dashed #9BD3B9",
                   display: "inline-block",
                 }}
               />

@@ -97,7 +97,7 @@ export default function FindId() {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 6,
-                  padding: "5px 10px",
+                  padding: "4px 10px",
                   borderRadius: 999,
                   background: "#FEE500",
                   color: "#191919",
@@ -114,7 +114,7 @@ export default function FindId() {
                 카카오로 가입됨
               </div>
               )}
-              <p style={{ margin: "12px 0 0", fontSize: 13, lineHeight: 1.55, color: "#4B6157" }}>
+              <p style={{ margin: "12px 0 0", fontSize: 13, lineHeight: "20px", color: "#4B6157" }}>
                 {result?.provider === "email"
                   ? "이 이메일과 비밀번호로 로그인하세요. 비밀번호를 잊었다면 비밀번호 찾기를 이용해 주세요."
                   : "이 계정은 비밀번호가 없어요. 로그인 화면에서 소셜 버튼을 눌러주세요."}

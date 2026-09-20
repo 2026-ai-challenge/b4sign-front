@@ -252,7 +252,7 @@ export default function Tasks() {
                                 background: t.done ? "#16A36A" : "#fff",
                                 color: "#fff",
                                 padding: 0,
-                                marginTop: 1,
+                                marginTop: 2,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -275,7 +275,7 @@ export default function Tasks() {
                                 style={{
                                   fontSize: 14,
                                   fontWeight: 600,
-                                  lineHeight: 1.4,
+                                  lineHeight: "20px",
                                   color: t.done ? "#5A6660" : "#17211E",
                                   textDecoration: t.done ? "line-through" : "none",
                                 }}
@@ -293,7 +293,7 @@ export default function Tasks() {
                               >
                                 <span
                                   style={{
-                                    padding: "2px 7px",
+                                    padding: "2px 6px",
                                     borderRadius: 5,
                                     background: t.source === "auto" ? "#EEF6F1" : "#F1F3F1",
                                     color: t.source === "auto" ? "#14613F" : "#5A6660",
@@ -306,7 +306,7 @@ export default function Tasks() {
                                 {dd && (
                                   <span
                                     style={{
-                                      padding: "2px 7px",
+                                      padding: "2px 6px",
                                       borderRadius: 5,
                                       background: resolved.recommended ? "#FFF6E3" : dd.bg,
                                       color: resolved.recommended ? "#8A6100" : dd.fg,
@@ -340,7 +340,7 @@ export default function Tasks() {
             borderRadius: 14,
             background: "#F4F6F4",
             fontSize: 13,
-            lineHeight: 1.55,
+            lineHeight: "20px",
             color: "#4B6157",
           }}
         >
@@ -388,7 +388,7 @@ export default function Tasks() {
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               <span
                 style={{
-                  padding: "3px 8px",
+                  padding: "4px 8px",
                   borderRadius: 5,
                   background: detail.source === "auto" ? "#EEF6F1" : "#F1F3F1",
                   color: detail.source === "auto" ? "#14613F" : "#5A6660",
@@ -405,7 +405,7 @@ export default function Tasks() {
                 return (
                   <span
                     style={{
-                      padding: "3px 8px",
+                      padding: "4px 8px",
                       borderRadius: 5,
                       background: r.recommended ? "#FFF6E3" : dd.bg,
                       color: r.recommended ? "#8A6100" : dd.fg,
@@ -429,7 +429,7 @@ export default function Tasks() {
                 gridTemplateColumns: "auto 1fr",
                 gap: "10px 14px",
                 fontSize: 14,
-                lineHeight: 1.55,
+                lineHeight: "22px",
               }}
             >
               <span style={{ color: "#6E827A", fontWeight: 600 }}>왜</span>

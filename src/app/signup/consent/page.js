@@ -58,7 +58,7 @@ export default function Consent() {
             fontSize: 26,
             fontWeight: 800,
             letterSpacing: "-.02em",
-            lineHeight: 1.3,
+            lineHeight: "34px",
           }}
         >
           서비스 이용에
@@ -133,7 +133,7 @@ export default function Consent() {
                   </button>
                 </div>
                 {c.note && (
-                  <div style={{ marginTop: 6, fontSize: 12, lineHeight: 1.55, color: "#4B6157" }}>
+                  <div style={{ marginTop: 6, fontSize: 12, lineHeight: "18px", color: "#4B6157" }}>
                     {c.note}
                   </div>
                 )}
@@ -205,7 +205,7 @@ export default function Consent() {
               style={{
                 margin: "12px 0 0",
                 fontSize: 14,
-                lineHeight: 1.7,
+                lineHeight: "24px",
                 color: "#2E463C",
                 whiteSpace: "pre-line",
               }}

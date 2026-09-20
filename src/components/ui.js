@@ -95,7 +95,7 @@ function BrandBar() {
                   height: 8,
                   borderRadius: "50%",
                   background: color.dangerFg,
-                  border: `1.5px solid ${color.white}`,
+                  border: `2px solid ${color.white}`,
                 }}
               />
             )}
@@ -197,7 +197,7 @@ export function TabBar() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: 3,
+              gap: 4,
               background: "none",
               border: "none",
               color: tint,
@@ -311,14 +311,14 @@ function GlobalSheets() {
                 borderRadius: 14,
                 background: "#F4F6F4",
                 fontSize: 15,
-                lineHeight: 1.8,
+                lineHeight: "28px",
                 color: "#2E463C",
               }}
             >
               {D.LAWS[law].text}
             </p>
             <LawOriginal lawKey={law} />
-            <div style={{ marginTop: 12, fontSize: 13, color: "#6E827A", lineHeight: 1.6 }}>
+            <div style={{ marginTop: 12, fontSize: 13, color: "#6E827A", lineHeight: "20px" }}>
               {D.LAWS[law].note} · B4SIGN의 요약은 법률 자문이 아니에요.
             </div>
             <button
@@ -371,7 +371,7 @@ function GlobalSheets() {
             <div style={{ fontSize: 12, fontWeight: 700, color: "#9BD3B9" }}>
               {D.TERMS[term].word}
             </div>
-            <div style={{ marginTop: 4, fontSize: 14, lineHeight: 1.55 }}>
+            <div style={{ marginTop: 4, fontSize: 14, lineHeight: "22px" }}>
               {D.TERMS[term].def}
             </div>
           </div>
@@ -384,7 +384,7 @@ function GlobalSheets() {
 // ─── 공용 소품 ───
 export function TypeBadge({ type, size = "md" }) {
   const t = D.TYPES[type];
-  const pad = size === "sm" ? "1px 6px" : "3px 8px";
+  const pad = size === "sm" ? "2px 6px" : "4px 8px";
   const fs = size === "sm" ? 11 : 12;
   return (
     <span
@@ -410,7 +410,7 @@ export function StatusChip({ st, children }) {
         display: "inline-flex",
         alignItems: "center",
         gap: 4,
-        padding: "4px 9px",
+        padding: "4px 8px",
         borderRadius: 999,
         background: st.bg,
         color: st.fg,
@@ -435,8 +435,8 @@ export function TermButton({ termKey, children }) {
         padding: 0,
         font: "inherit",
         color: "#17211E",
-        borderBottom: "1.5px dashed #16A36A",
-        lineHeight: 1.2,
+        borderBottom: "2px dashed #16A36A",
+        lineHeight: "16px",
         cursor: "pointer",
       }}
     >
@@ -451,7 +451,7 @@ export function LawButton({ lawKey, short }) {
     <button
       onClick={() => setLaw(lawKey)}
       style={{
-        padding: "4px 9px",
+        padding: "4px 8px",
         borderRadius: 6,
         border: "1px solid #DDE3DF",
         background: "#fff",
@@ -481,7 +481,7 @@ export function LawRow({ lawKey }) {
         alignItems: "center",
         gap: 10,
         marginTop: 10,
-        padding: "11px 12px",
+        padding: "12px 12px",
         borderRadius: 12,
         border: "1px solid #DDE3DF",
         background: "#F9FAF9",
@@ -514,7 +514,7 @@ export function LawRow({ lawKey }) {
             fontSize: 13,
             fontWeight: 700,
             color: "#17211E",
-            marginTop: 1,
+            marginTop: 2,
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -534,7 +534,7 @@ export function NoCase({ title = "아직 케이스가 없어요" }) {
   return (
     <div style={{ padding: "48px 24px", textAlign: "center" }}>
       <div style={{ fontSize: 17, fontWeight: 800 }}>{title}</div>
-      <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: 1.6, color: color.textSecondary }}>
+      <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "22px", color: color.textSecondary }}>
         계약 유형과 주소를 입력해 첫 케이스를 만들면, 서류를 올리고 판정을 받을 수 있어요.
       </p>
       <button
@@ -609,7 +609,7 @@ export function LawOriginal({ lawKey }) {
             border: `1px solid ${color.borderSoft}`,
             background: "#fff",
             fontSize: 13,
-            lineHeight: 1.75,
+            lineHeight: "22px",
             color: "#2E463C",
             maxHeight: 260,
             overflow: "auto",

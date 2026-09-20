@@ -196,7 +196,7 @@ export default function Login() {
               background: e.bg,
               color: e.fg,
               fontSize: 13,
-              lineHeight: 1.5,
+              lineHeight: "20px",
               display: "flex",
               gap: 8,
             }}
@@ -254,7 +254,7 @@ export default function Login() {
               borderRadius: 10,
               background: "#F1F3F1",
               fontSize: 12,
-              lineHeight: 1.6,
+              lineHeight: "20px",
               color: "#6E827A",
             }}
           >

@@ -35,7 +35,7 @@ export default function Landing() {
           <div
             style={{
               display: "inline-flex",
-              padding: "5px 10px",
+              padding: "4px 10px",
               borderRadius: 999,
               background: "#fff",
               border: "1px solid #CFE3D8",
@@ -52,7 +52,7 @@ export default function Landing() {
             style={{
               margin: "14px 0 0",
               fontSize: 34,
-              lineHeight: 1.15,
+              lineHeight: "40px",
               fontWeight: 900,
               letterSpacing: "-.02em",
               color: "#17211E",
@@ -80,7 +80,7 @@ export default function Landing() {
                 marginTop: 6,
                 fontSize: 12,
                 color: "#555",
-                lineHeight: 1.7,
+                lineHeight: "20px",
                 fontFamily: "'Noto Serif KR',serif",
               }}
             >
@@ -88,7 +88,7 @@ export default function Landing() {
               <span
                 style={{
                   background: "rgba(240,110,95,.32)",
-                  padding: "1px 3px",
+                  padding: "2px 4px",
                   borderRadius: 3,
                   color: "#111",
                 }}
@@ -101,7 +101,7 @@ export default function Landing() {
                 display: "inline-flex",
                 alignItems: "center",
                 marginTop: 8,
-                padding: "2px 7px",
+                padding: "2px 6px",
                 borderRadius: 999,
                 background: "#FDE8E4",
                 color: "#B4231A",
@@ -132,7 +132,7 @@ export default function Landing() {
             <path
               d="M2 2L11 10L20 2"
               stroke="#16A36A"
-              strokeWidth="2.5"
+              strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
@@ -172,7 +172,7 @@ export default function Landing() {
                 </span>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontSize: 15, fontWeight: 700 }}>{c.q}</div>
-                  <div style={{ marginTop: 4, fontSize: 13, lineHeight: 1.5, color: "#4B6157" }}>
+                  <div style={{ marginTop: 4, fontSize: 13, lineHeight: "20px", color: "#4B6157" }}>
                     {c.desc}
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export default function Landing() {
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, fontWeight: 700 }}>등기부등본_촬영.jpg</div>
-                  <div style={{ height: 5, borderRadius: 3, background: "#E6EBE7", marginTop: 5, overflow: "hidden" }}>
+                  <div style={{ height: 5, borderRadius: 3, background: "#E6EBE7", marginTop: 4, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: "100%", background: "#16A36A", borderRadius: 3 }} />
                   </div>
                 </div>
@@ -211,12 +211,12 @@ export default function Landing() {
                   분석 완료
                 </span>
               </div>
-              <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 5 }}>
-                <div style={{ ...mock.okRow, display: "flex", alignItems: "center", gap: 5 }}>
+              <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 4 }}>
+                <div style={{ ...mock.okRow, display: "flex", alignItems: "center", gap: 4 }}>
                   <CheckIcon style={{ width: 11, height: 11 }} />
                   등기부 소유자 = 계약서 임대인 일치
                 </div>
-                <div style={{ ...mock.okRow, display: "flex", alignItems: "center", gap: 5 }}>
+                <div style={{ ...mock.okRow, display: "flex", alignItems: "center", gap: 4 }}>
                   <CheckIcon style={{ width: 11, height: 11 }} />
                   국토부 건축물대장 교차검증 완료
                 </div>
@@ -234,13 +234,13 @@ export default function Landing() {
               desc="특약사항 중 불리한 것·위험한 것을 감지해 문서 위에 표시하고, 어떻게 고쳐야 하는지 수정 방향까지 알려줘요."
             />
             <div style={{ ...mock.frame, fontFamily: "'Noto Serif KR',serif" }}>
-              <div style={{ fontSize: 11, color: "#555", lineHeight: 1.8 }}>
+              <div style={{ fontSize: 11, color: "#555", lineHeight: "20px" }}>
                 3. 특약사항
                 <br />① 임차인은{" "}
                 <span
                   style={{
                     background: "rgba(240,110,95,.32)",
-                    padding: "1px 3px",
+                    padding: "2px 4px",
                     borderRadius: 3,
                     color: "#111",
                   }}
@@ -252,7 +252,7 @@ export default function Landing() {
               <div
                 style={{
                   marginTop: 10,
-                  padding: "9px 11px",
+                  padding: "8px 12px",
                   borderRadius: 10,
                   background: "#fff",
                   border: "1px solid #F5C8C1",
@@ -264,7 +264,7 @@ export default function Landing() {
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      padding: "2px 7px",
+                      padding: "2px 6px",
                       borderRadius: 999,
                       background: "#FDE8E4",
                       color: "#B4231A",
@@ -283,7 +283,7 @@ export default function Landing() {
                   style={{
                     marginTop: 6,
                     fontSize: 11,
-                    lineHeight: 1.55,
+                    lineHeight: "18px",
                     color: "#2E463C",
                     fontFamily: "Pretendard, sans-serif",
                   }}
@@ -311,8 +311,8 @@ export default function Landing() {
                   marginLeft: "auto",
                   maxWidth: "80%",
                   width: "fit-content",
-                  padding: "7px 10px",
-                  borderRadius: "12px 12px 3px 12px",
+                  padding: "6px 10px",
+                  borderRadius: "12px 12px 4px 12px",
                   background: "#16A36A",
                   color: "#fff",
                   fontSize: 12,
@@ -325,11 +325,11 @@ export default function Landing() {
                   marginTop: 6,
                   maxWidth: "88%",
                   padding: "8px 10px",
-                  borderRadius: "12px 12px 12px 3px",
+                  borderRadius: "12px 12px 12px 4px",
                   background: "#fff",
                   border: "1px solid #E3E8E3",
                   fontSize: 12,
-                  lineHeight: 1.55,
+                  lineHeight: "18px",
                 }}
               >
                 네, 통상 마모까지 부담하게 되어 불리해요. 특약에 "통상 마모 제외"를 넣자고
@@ -372,7 +372,7 @@ export default function Landing() {
                 </span>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700 }}>{t.risk}</div>
-                  <div style={{ marginTop: 4, fontSize: 13, lineHeight: 1.5, color: "#4B6157" }}>
+                  <div style={{ marginTop: 4, fontSize: 13, lineHeight: "20px", color: "#4B6157" }}>
                     {t.focus.join(" · ")}
                   </div>
                 </div>
@@ -394,7 +394,7 @@ export default function Landing() {
               flexDirection: "column",
               gap: 8,
               fontSize: 13,
-              lineHeight: 1.5,
+              lineHeight: "20px",
             }}
           >
             {[
@@ -443,7 +443,7 @@ export default function Landing() {
             padding: "20px 20px calc(20px + env(safe-area-inset-bottom))",
             borderTop: "1px solid #E3E8E3",
             fontSize: 12,
-            lineHeight: 1.7,
+            lineHeight: "20px",
             color: "#6E827A",
           }}
         >
@@ -482,7 +482,7 @@ function GuideHead({ step, title, desc }) {
         {step}
       </div>
       <div style={{ marginTop: 4, fontSize: 15, fontWeight: 800 }}>{title}</div>
-      <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.6, color: "#4B6157" }}>{desc}</p>
+      <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: "20px", color: "#4B6157" }}>{desc}</p>
     </>
   );
 }
@@ -508,7 +508,7 @@ const mock = {
     fontSize: 14,
   },
   okRow: {
-    padding: "6px 9px",
+    padding: "6px 8px",
     borderRadius: 8,
     background: "#E3F3E9",
     color: "#14613F",
@@ -516,7 +516,7 @@ const mock = {
     fontWeight: 700,
   },
   chip: {
-    padding: "3px 7px",
+    padding: "4px 6px",
     borderRadius: 5,
     background: "#EEF6F1",
     color: "#16A36A",
