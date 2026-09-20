@@ -10,10 +10,23 @@ export const viewport = {
   themeColor: "#FAFAF7",
 };
 
+const TITLE = "B4SIGN(비포사인), 4 checks before you sign";
+const DESCRIPTION =
+  "사인하기 전, 놓치면 안 되는 계약 위험을 확인하세요. 등기부등본·계약서·건축물대장을 올리면 위험한 줄을 문서 위에 표시해 드려요.";
+
 export const metadata = {
-  title: "B4SIGN(비포사인), 4 checks before you sign",
-  description:
-    "사인하기 전, 놓치면 안 되는 계약 위험을 확인하세요. 등기부등본·계약서·건축물대장을 올리면 위험한 줄을 문서 위에 표시해 드려요.",
+  // 링크 공유 미리보기(og:image 등)의 절대 URL 기준
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://b4sign-front.vercel.app"),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    siteName: "B4SIGN",
+    type: "website",
+    locale: "ko_KR",
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
 };
 
 export default function RootLayout({ children }) {

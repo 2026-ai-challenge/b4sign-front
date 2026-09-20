@@ -71,7 +71,7 @@ export default function Terms() {
         <Section title="제5조 (회사 정보 및 문의)">
           상호 <span style={TODO}>B4SIGN (비포사인) 팀</span>
           <br />
-          사업자등록번호 <span style={TODO}>해당 없음 (2026 AI Challenge 출품 프로젝트, 비영리 시범 서비스)</span>
+          사업자등록번호 <span style={TODO}>해당 없음 (원티드 AI Championship 2026 출품 프로젝트, 비영리 시범 서비스)</span>
           <br />
           대표자 <span style={TODO}>이창호</span>
           <br />
