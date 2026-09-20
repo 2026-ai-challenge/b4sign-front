@@ -20,7 +20,7 @@ import {
 } from "@/lib/derive";
 import { TypeBadge, StatusChip, NoCase } from "@/components/ui";
 import { Collapse } from "@/components/fields";
-import { Button, Card, color } from "@/design-system";
+import { Button, LinkButton, Card, color } from "@/design-system";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -654,19 +654,9 @@ export default function Dashboard() {
               }}
             >
               <span style={{ fontSize: 13, fontWeight: 700, color: "#6E827A" }}>서류</span>
-              <button
-                onClick={() => router.push("/documents")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: 13,
-                  color: "#16A36A",
-                  fontWeight: 600,
-                  padding: 0,
-                }}
-              >
+              <LinkButton onClick={() => router.push("/documents")}>
                 전체 보기 →
-              </button>
+              </LinkButton>
             </div>
             <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
               {docList.map((d) => (

@@ -82,3 +82,48 @@ textarea {
     opacity: 1;
   }
 }
+
+/* ─── 버튼 상태 (hover · pressed · focus) ───
+   Button/LinkButton의 기본 색은 인라인 스타일이라, 상태 색은 !important로 덮는다.
+   hover는 마우스 환경에서만(터치에서 눌렀다 뗀 뒤 색이 남는 문제 방지), pressed는 어디서나. */
+.ds-btn,
+.ds-link {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.ds-btn:focus-visible,
+.ds-link:focus-visible {
+  outline: 2px solid #16a36a;
+  outline-offset: 2px;
+}
+.ds-btn:disabled {
+  transition: none;
+}
+
+/* hover */
+@media (hover: hover) {
+  .ds-btn[data-variant="primary"]:hover:not(:disabled) { background: #129158 !important; }
+  .ds-btn[data-variant="secondary"]:hover:not(:disabled) { background: #e8f4f0 !important; border-color: #9bd3b9 !important; color: #0e7a4a !important; }
+  .ds-btn[data-variant="tint"]:hover:not(:disabled) { background: #dceee6 !important; }
+  .ds-btn[data-variant="neutral"]:hover:not(:disabled) { background: #f4f6f4 !important; border-color: #c9d2cc !important; }
+  .ds-btn[data-variant="dark"]:hover:not(:disabled) { background: #26332e !important; }
+  .ds-btn[data-variant="ghost"]:hover:not(:disabled) { background: #f4f6f4 !important; color: #17211e !important; }
+  .ds-btn[data-variant="inverse"]:hover:not(:disabled) { background: #f4f6f4 !important; }
+  .ds-btn[data-variant="inverseGhost"]:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1) !important; }
+  .ds-link:hover { background: #e8f4f0 !important; color: #0e7a4a !important; }
+}
+
+/* pressed */
+.ds-btn[data-variant="primary"]:active:not(:disabled) { background: #0e7a4a !important; }
+.ds-btn[data-variant="secondary"]:active:not(:disabled) { background: #d5ebe1 !important; border-color: #7fc9ab !important; color: #0b6b41 !important; }
+.ds-btn[data-variant="tint"]:active:not(:disabled) { background: #cde6da !important; }
+.ds-btn[data-variant="neutral"]:active:not(:disabled) { background: #e8ece9 !important; border-color: #b9c2bc !important; }
+.ds-btn[data-variant="dark"]:active:not(:disabled) { background: #0f1714 !important; }
+.ds-btn[data-variant="ghost"]:active:not(:disabled) { background: #e8ece9 !important; color: #17211e !important; }
+.ds-btn[data-variant="inverse"]:active:not(:disabled) { background: #e8ece9 !important; }
+.ds-btn[data-variant="inverseGhost"]:active:not(:disabled) { background: rgba(255, 255, 255, 0.18) !important; }
+.ds-link:active { background: #d5ebe1 !important; color: #0b6b41 !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-btn,
+  .ds-link { transition: none; }
+}

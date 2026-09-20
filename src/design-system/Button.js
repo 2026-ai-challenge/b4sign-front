@@ -21,12 +21,14 @@ const SIZE = {
   sm: { height: 34, fontSize: font.size.caption, borderRadius: radius.sm },
 };
 
-export function Button({ variant = "primary", size = "lg", disabled, style, children, ...rest }) {
+export function Button({ variant = "primary", size = "lg", disabled, style, className, children, ...rest }) {
   const v = VARIANT[variant];
   const s = SIZE[size];
   return (
     <button
       disabled={disabled}
+      className={["ds-btn", className].filter(Boolean).join(" ")}
+      data-variant={variant}
       style={{
         display: "flex",
         width: "100%",
@@ -40,6 +42,33 @@ export function Button({ variant = "primary", size = "lg", disabled, style, chil
         opacity: disabled ? 0.5 : 1,
         cursor: disabled ? "not-allowed" : "pointer",
         ...v,
+        ...style,
+      }}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}
+
+/**
+ * 텍스트 링크형 버튼("전체 보기 →" 등). 글자 위치는 그대로 두고(padding + 음수 margin 상쇄)
+ * 눌리는 영역만 넓혀 hover/pressed 배경을 줄 수 있게 한다. 상태 스타일은 globals.css의 .ds-link.
+ */
+export function LinkButton({ style, className, children, ...rest }) {
+  return (
+    <button
+      className={["ds-link", className].filter(Boolean).join(" ")}
+      style={{
+        background: "none",
+        border: "none",
+        padding: "4px 8px",
+        margin: "-4px -8px",
+        borderRadius: 8,
+        fontSize: font.size.sm,
+        fontWeight: 600,
+        color: color.primary,
+        cursor: "pointer",
         ...style,
       }}
       {...rest}
