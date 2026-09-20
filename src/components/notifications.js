@@ -32,9 +32,18 @@ export async function dismissDueNotification(n) {
  * 같은 규칙(D-1·D-day·D+7 이내 지남)으로 계산. 헤더 알림 배지·상단 배너·알림함
  * 화면이 모두 이 훅 하나를 공유해 "새로고침하면 떴던 알림"을 한곳에서 모아본다.
  */
-// 로그인 전 화면(랜딩·인증 플로우)에서는 알림을 아예 계산·구독하지 않는다
-// (ui.js NO_TAB_ROUTES와 동일 목록 — 변경 시 함께 갱신)
-const PRE_AUTH_ROUTES = ["/", "/login", "/signup", "/signup/consent", "/find-id", "/find-password"];
+// 로그인 전 화면(랜딩·인증 플로우·약관 문서)에서는 알림을 아예 계산·구독하지 않는다
+// (ui.js NO_TAB_ROUTES 기준 + 약관·방침. 약관 페이지는 탭바는 유지하되 알림 배너만 끈다)
+const PRE_AUTH_ROUTES = [
+  "/",
+  "/login",
+  "/signup",
+  "/signup/consent",
+  "/find-id",
+  "/find-password",
+  "/terms",
+  "/privacy",
+];
 
 export function useDueNotifications() {
   const { tasks, apiOn, me, cases } = useApp();
@@ -123,12 +132,22 @@ export function NotificationHost() {
   const items = useDueNotifications();
   // 배너는 10초만 보여주고 접는다 — 상시 노출 대신 헤더 종 배지·알림함이 이어받는다.
   // 알림 구성이 바뀌면(새 알림 도착) 다시 10초 노출.
-  const sig = items.map((n) => `${n.id}|${n.due}`).join(",");
+  const sig = items.map((n) => `${n.id}|${n.due}`).sort().join(","); // 순서와 무관하게 같은 구성이면 같은 값
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (!sig) return;
+    // 같은 알림 구성은 브라우저 세션당 한 번만 띄운다 — 화면을 이동할 때마다 다시 뜨면
+    // 상단(케이스 전환 등)을 10초씩 가려서 조작을 막는다. 이후엔 종 배지·알림함이 이어받는다.
+    try {
+      if (sessionStorage.getItem("zs_banner_seen") === sig) return;
+    } catch {}
     setVisible(true);
-    const t = setTimeout(() => setVisible(false), 10_000);
+    const t = setTimeout(() => {
+      setVisible(false);
+      try {
+        sessionStorage.setItem("zs_banner_seen", sig);
+      } catch {}
+    }, 10_000);
     return () => clearTimeout(t);
   }, [sig]);
   if (!items.length || !visible) return null;
