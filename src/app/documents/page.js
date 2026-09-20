@@ -3,8 +3,8 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  MagnifyingGlassIcon,
   ChevronRightIcon,
+  ChevronDownIcon,
   XMarkIcon,
   ArrowUpTrayIcon,
   CameraIcon,
@@ -69,6 +69,8 @@ function Documents() {
     };
   }, [apiOn, caseId, docs]);
   const docList = applyLiveMarks(buildDocList(cur, docs[caseId]), liveItems);
+  // 필수 서류가 하나라도 없으면 샘플 체험을 카드 위로 올려 바로 보이게 한다 (서류 없는 사용자의 가장 빠른 경로)
+  const needSample = docList.some((d) => d.req === "필수" && d.missing);
 
   // 업로드 모달 상태: { docKey, stage: 'pick'|'progress'|'analyzing'|'fail', pct, eta, fail, demoFail, fileName, fileSize }
   const [upload, setUpload] = useState(null);
@@ -248,6 +250,7 @@ function Documents() {
       </div>
 
       <div style={{ padding: "8px 20px 32px" }}>
+        {needSample && <SampleDocs caseType={cur?.type} onUpload={uploadSample} top />}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           {docList.map((d) => (
             <Card
@@ -372,7 +375,6 @@ function Documents() {
             textAlign: "left",
           }}
         >
-          <MagnifyingGlassIcon style={{ width: 18, height: 18, color: "#fff", flex: "none" }} />
           <span style={{ flex: 1, minWidth: 0 }}>
             <span style={{ display: "block", fontSize: 14, fontWeight: 700, color: "#fff" }}>
               등기 변동 모니터링
@@ -383,7 +385,7 @@ function Documents() {
           </span>
           <ChevronRightIcon style={{ width: 14, height: 14, color: "rgba(255,255,255,.6)", flex: "none" }} />
         </button>
-        <SampleDocs caseType={cur?.type} onUpload={uploadSample} />
+        {!needSample && <SampleDocs caseType={cur?.type} onUpload={uploadSample} />}
         <p style={{ margin: "16px 0 0", fontSize: 12, lineHeight: "20px", color: "#6E827A" }}>
           업로드 시 주민등록번호 뒷자리는 자동 마스킹 후 저장돼요. 원본은 보관하지 않으며, 케이스
           삭제 시 함께 지워집니다.
@@ -672,15 +674,20 @@ function Documents() {
 }
 
 /** 시연용 샘플 서류 — 서버의 데모 PDF를 받아 업로드 기능을 바로 체험 */
-function SampleDocs({ caseType, onUpload }) {
+function SampleDocs({ caseType, onUpload, top = false }) {
   const { apiOn } = useApp();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(top); // 상단 배치(서류 없음)일 땐 처음부터 펼쳐 둔다
   const [list, setList] = useState(null);
+  const loadList = () => api("/demo/documents").then(setList).catch(() => setList([]));
+  useEffect(() => {
+    if (top && apiOn) loadList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [top, apiOn]);
   if (!apiOn) return null;
 
   const load = () => {
     setOpen((v) => !v);
-    if (!list) api("/demo/documents").then(setList).catch(() => setList([]));
+    if (!list) loadList();
   };
   // 이 케이스 유형에 맞는 샘플만 — 계약서는 유형별 파일(contract-jeonse 등), 나머지는 공통
   const typeDocs = caseType ? D.TYPES[caseType].docs.map(([k]) => k) : null;
@@ -691,20 +698,41 @@ function SampleDocs({ caseType, onUpload }) {
   });
 
   return (
-    <div style={{ marginTop: 10 }}>
+    <div style={top ? { marginBottom: 12 } : { marginTop: 12 }}>
       <button
         onClick={load}
+        aria-expanded={open}
         style={{
-          background: "none",
-          border: "none",
-          padding: 0,
-          fontSize: 13,
-          fontWeight: 700,
-          color: "#4B6157",
+          display: "flex",
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+          padding: "12px 14px",
+          borderRadius: 12,
+          border: `1px solid ${top ? "#CFE3D8" : "#DDE3DF"}`,
+          background: top ? "#EEF6F1" : "#fff",
+          textAlign: "left",
           cursor: "pointer",
         }}
       >
-        서류가 없으신가요? 샘플 서류로 체험하기 {open ? "▲" : "▼"}
+        <span style={{ minWidth: 0 }}>
+          <span style={{ display: "block", fontSize: 14, fontWeight: 700, color: "#17211E" }}>
+            서류가 없으신가요?
+          </span>
+          <span style={{ display: "block", fontSize: 12, color: "#4B6157", marginTop: 2 }}>
+            샘플 서류로 업로드부터 AI 판정까지 바로 체험해 보세요
+          </span>
+        </span>
+        <ChevronDownIcon
+          style={{
+            width: 16,
+            height: 16,
+            flex: "none",
+            color: "#4B6157",
+            transform: open ? "rotate(180deg)" : "none",
+          }}
+        />
       </button>
       {open && (
         <Card radius={14} style={{ marginTop: 8, padding: "6px 14px" }}>
